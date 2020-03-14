@@ -1,4 +1,4 @@
-package com.example.foodiepops
+package com.foodiepops.foodiepops
 
 import android.os.Bundle
 
