@@ -1,8 +1,8 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:foodiepops/firebaseAuth.dart';
 import 'package:foodiepops/mainScreen.dart';
+import 'package:foodiepops/mainScreenArguments.dart';
 import 'package:foodiepops/signInButton.dart';
 
 
@@ -25,17 +25,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void onGoogleSignInPressed (BuildContext context) {
       toggleLoadingIndicator();
-      signInWithGoogle().then((value) {
-        print(value);
-
+      signInWithGoogle().catchError((onError) {
+        print(onError);
+      }).then((value) {
       toggleLoadingIndicator();
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) {
-            return MainScreen(userDisplayName: value,);
-          },
-        ),
-      );
+      Navigator.pushNamed(context, MainScreen.routeName, arguments: MainScreenArguments(value));
     });
 }
 
