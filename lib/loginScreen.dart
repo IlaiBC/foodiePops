@@ -33,6 +33,16 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 }
 
+    void onFacebookSignInPressed (BuildContext context) {
+      toggleLoadingIndicator();
+      signInWithFacebook().catchError((onError) {
+        print(onError);
+      }).then((value) {
+      toggleLoadingIndicator();
+      Navigator.pushNamed(context, MainScreen.routeName, arguments: MainScreenArguments(value));
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(height: 50),
               SignInButton(buttonText: 'Sign in with Google', buttonColor: Colors.grey, buttonIconPath: "assets/google_logo.png", buttonOnPressedAction: () => onGoogleSignInPressed(context)),
               SizedBox(height: 20),
-              SignInButton(buttonText: 'Sign in with Facebook', buttonColor: Colors.blue, buttonIconPath: "assets/google_logo.png", buttonOnPressedAction: () {}),
+              SignInButton(buttonText: 'Sign in with Facebook', buttonColor: Colors.blue, buttonIconPath: "assets/google_logo.png", buttonOnPressedAction: () => onFacebookSignInPressed(context)),
             ]),
         ),
       ),
