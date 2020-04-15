@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:foodiepops/mainScreenArguments.dart';
+import 'package:foodiepops/screens/main/mainScreenArguments.dart';
 
 class MainScreen extends StatelessWidget {
   static const routeName = '/MainScreen';

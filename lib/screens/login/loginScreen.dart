@@ -1,9 +1,9 @@
 
 import 'package:flutter/material.dart';
-import 'package:foodiepops/firebaseAuth.dart';
-import 'package:foodiepops/mainScreen.dart';
-import 'package:foodiepops/mainScreenArguments.dart';
-import 'package:foodiepops/signInButton.dart';
+import 'package:foodiepops/screens/login/firebaseAuth.dart';
+import 'package:foodiepops/screens/main/mainScreen.dart';
+import 'package:foodiepops/screens/main/mainScreenArguments.dart';
+import 'package:foodiepops/components/signInButton.dart';
 
 
 class LoginScreen extends StatefulWidget {
