@@ -96,7 +96,17 @@ Future<dynamic> signInWithFacebook() async {
   }
 
   Future<void> signOut() async {
-    return _firebaseAuth.signOut();
-  }
+    final isSignedInWithGoogle = await _googleSignIn.isSignedIn();
+    final isSignedInWithFacebook = await _facebookSignIn.isLoggedIn;
 
+    if (isSignedInWithGoogle) {
+      await _googleSignIn.signOut();
+    }
+
+    if (isSignedInWithFacebook) {
+      await _facebookSignIn.logOut();
+    }
+
+    await _firebaseAuth.signOut();
+  }
 }

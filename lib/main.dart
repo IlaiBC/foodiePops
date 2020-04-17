@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:foodiepops/loginScreen.dart';
 import 'package:foodiepops/mainScreen.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
 import 'package:foodiepops/services/fireStoreDatabase.dart';
+import 'package:provider/provider.dart';
 
-void main() => runApp(MyApp());
+import 'authentication/authWidget.dart';
+import 'authentication/authWidgetBuilder.dart';
+
+void main() => runApp(MyApp(
+      authServiceBuilder: (_) => FirebaseAuthService(),
+      databaseBuilder: (_, uid) => FirestoreDatabase(uid: uid),
+    ));
 
 class MyApp extends StatelessWidget {
     const MyApp({Key key, this.authServiceBuilder, this.databaseBuilder})
@@ -17,16 +23,26 @@ class MyApp extends StatelessWidget {
       
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'FoodiePops Login',
-      initialRoute: '/',
-      routes: {
-        MainScreen.routeName: (context) => MainScreen(),
-      },
-      theme: ThemeData(
-        primarySwatch: Colors.red,
+    return MultiProvider(
+      providers: [
+        Provider<FirebaseAuthService>(
+          create: authServiceBuilder,
+        ),
+      ],
+      child: AuthWidgetBuilder(
+        databaseBuilder: databaseBuilder,
+        builder: (BuildContext context, AsyncSnapshot<User> userSnapshot) {
+          return MaterialApp(
+            initialRoute: '/',
+            routes: {
+              MainScreen.routeName: (context) => MainScreen(),
+            },
+            title: 'FoodiePops Login',
+            theme: ThemeData(primarySwatch: Colors.red),
+            home: AuthWidget(userSnapshot: userSnapshot),
+          );
+        },
       ),
-      home: LoginScreen(),
     );
   }
 }

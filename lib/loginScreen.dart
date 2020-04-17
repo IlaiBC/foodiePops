@@ -1,9 +1,10 @@
 
 import 'package:flutter/material.dart';
-import 'package:foodiepops/firebaseAuth.dart';
 import 'package:foodiepops/mainScreen.dart';
 import 'package:foodiepops/mainScreenArguments.dart';
 import 'package:foodiepops/signInButton.dart';
+import 'package:foodiepops/services/firebaseAuthService.dart';
+import 'package:provider/provider.dart';
 
 
 class LoginScreen extends StatefulWidget {
@@ -23,29 +24,23 @@ class _LoginScreenState extends State<LoginScreen> {
       });
   }
 
-  void onGoogleSignInPressed (BuildContext context) {
+  void onGoogleSignInPressed (BuildContext context, FirebaseAuthService authService) async {
       toggleLoadingIndicator();
-      signInWithGoogle().catchError((onError) {
-        print(onError);
-      }).then((value) {
+      await authService.signInWithGoogle().catchError((onError) => print("login error occurred, user possibly canceled login"));
       toggleLoadingIndicator();
-      Navigator.pushNamed(context, MainScreen.routeName, arguments: MainScreenArguments(value));
-    });
-}
 
-    void onFacebookSignInPressed (BuildContext context) {
+  }
+
+  void onFacebookSignInPressed (BuildContext context, FirebaseAuthService authService) async {
       toggleLoadingIndicator();
-      signInWithFacebook().catchError((onError) {
-        print(onError);
-      }).then((value) {
+      await authService.signInWithFacebook().catchError((onError) => print("login error occurred, user possibly canceled login"));
       toggleLoadingIndicator();
-      Navigator.pushNamed(context, MainScreen.routeName, arguments: MainScreenArguments(value));
-    });
   }
 
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<FirebaseAuthService>(context, listen: false);
     return Scaffold(
       body: Container(
         color: Colors.white,
@@ -63,9 +58,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ]),
               SizedBox(height: 50),
-              SignInButton(buttonText: 'Sign in with Google', buttonColor: Colors.grey, buttonIconPath: "assets/google_logo.png", buttonOnPressedAction: () => onGoogleSignInPressed(context)),
+              SignInButton(buttonText: 'Sign in with Google', buttonColor: Colors.grey, buttonIconPath: "assets/google_logo.png", buttonOnPressedAction: () => onGoogleSignInPressed(context, authService)),
               SizedBox(height: 20),
-              SignInButton(buttonText: 'Sign in with Facebook', buttonColor: Colors.blue, buttonIconPath: "assets/google_logo.png", buttonOnPressedAction: () => onFacebookSignInPressed(context)),
+              SignInButton(buttonText: 'Sign in with Facebook', buttonColor: Colors.blue, buttonIconPath: "assets/google_logo.png", buttonOnPressedAction: () => onFacebookSignInPressed(context, authService)),
             ]),
         ),
       ),

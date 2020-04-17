@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:foodiepops/mainScreenArguments.dart';
+import 'package:provider/provider.dart';
+import 'package:foodiepops/services/firebaseAuthService.dart';
 
 class MainScreen extends StatelessWidget {
   static const routeName = '/MainScreen';
-  const MainScreen({Key key, this.userLoginResponse}) : super(key: key); 
-
-  final dynamic userLoginResponse;
-
+  const MainScreen({Key key}) : super(key: key); 
   
   @override
   Widget build(BuildContext context) {
-    final MainScreenArguments args = ModalRoute.of(context).settings.arguments;
-    String userDisplayName = args.userLoginResponse.providerData[0].displayName;
+    final user = Provider.of<User>(context, listen: false);
+    final authService =
+    Provider.of<FirebaseAuthService>(context, listen: false);
     
     return Scaffold(backgroundColor: Colors.green,
-      body: Center(child: Text('Welcome $userDisplayName!'),) ,
+      body: Center(child: Column(children: <Widget>[
+        Text('Welcome ${user.displayName}!'),
+        RaisedButton(child: Text("logout"), onPressed: () => authService.signOut(),)
+      ],) ) ,
     );
   }
 }

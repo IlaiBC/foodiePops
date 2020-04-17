@@ -31,9 +31,9 @@ class Example {
   bool operator ==(other) {
     if (identical(this, other)) return true;
     if (runtimeType != other.runtimeType) return false;
-    final Job otherJob = other;
-    return id == otherJob.id &&
-        name == otherJob.name;
+    final Example otherExample = other;
+    return id == otherExample.id &&
+        name == otherExample.name;
   }
 
   @override
