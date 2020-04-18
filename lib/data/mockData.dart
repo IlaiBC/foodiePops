@@ -21,26 +21,17 @@ List names = [
 List Descriptions = [
   "Speacial Deal Description",
   "Speacial Deal Description",
-  "Speacial Deal Description",
-  "Speacial Deal Description",
-  "Speacial Deal Description",
-  "Speacial Deal Description",
-  "Speacial Deal Description",
-  "Speacial Deal Description",
-  "Speacial Deal Description",
-  "Speacial Deal Description",
-  "Speacial Deal Description",
 ];
 
 
 
-List mockPops = [
-  new Pop(name: names[0], description: Descriptions[1], photoUrl: "assets/mockPics/vitrina.jpeg", time: 2134512514),
-  new Pop(name: names[random.nextInt(10)], description: Descriptions[1], time: 2134512514),
-  new Pop(name: names[random.nextInt(10)], description: Descriptions[1], time: 2134512514),
-  new Pop(name: names[random.nextInt(10)], description: Descriptions[1], time: 2134512514),
-  new Pop(name: names[random.nextInt(10)], description: Descriptions[1], time: 2134512514),
-  new Pop(name: names[random.nextInt(10)], description: Descriptions[1], time: 2134512514),
-  new Pop(name: names[random.nextInt(10)], description: Descriptions[1], time: 2134512514),
-  new Pop(name: names[random.nextInt(10)], description: Descriptions[1], time: 2134512514),
+List<Pop> mockPops = [
+  new Pop(name: names[0], description: Descriptions[1], photoUrl: "assets/vitrina.jpeg", time: 2134512514),
+  new Pop(name: names[random.nextInt(10)], description: Descriptions[1], photoUrl: "assets/vitrina.jpeg", time: 2134512514),
+  new Pop(name: names[random.nextInt(10)], description: Descriptions[1], photoUrl: "assets/vitrina.jpeg", time: 2134512514),
+  new Pop(name: names[random.nextInt(10)], description: Descriptions[1], photoUrl: "assets/vitrina.jpeg", time: 2134512514),
+  new Pop(name: names[random.nextInt(10)], description: Descriptions[1], photoUrl: "assets/vitrina.jpeg", time: 2134512514),
+  new Pop(name: names[random.nextInt(10)], description: Descriptions[1], photoUrl: "assets/vitrina.jpeg", time: 2134512514),
+  new Pop(name: names[random.nextInt(10)], description: Descriptions[1], photoUrl: "assets/vitrina.jpeg", time: 2134512514),
+  new Pop(name: names[random.nextInt(10)], description: Descriptions[1], photoUrl: "assets/vitrina.jpeg", time: 2134512514),
 ];

@@ -6,7 +6,6 @@ class Pop {
   static final String popName = "name";
   static final String popTime = "time";
   static final String popDescription = "description";
-  static final String popUrl = "url";
   static final String popPhotoUrl = "photo";
   static final String popLat = "lat";
   static final String popLng = "lng";
@@ -15,7 +14,6 @@ class Pop {
     @required this.name,
     @required this.time,
     this.description,
-    this.url,
     this.photoUrl,
     this.latLng,
   });
@@ -23,7 +21,6 @@ class Pop {
   final String name;
   final int time;
   final String description;
-  final String url;
   final String photoUrl;
   final LatLng latLng;
 
@@ -32,7 +29,6 @@ class Pop {
       popName: name,
       popTime: time,
       popDescription: description,
-      popUrl: url,
       popPhotoUrl: photoUrl,
       popLat: latLng.latitude,
       popLng: latLng.longitude
@@ -46,7 +42,6 @@ class Pop {
         name: map[popName],
         time: map[popTime],
         description: map[popDescription],
-        url: map[popUrl],
         photoUrl: map[popPhotoUrl],
         latLng: new LatLng(map[popLat], map[popLng]));
   }
