@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:foodiepops/data/popsRepository.dart';
+import 'package:foodiepops/model/pop.dart';
+import 'package:foodiepops/util/imageUtil.dart';
 
 
 class PopListScreen extends StatefulWidget {
@@ -15,7 +18,7 @@ class _PopListScreenState extends State<PopListScreen> {
   void initState() {
     super.initState();
 
-    PopRepository.getEvents().then((List<Pop> pops) {
+    PopsRepository.getEvents().then((List<Pop> pops) {
       setState(() {
         this.pops = pops;
         this.pops.sort((a, b) {
@@ -54,7 +57,7 @@ class _PopListScreenState extends State<PopListScreen> {
                 new Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
                   new ClipRRect(
                     borderRadius: new BorderRadius.circular(4.0),
-                    child: ImageUtil.getEventImageWidget(pop, 80.0, 80.0),
+                    child: ImageUtil.getPopImageWidget(pop, 80.0, 80.0),
                   ),
                 ]),
                 Padding(
@@ -65,12 +68,6 @@ class _PopListScreenState extends State<PopListScreen> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          new Text(
-                            PopUtil.getEventDateAndTimeDisplayText(pop),
-                            style: TextStyle(
-                              fontSize: 14.0,
-                            ),
-                          ),
                           new SizedBox(height: 4.0),
                           new Text(
                             pop.name,
@@ -83,10 +80,11 @@ class _PopListScreenState extends State<PopListScreen> {
                         ]))
               ]),
         ),
-        onTap: () => eventTapped(pop));
+        onTap: () => popTapped(pop));
   }
 
-  eventTapped(Pop pop) {
-    UrlUtil.launchURL(event.url);
+  popTapped(Pop pop) {
+//    UrlUtil.launchURL(event.url);
+  print("pop clicked!!");
   }
 }
