@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:foodiepops/components/countDownTimer.dart';
 import 'package:foodiepops/data/popsRepository.dart';
 import 'package:foodiepops/model/pop.dart';
 import 'package:foodiepops/util/imageUtil.dart';
@@ -81,7 +82,7 @@ class _PopListScreenState extends State<PopListScreen> {
                 new Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
                   new ClipRRect(
                     borderRadius: new BorderRadius.circular(4.0),
-                    child: ImageUtil.getPopTimer(pop, 80.0, 80.0),
+                    child: CountDownTimer(),
                   ),
                 ]),
               ]),
