@@ -77,7 +77,13 @@ class _PopListScreenState extends State<PopListScreen> {
                               fontSize: 16.0,
                             ),
                           )
-                        ]))
+                        ])),
+                new Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                  new ClipRRect(
+                    borderRadius: new BorderRadius.circular(4.0),
+                    child: ImageUtil.getPopTimer(pop, 80.0, 80.0),
+                  ),
+                ]),
               ]),
         ),
         onTap: () => popTapped(pop));
