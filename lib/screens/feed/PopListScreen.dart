@@ -1,5 +1,6 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
-import 'package:foodiepops/components/countDownTimer.dart';
 import 'package:foodiepops/data/popsRepository.dart';
 import 'package:foodiepops/model/pop.dart';
 import 'package:foodiepops/util/imageUtil.dart';
@@ -49,14 +50,24 @@ class _PopListScreenState extends State<PopListScreen> {
         child: Row(mainAxisSize: MainAxisSize.max, children: <Widget>[
           ClipRRect(
               borderRadius: new BorderRadius.circular(4.0),
-              child: ImageUtil.getPopImageWidget(pop, 200.0, 200.0)),
+              child: ImageUtil.getPopImageWidget(pop, 180.0, 180.0)),
           Padding(
             padding: EdgeInsets.only(left: 8.0),
           ),
           Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-            Text(pop.name),
-            Text(pop.description),
-            Text(pop.description)
+            Text(pop.name,
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+              overflow: TextOverflow.ellipsis),
+            Padding(
+              padding: EdgeInsets.only(top: 16.0),
+            ),
+            Text(pop.description, style: TextStyle(fontSize: 16.0),
+              overflow: TextOverflow.ellipsis,),
+            Padding(
+              padding: EdgeInsets.only(top: 16.0),
+            ),
+            Text(pop.description, style: TextStyle(color: Colors.blue),
+              overflow: TextOverflow.ellipsis)
           ])
         ]));
   }
@@ -88,8 +99,7 @@ class _PopListScreenState extends State<PopListScreen> {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 16.0,
-                        ),
+                            fontSize: 18.0, fontWeight: FontWeight.bold),
                       )
                     ])),
                 Padding(
