@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:foodiepops/model/pop.dart';
 
 class ImageUtil {
@@ -9,7 +8,7 @@ class ImageUtil {
 
   static Widget getPopTimer(Pop pop, double width, double height) {
     return Image(
-        image: AssetImage('assets/countdown.jpg'),
+        image: AssetImage('assets/clock.gif'),
         width: width,
         height: height,
         fit: BoxFit.fitWidth);

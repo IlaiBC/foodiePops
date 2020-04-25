@@ -3,14 +3,12 @@ import 'package:foodiepops/components/countDownTimer.dart';
 import 'package:foodiepops/data/popsRepository.dart';
 import 'package:foodiepops/model/pop.dart';
 import 'package:foodiepops/util/imageUtil.dart';
-
+import 'package:flutter_countdown_timer/countdown_timer.dart';
 
 class PopListScreen extends StatefulWidget {
   @override
   _PopListScreenState createState() => _PopListScreenState();
 }
-
-
 
 class _PopListScreenState extends State<PopListScreen> {
   List<Pop> pops = [];
@@ -36,62 +34,92 @@ class _PopListScreenState extends State<PopListScreen> {
       body: new Container(
           child: pops.length == 0
               ? new Center(child: new CircularProgressIndicator())
-              : new ListView.separated(
-            separatorBuilder: (context, index) => Divider(
-              color: Colors.black,
-            ),
-            itemCount: pops.length,
-            itemBuilder: (_, index) {
-              return _buildRow(pops[index]);
-            },
-          )),
+              : new ListView.builder(
+                  itemCount: pops.length,
+                  itemBuilder: (_, index) {
+                    return _buildRow(pops[index]);
+                  },
+                )),
     );
   }
 
   Widget _buildRow(Pop pop) {
     return new GestureDetector(
-        child: Padding(
+        child: Card(
+            child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: new Row(
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                new Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                  new ClipRRect(
-                    borderRadius: new BorderRadius.circular(4.0),
-                    child: ImageUtil.getPopImageWidget(pop, 80.0, 80.0),
-                  ),
-                ]),
-                Padding(
-                  padding: EdgeInsets.only(left: 8.0),
+          child: new Row(mainAxisSize: MainAxisSize.max, children: <Widget>[
+            new Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+              new ClipRRect(
+                borderRadius: new BorderRadius.circular(4.0),
+                child: ImageUtil.getPopImageWidget(pop, 80.0, 80.0),
+              ),
+            ]),
+            Padding(
+              padding: EdgeInsets.only(left: 8.0),
+            ),
+            new Expanded(
+                child: new Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                  new SizedBox(height: 4.0),
+                  new Text(
+                    pop.name,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 16.0,
+                    ),
+                  )
+                ])),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child:
+                  new Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                new ClipRRect(
+                  borderRadius: new BorderRadius.circular(4.0),
+                  child: ImageUtil.getPopTimer(pop, 40.0, 40.0),
                 ),
-                new Expanded(
-                    child: new Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          new SizedBox(height: 4.0),
-                          new Text(
-                            pop.name,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 16.0,
-                            ),
-                          )
-                        ])),
-                new Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                  new ClipRRect(
-                    borderRadius: new BorderRadius.circular(4.0),
-                    child: CountDownTimer(),
+                Padding(
+                  padding: EdgeInsets.only(top: 2.0),
+                ),
+                new ClipRRect(
+                  borderRadius: new BorderRadius.circular(4.0),
+                  child: CountdownTimer(
+                    endTime: 1588839556732,
+                    defaultDays: "==",
+                    defaultHours: "--",
+                    defaultMin: "**",
+                    defaultSec: "++",
+                    daysSymbol: "d ",
+                    hoursSymbol: "h ",
+                    minSymbol: "m ",
+                    secSymbol: "s",
+                    daysTextStyle: TextStyle(fontSize: 15, color: Colors.red),
+                    hoursTextStyle: TextStyle(fontSize: 15, color: Colors.red),
+                    minTextStyle: TextStyle(fontSize: 15, color: Colors.red),
+                    secTextStyle: TextStyle(fontSize: 15, color: Colors.red),
+                    daysSymbolTextStyle:
+                        TextStyle(fontSize: 15, color: Colors.black),
+                    hoursSymbolTextStyle:
+                        TextStyle(fontSize: 15, color: Colors.black),
+                    minSymbolTextStyle:
+                        TextStyle(fontSize: 15, color: Colors.black),
+                    secSymbolTextStyle:
+                        TextStyle(fontSize: 15, color: Colors.black),
                   ),
-                ]),
+                ),
               ]),
-        ),
+            )
+          ]),
+        )),
         onTap: () => popTapped(pop));
   }
 
   popTapped(Pop pop) {
 //    UrlUtil.launchURL(event.url);
-  print("pop clicked!!");
+    print("pop clicked!!");
   }
 }
