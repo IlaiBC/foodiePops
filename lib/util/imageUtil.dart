@@ -15,9 +15,9 @@ class ImageUtil {
   }
 
   static Widget getPopImageWidget(Pop pop, double width, double height) {
-    return (pop.photoUrl != null && pop.photoUrl.isNotEmpty)
+    return (pop.photo != null && pop.photo.isNotEmpty)
         ? Image(
-            image: AssetImage(pop.photoUrl),
+            image: AssetImage(pop.photo),
             width: width,
             height: height,
             fit: BoxFit.fitWidth)
