@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:foodiepops/mainScreen.dart';
+import 'package:foodiepops/screens/main/mainScreen.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
 import 'package:foodiepops/services/fireStoreDatabase.dart';
 import 'package:provider/provider.dart';

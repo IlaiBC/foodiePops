@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:foodiepops/loginScreen.dart';
-import 'package:foodiepops/mainScreen.dart';
+import 'package:foodiepops/screens/feed/PopListScreen.dart';
+import 'package:foodiepops/screens/login/loginScreen.dart';
+import 'package:foodiepops/screens/main/mainScreen.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
 
 class AuthWidget extends StatelessWidget {

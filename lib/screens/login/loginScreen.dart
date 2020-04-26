@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:foodiepops/signInButton.dart';
+import 'package:foodiepops/components/signInButton.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
 import 'package:provider/provider.dart';
 

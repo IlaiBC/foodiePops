@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foodiepops/models/swipeCard.dart';
+import 'package:foodiepops/screens/feed/PopListScreen.dart';
 import 'package:provider/provider.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
 import 'package:swipe_stack/swipe_stack.dart';
@@ -63,7 +64,9 @@ class MainScreen extends StatelessWidget {
             stackFrom: StackFrom.Top,
             translationInterval: 6,
             scaleInterval: 0.03,
-            onEnd: () => debugPrint("onEnd"),
+            onEnd: () {Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => PopListScreen()));},
             onSwipe: (int index, SwiperPosition position) =>
                 debugPrint("onSwipe $index $position"),
             onRewind: (int index, SwiperPosition position) =>
