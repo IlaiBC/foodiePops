@@ -3,7 +3,6 @@ import 'package:foodiepops/screens/main/mainScreen.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
 import 'package:foodiepops/services/fireStoreDatabase.dart';
 import 'package:provider/provider.dart';
-
 import 'authentication/authWidget.dart';
 import 'authentication/authWidgetBuilder.dart';
 
