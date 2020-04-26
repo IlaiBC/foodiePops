@@ -33,6 +33,7 @@ class MyApp extends StatelessWidget {
         databaseBuilder: databaseBuilder,
         builder: (BuildContext context, AsyncSnapshot<User> userSnapshot) {
           return MaterialApp(
+            debugShowCheckedModeBanner: false,
             initialRoute: '/',
             routes: {
               MainScreen.routeName: (context) => MainScreen(),

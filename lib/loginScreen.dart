@@ -12,9 +12,12 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoadingIndicatorShowing = false;
 
   void toggleLoadingIndicator() {
+    if(mounted) {
+
     setState(() {
       _isLoadingIndicatorShowing = !_isLoadingIndicatorShowing;
     });
+    }
   }
 
   void onGoogleSignInPressed(
@@ -57,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(height: 50),
                 SignInButton(
                     buttonText: 'Sign in with Google',
-                    buttonColor: Colors.grey,
+                    buttonColor: Colors.red,
                     buttonIconPath: "assets/google_logo.png",
                     buttonOnPressedAction: () =>
                         onGoogleSignInPressed(context, authService)),
@@ -65,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SignInButton(
                     buttonText: 'Sign in with Facebook',
                     buttonColor: Colors.blue,
-                    buttonIconPath: "assets/google_logo.png",
+                    buttonIconPath: "assets/facebook_logo.png",
                     buttonOnPressedAction: () =>
                         onFacebookSignInPressed(context, authService)),
               ]),
