@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:foodiepops/model/pop.dart';
+import 'package:foodiepops/models/pop.dart';
 
 Random random = Random();
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:foodiepops/model/pop.dart';
+import 'package:foodiepops/models/pop.dart';
 
 class ImageUtil {
   static String getAppLogo() {
