@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:foodiepops/data/mockData.dart';
+import 'package:foodiepops/models/news.dart';
 import 'package:foodiepops/models/pop.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -117,4 +118,9 @@ class PopsRepository {
 //    });
 //  }
 
+  static Future<List<News>> getNews() async {
+    List<News> news = [];
+    news = mockNews;
+    return news;
+  }
 }

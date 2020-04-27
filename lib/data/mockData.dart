@@ -1,9 +1,12 @@
 import 'dart:math';
 
+import 'package:foodiepops/models/news.dart';
 import 'package:foodiepops/models/pop.dart';
 
 Random random = Random();
 
+
+// pops list
 List names = [
   "Vitrina Special",
   "Papasan's Monthly",
@@ -38,3 +41,13 @@ List<Pop> mockPops = [
   new Pop(name: names[9], description: Descriptions[1], time: 1589839556732),
   new Pop(name: names[10], description: Descriptions[1], photo: "assets/KFC_LOGO.png", time: 1598839556732),
 ];
+
+// news list
+List<News> mockNews = [
+  new News(author: "Tallie Lieberman", title: "An insider guide to Israel's under-the-radar ethnic eateries", description: "Where to find authentic Jewish dishes from around the world", url: "https://www.timeout.com/israel/restaurants/an-insider-guide-to-israels-under-the-radar-ethnic-eateries", date: "20/1/2020"),
+  new News(author: "TimeOut team", title: "The best hummus spots in Tel Aviv", description: "Tel Aviv is a hummus haven, but these Middle Eastern hot spots separate the strong from the weak", url: "https://www.timeout.com/israel/restaurants/the-best-hummus-spots-in-tel-aviv", date: "14/2/2020"),
+];
+
+// news list icons paths
+List<String> icons = [""];
+

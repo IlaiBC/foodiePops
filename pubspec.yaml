@@ -28,6 +28,8 @@ dependencies:
   flutter_launcher_icons: ^0.7.4
   swipe_stack: ^1.0.0
   flutter_countdown_timer: ^1.0.0
+  http: ^0.12.0+4
+  flutter_webview_plugin: "^0.3.11"
 
 flutter_icons:
   image_path: "assets/foodiepopsicon.png"

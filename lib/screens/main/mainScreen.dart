@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foodiepops/models/swipeCard.dart';
-import 'package:foodiepops/screens/feed/PopListScreen.dart';
+import 'package:foodiepops/screens/pops/PopListScreen.dart';
 import 'package:provider/provider.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
 import 'package:swipe_stack/swipe_stack.dart';
