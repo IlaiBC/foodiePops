@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:foodiepops/data/popsRepository.dart';
-import 'package:foodiepops/model/pop.dart';
+import 'package:foodiepops/models/pop.dart';
 import 'package:foodiepops/util/imageUtil.dart';
 import 'package:flutter_countdown_timer/countdown_timer.dart';
 import 'package:animations/animations.dart';

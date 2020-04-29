@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:foodiepops/model/pop.dart';
+import 'package:foodiepops/models/pop.dart';
+import 'package:foodiepops/data/mockData.dart';
+import 'dart:math';
+
+Random random = Random();
 
 class ImageUtil {
   static String getAppLogo() {
@@ -15,9 +19,9 @@ class ImageUtil {
   }
 
   static Widget getPopImageWidget(Pop pop, double width, double height) {
-    return (pop.photoUrl != null && pop.photoUrl.isNotEmpty)
+    return (pop.photo != null && pop.photo.isNotEmpty)
         ? Image(
-            image: AssetImage(pop.photoUrl),
+            image: AssetImage(pop.photo),
             width: width,
             height: height,
             fit: BoxFit.fitWidth)
@@ -26,6 +30,10 @@ class ImageUtil {
             width: width,
             height: height,
           );
+  }
+
+  static Widget getNewsIcon() {
+    return ImageIcon(AssetImage(newsIcons[0]));
   }
 
 
