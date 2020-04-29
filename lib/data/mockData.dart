@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:foodiepops/models/news.dart';
 import 'package:foodiepops/models/pop.dart';
 
@@ -49,5 +48,5 @@ List<News> mockNews = [
 ];
 
 // news list icons paths
-List<String> icons = [""];
+List<String> newsIcons = ["assets/drink.gif", "assets/fries.gif","assets/pizza.gif","assets/cake.gif"];
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:foodiepops/data/mockData.dart';
 import 'package:foodiepops/models/news.dart';
 import 'package:foodiepops/screens/news/newsFull.dart';
+import 'package:foodiepops/util/imageUtil.dart';
 
 class NewsScreen extends StatelessWidget {
   final List<News> news;
@@ -16,13 +17,13 @@ class NewsScreen extends StatelessWidget {
         return new Card(
           child: new ListTile(
             leading: CircleAvatar(
-              child: ImageIcon(AssetImage("assets/foodie.png")),
+              child:ImageUtil.getNewsIcon(),
               backgroundColor: Colors.lightBlue,
             ),
             title: Text(news[index].title),
             subtitle: Padding(
               padding: EdgeInsets.only(top: 16.0),
-              child: Row(mainAxisSize: MainAxisSize.max, children: <Widget>[
+              child: Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
                 Text(news[index].author),
                 Text(news[index].date)
               ]
