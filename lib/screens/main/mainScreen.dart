@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foodiepops/models/swipeCard.dart';
 import 'package:foodiepops/screens/feed/PopListScreen.dart';
-import 'package:provider/provider.dart';
-import 'package:foodiepops/services/firebaseAuthService.dart';
 import 'package:swipe_stack/swipe_stack.dart';
 
 class MainScreen extends StatelessWidget {
@@ -21,15 +19,9 @@ class MainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context, listen: false);
-    final authService =
-        Provider.of<FirebaseAuthService>(context, listen: false);
 
     return Scaffold(appBar: AppBar(
           title: const Text('Pick Favorite Foods'),
-          actions: <Widget>[
-            IconButton(icon: Icon(Icons.exit_to_app), onPressed: () => authService.signOut(),)
-          ],
         ), body: Column(children: <Widget>[
       Expanded(
           flex: 6,
@@ -102,12 +94,5 @@ class MainScreen extends StatelessWidget {
             ],
           )))
     ]));
-
-    // return Scaffold(backgroundColor: Colors.green,
-    //   body: Center(child: Column(children: <Widget>[
-    //     Text('Welcome ${user.displayName}!'),
-    //     RaisedButton(child: Text("logout"), onPressed: () => authService.signOut(),)
-    //   ],) ) ,
-    // );
   }
 }
