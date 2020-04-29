@@ -1,18 +1,21 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:foodiepops/data/popsRepository.dart';
 import 'package:foodiepops/model/pop.dart';
 import 'package:foodiepops/util/imageUtil.dart';
 import 'package:flutter_countdown_timer/countdown_timer.dart';
+import 'package:animations/animations.dart';
 
+const String _mockFoodieText = "Some foodie text bro, that's no doubt";
 class PopListScreen extends StatefulWidget {
   @override
   _PopListScreenState createState() => _PopListScreenState();
 }
 
 class _PopListScreenState extends State<PopListScreen> {
-  List<Pop> pops = [];
+ContainerTransitionType _transitionType = ContainerTransitionType.fade;
+
+    List<Pop> pops = [];
 
   @override
   void initState() {
@@ -31,50 +34,38 @@ class _PopListScreenState extends State<PopListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      body: new Container(
-          child: pops.length == 0
-              ? new Center(child: new CircularProgressIndicator())
-              : new ListView.builder(
-                  itemCount: pops.length,
-                  itemBuilder: (_, index) {
-                    return _buildRow(pops[index]);
-                  },
-                )),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Foodie Pops you will love'),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(8.0),
+        children: <Widget>[
+          ...List<Widget>.generate(pops.length, (int index) {
+            return OpenContainer(
+              transitionType: _transitionType,
+              openBuilder: (BuildContext _, VoidCallback openContainer) {
+                return _DetailsPage();
+              },
+              tappable: false,
+              closedShape: const RoundedRectangleBorder(),
+              closedElevation: 0.0,
+              closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                return _buildRow(
+                  pops[index], openContainer
+                );
+              },
+            );
+          }),
+        ],
+      ),
     );
   }
+}
 
-  Widget _buildPop(Pop pop) {
-    return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(mainAxisSize: MainAxisSize.max, children: <Widget>[
-          ClipRRect(
-              borderRadius: new BorderRadius.circular(4.0),
-              child: ImageUtil.getPopImageWidget(pop, 180.0, 180.0)),
-          Padding(
-            padding: EdgeInsets.only(left: 8.0),
-          ),
-          Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-            Text(pop.name,
-                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-              overflow: TextOverflow.ellipsis),
-            Padding(
-              padding: EdgeInsets.only(top: 16.0),
-            ),
-            Text(pop.description, style: TextStyle(fontSize: 16.0),
-              overflow: TextOverflow.ellipsis,),
-            Padding(
-              padding: EdgeInsets.only(top: 16.0),
-            ),
-            Text(pop.description, style: TextStyle(color: Colors.blue),
-              overflow: TextOverflow.ellipsis)
-          ])
-        ]));
-  }
-
-  Widget _buildRow(Pop pop) {
+  Widget _buildRow(Pop pop, VoidCallback openContainer) {
     return new Card(
-        child: ExpansionTile(
+        child: ListTile(
             title: Padding(
               padding: const EdgeInsets.all(0.0),
               child: new Row(mainAxisSize: MainAxisSize.max, children: <Widget>[
@@ -148,12 +139,41 @@ class _PopListScreenState extends State<PopListScreen> {
                 )
               ]),
             ),
-            children: <Widget>[_buildPop(pop)]));
-//        onTap: () => popTapped(pop));
+       onTap: openContainer));
   }
 
-  popTapped(Pop pop) {
-//    UrlUtil.launchURL(event.url);
-    print("pop clicked!!");
+class _DetailsPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Details page')),
+      body: ListView(
+        children: <Widget>[
+          Container(
+            height: 250,
+              child: Image.asset(
+                'assets/benedicts.png',
+              ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  'Title',
+                  style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold, color: Colors.grey),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  _mockFoodieText,
+                  style: TextStyle(fontSize: 16.0, color: Colors.grey),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
