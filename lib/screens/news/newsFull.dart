@@ -11,7 +11,7 @@ class NewsFull extends StatelessWidget {
     return Scaffold(
       appBar: new AppBar(
         title: new Text(
-          "Full Article",
+          "Full Foodie Article",
           style: new TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),
@@ -24,7 +24,7 @@ class NewsFull extends StatelessWidget {
               routes: {
                 "/": (_) => new WebviewScaffold(
                   url: urlnews,
-                  appBar: new AppBar(title: new Text("some text")),
+                  appBar: new AppBar(),
                 )
               },
             )),

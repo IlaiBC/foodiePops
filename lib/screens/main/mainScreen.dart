@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:foodiepops/components/bottomNav.dart';
 import 'package:foodiepops/models/swipeCard.dart';
 import 'package:foodiepops/screens/pops/PopListScreen.dart';
 import 'package:provider/provider.dart';
@@ -66,7 +67,7 @@ class MainScreen extends StatelessWidget {
             scaleInterval: 0.03,
             onEnd: () {Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => PopListScreen()));},
+              MaterialPageRoute(builder: (context) => BottomNav()));},
             onSwipe: (int index, SwiperPosition position) =>
                 debugPrint("onSwipe $index $position"),
             onRewind: (int index, SwiperPosition position) =>
