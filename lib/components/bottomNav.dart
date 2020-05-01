@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:foodiepops/data/mockData.dart';
 import 'package:foodiepops/screens/news/newsScreen.dart';
 import 'package:foodiepops/screens/pops/PopListScreen.dart';
+import 'package:foodiepops/screens/profile/profileScreen.dart';
 
 
 class BottomNav extends StatefulWidget {
@@ -20,7 +21,7 @@ class _BottomNavState
     final _kTabPages = <Widget>[
       PopListScreen(),
       NewsScreen(news: mockNews),
-      Center(child: ImageIcon(AssetImage("assets/profile.png"), size: 64.0, color: Colors.blue)),
+      ProfileScreen(),
     ];
     final _kBottmonNavBarItems = <BottomNavigationBarItem>[
       BottomNavigationBarItem(icon: ImageIcon(AssetImage("assets/foodie.png")), title: Text('Pops')),
