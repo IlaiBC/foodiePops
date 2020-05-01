@@ -6,16 +6,15 @@ import 'package:foodiepops/util/imageUtil.dart';
 import 'package:flutter_countdown_timer/countdown_timer.dart';
 import 'package:animations/animations.dart';
 
-const String _mockFoodieText = "Some foodie text bro, that's no doubt";
 class PopListScreen extends StatefulWidget {
   @override
   _PopListScreenState createState() => _PopListScreenState();
 }
 
 class _PopListScreenState extends State<PopListScreen> {
-ContainerTransitionType _transitionType = ContainerTransitionType.fade;
+  ContainerTransitionType _transitionType = ContainerTransitionType.fade;
 
-    List<Pop> pops = [];
+  List<Pop> pops = [];
 
   @override
   void initState() {
@@ -45,15 +44,13 @@ ContainerTransitionType _transitionType = ContainerTransitionType.fade;
             return OpenContainer(
               transitionType: _transitionType,
               openBuilder: (BuildContext _, VoidCallback openContainer) {
-                return _DetailsPage();
+                return _DetailsPage(pop: pops[index]);
               },
               tappable: false,
               closedShape: const RoundedRectangleBorder(),
               closedElevation: 0.0,
               closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                return _buildRow(
-                  pops[index], openContainer
-                );
+                return _buildRow(pops[index], openContainer);
               },
             );
           }),
@@ -63,51 +60,139 @@ ContainerTransitionType _transitionType = ContainerTransitionType.fade;
   }
 }
 
-  Widget _buildRow(Pop pop, VoidCallback openContainer) {
-    return new Card(
-        child: ListTile(
-            title: Padding(
-              padding: const EdgeInsets.all(0.0),
-              child: new Row(mainAxisSize: MainAxisSize.max, children: <Widget>[
-                new Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                  new ClipRRect(
-                    borderRadius: new BorderRadius.circular(4.0),
-                    child: ImageUtil.getPopImageWidget(pop, 80.0, 80.0),
-                  ),
-                ]),
-                Padding(
-                  padding: EdgeInsets.only(left: 8.0),
+Widget _buildRow(Pop pop, VoidCallback openContainer) {
+  return new Card(
+      child: ListTile(
+          title: Padding(
+            padding: const EdgeInsets.all(0.0),
+            child: new Row(mainAxisSize: MainAxisSize.max, children: <Widget>[
+              new Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                new ClipRRect(
+                  borderRadius: new BorderRadius.circular(4.0),
+                  child: ImageUtil.getPopImageWidget(pop, 80.0, 80.0),
                 ),
-                new Expanded(
-                    child: new Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-//                  new SizedBox(height: 4.0),
-                      new Text(
-                        pop.name,
-//                    textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontSize: 18.0, fontWeight: FontWeight.bold),
-                      )
-                    ])),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
+              ]),
+              Padding(
+                padding: EdgeInsets.only(left: 8.0),
+              ),
+              new Expanded(
                   child: new Column(
                       mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        new ClipRRect(
-                          borderRadius: new BorderRadius.circular(4.0),
-                          child: ImageUtil.getPopTimer(pop, 40.0, 40.0),
+//                  new SizedBox(height: 4.0),
+                    new Text(
+                      pop.name,
+//                    textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontSize: 18.0, fontWeight: FontWeight.bold),
+                    )
+                  ])),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: new Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      new ClipRRect(
+                        borderRadius: new BorderRadius.circular(4.0),
+                        child: ImageUtil.getPopTimer(pop, 40.0, 40.0),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 2.0),
+                      ),
+                      new ClipRRect(
+                        borderRadius: new BorderRadius.circular(4.0),
+                        child: CountdownTimer(
+                          endTime: pop.time,
+                          defaultDays: "==",
+                          defaultHours: "--",
+                          defaultMin: "**",
+                          defaultSec: "++",
+                          daysSymbol: ":",
+                          hoursSymbol: ":",
+                          minSymbol: ":",
+                          secSymbol: "",
+                          daysTextStyle:
+                              TextStyle(fontSize: 15, color: Color(0xffe51923)),
+                          hoursTextStyle:
+                              TextStyle(fontSize: 15, color: Color(0xffe51923)),
+                          minTextStyle:
+                              TextStyle(fontSize: 15, color: Color(0xffe51923)),
+                          secTextStyle:
+                              TextStyle(fontSize: 15, color: Color(0xffe51923)),
+                          daysSymbolTextStyle:
+                              TextStyle(fontSize: 15, color: Colors.black),
+                          hoursSymbolTextStyle:
+                              TextStyle(fontSize: 15, color: Colors.black),
+                          minSymbolTextStyle:
+                              TextStyle(fontSize: 15, color: Colors.black),
+                          secSymbolTextStyle:
+                              TextStyle(fontSize: 15, color: Colors.black),
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 2.0),
-                        ),
-                        new ClipRRect(
-                          borderRadius: new BorderRadius.circular(4.0),
-                          child: CountdownTimer(
+                      ),
+                    ]),
+              )
+            ]),
+          ),
+          onTap: openContainer));
+}
+
+class _DetailsPage extends StatelessWidget {
+  final Pop pop;
+
+  _DetailsPage({Key key, this.pop}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Pop Details')),
+      body: ListView(
+        children: <Widget>[
+          Container(
+            height: 250,
+            child: ImageUtil.getPopImageWidget(pop, 200.0, 200.0),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Center(
+                    child: Text(
+                  pop.name,
+                  style: TextStyle(
+                      fontSize: 30.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black),
+                  textAlign: TextAlign.center,
+                )),
+                const SizedBox(height: 10),
+                Text(
+                  pop.description,
+                  style: TextStyle(fontSize: 16.0, color: Colors.grey),
+                ),
+                Container(
+                    child: ButtonBar(children: <Widget>[
+                      FlatButton.icon(
+                        textColor: Colors.blue,
+                        icon: Icon(Icons.open_in_new, color: Colors.blue),
+                        label: Text('Visit Pops website'),
+                        onPressed: () {},
+                      )
+                    ])),
+                Container(
+                    margin: EdgeInsets.all(50.0),
+                    padding: const EdgeInsets.all(10.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 3.0, color: Color(0xffe51923)),
+                      borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                    ),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          CountdownTimer(
                             endTime: pop.time,
                             defaultDays: "==",
                             defaultHours: "--",
@@ -117,58 +202,24 @@ ContainerTransitionType _transitionType = ContainerTransitionType.fade;
                             hoursSymbol: ":",
                             minSymbol: ":",
                             secSymbol: "",
-                            daysTextStyle:
-                                TextStyle(fontSize: 15, color: Color(0xffe51923)),
-                            hoursTextStyle:
-                                TextStyle(fontSize: 15, color: Color(0xffe51923)),
-                            minTextStyle:
-                                TextStyle(fontSize: 15, color: Color(0xffe51923)),
-                            secTextStyle:
-                                TextStyle(fontSize: 15, color: Color(0xffe51923)),
+                            daysTextStyle: TextStyle(
+                                fontSize: 30, color: Color(0xffe51923)),
+                            hoursTextStyle: TextStyle(
+                                fontSize: 30, color: Color(0xffe51923)),
+                            minTextStyle: TextStyle(
+                                fontSize: 30, color: Color(0xffe51923)),
+                            secTextStyle: TextStyle(
+                                fontSize: 30, color: Color(0xffe51923)),
                             daysSymbolTextStyle:
-                                TextStyle(fontSize: 15, color: Colors.black),
+                                TextStyle(fontSize: 30, color: Colors.black),
                             hoursSymbolTextStyle:
-                                TextStyle(fontSize: 15, color: Colors.black),
+                                TextStyle(fontSize: 30, color: Colors.black),
                             minSymbolTextStyle:
-                                TextStyle(fontSize: 15, color: Colors.black),
+                                TextStyle(fontSize: 30, color: Colors.black),
                             secSymbolTextStyle:
-                                TextStyle(fontSize: 15, color: Colors.black),
-                          ),
-                        ),
-                      ]),
-                )
-              ]),
-            ),
-       onTap: openContainer));
-  }
-
-class _DetailsPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Details page')),
-      body: ListView(
-        children: <Widget>[
-          Container(
-            height: 250,
-              child: Image.asset(
-                'assets/benedicts.png',
-              ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  'Title',
-                  style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold, color: Colors.grey),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  _mockFoodieText,
-                  style: TextStyle(fontSize: 16.0, color: Colors.grey),
-                ),
+                                TextStyle(fontSize: 30, color: Colors.black),
+                          )
+                        ]))
               ],
             ),
           ),

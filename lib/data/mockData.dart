@@ -21,7 +21,7 @@ List names = [
 
 List Descriptions = [
   "Speacial Deal Description",
-  "Speacial Deal Description",
+  "Is there anything better than starting the day with a chic breakfast composed of fluffy baked bread, perfectly-poached eggs and piles of pancakes? This one-of-a-kind classy vibe with antique silverware is the spot to open your mornings, but also the place for a fashionable meal at any time of day.",
 ];
 
 List<Pop> mockPops = [
@@ -72,8 +72,7 @@ List<News> mockNews = [
       url:
           "https://www.timeout.com/israel/restaurants/an-insider-guide-to-israels-under-the-radar-ethnic-eateries",
       date: "20/1/2020",
-    picUrl: "https://media.timeout.com/images/105292242/750/422/image.jpg"
-  ),
+      picUrl: "https://media.timeout.com/images/105292242/750/422/image.jpg"),
   new News(
       author: "TimeOut team",
       title: "The best hummus spots in Tel Aviv",
@@ -82,78 +81,77 @@ List<News> mockNews = [
       url:
           "https://www.timeout.com/israel/restaurants/the-best-hummus-spots-in-tel-aviv",
       date: "14/2/2020",
-  picUrl: "https://media.timeout.com/images/105378437/750/422/image.jpg"),
+      picUrl: "https://media.timeout.com/images/105378437/750/422/image.jpg"),
   new News(
       author: "Jennifer Greenberg",
       title: "Blissful bakeries in Tel Aviv",
       description:
-      "From croissants and macarons to cookies and other irresistible treats, these are the best bakeries in Tel Aviv",
+          "From croissants and macarons to cookies and other irresistible treats, these are the best bakeries in Tel Aviv",
       url:
-      "https://www.timeout.com/israel/restaurants/blissful-bakeries-in-tel-aviv",
+          "https://www.timeout.com/israel/restaurants/blissful-bakeries-in-tel-aviv",
       date: "14/2/2020",
       picUrl: "https://media.timeout.com/images/104159996/750/422/image.jpg"),
   new News(
       author: "Jennifer Greenberg",
       title: "The best restaurants in Israel to take out-of-towners for...",
       description:
-      "Don’t let the stress of visitors get to you. We’ve got a restaurant for every occasion, mood, and location",
+          "Don’t let the stress of visitors get to you. We’ve got a restaurant for every occasion, mood, and location",
       url:
-      "https://www.timeout.com/israel/restaurants/the-best-restaurants-in-israel-to-take-out-of-towners-for",
+          "https://www.timeout.com/israel/restaurants/the-best-restaurants-in-israel-to-take-out-of-towners-for",
       date: "14/2/2020",
       picUrl: "https://media.timeout.com/images/105420918/750/422/image.jpg"),
   new News(
       author: "TimeOut team",
       title: "Beans of gold: The best cafes in Jerusalem",
       description:
-      "Tel Aviv is a hummus haven, but these Middle Eastern hot spots separate the strong from the weak",
+          "Tel Aviv is a hummus haven, but these Middle Eastern hot spots separate the strong from the weak",
       url:
-      "https://www.timeout.com/israel/restaurants/beans-of-gold-the-best-cafes-in-jerusalem",
+          "https://www.timeout.com/israel/restaurants/beans-of-gold-the-best-cafes-in-jerusalem",
       date: "14/2/2020",
       picUrl: "https://media.timeout.com/images/105477434/750/422/image.jpg"),
   new News(
       author: "Tallie Lieberman",
       title: "An insider guide to Israel's under-the-radar ethnic eateries",
       description:
-      "Where to find authentic Jewish dishes from around the world",
+          "Where to find authentic Jewish dishes from around the world",
       url:
-      "https://www.timeout.com/israel/restaurants/an-insider-guide-to-israels-under-the-radar-ethnic-eateries",
+          "https://www.timeout.com/israel/restaurants/an-insider-guide-to-israels-under-the-radar-ethnic-eateries",
       date: "20/1/2020",
-      picUrl: "https://media.timeout.com/images/105292242/750/422/image.jpg"
-  ),
+      picUrl: "https://media.timeout.com/images/105292242/750/422/image.jpg"),
   new News(
       author: "TimeOut team",
       title: "The best hummus spots in Tel Aviv",
       description:
-      "Tel Aviv is a hummus haven, but these Middle Eastern hot spots separate the strong from the weak",
+          "Tel Aviv is a hummus haven, but these Middle Eastern hot spots separate the strong from the weak",
       url:
-      "https://www.timeout.com/israel/restaurants/the-best-hummus-spots-in-tel-aviv",
+          "https://www.timeout.com/israel/restaurants/the-best-hummus-spots-in-tel-aviv",
       date: "14/2/2020",
       picUrl: "https://media.timeout.com/images/105378437/750/422/image.jpg"),
   new News(
       author: "Jennifer Greenberg",
       title: "Blissful bakeries in Tel Aviv",
       description:
-      "From croissants and macarons to cookies and other irresistible treats, these are the best bakeries in Tel Aviv",
+          "From croissants and macarons to cookies and other irresistible treats, these are the best bakeries in Tel Aviv",
       url:
-      "https://www.timeout.com/israel/restaurants/blissful-bakeries-in-tel-aviv",
+          "https://www.timeout.com/israel/restaurants/blissful-bakeries-in-tel-aviv",
       date: "14/2/2020",
       picUrl: "https://media.timeout.com/images/104159996/750/422/image.jpg"),
   new News(
       author: "Jennifer Greenberg",
       title: "The best restaurants in Israel to take out-of-towners for...",
       description:
-      "Don’t let the stress of visitors get to you. We’ve got a restaurant for every occasion, mood, and location",
+          "Don’t let the stress of visitors get to you. We’ve got a restaurant for every occasion, mood, and location",
       url:
-      "https://www.timeout.com/israel/restaurants/the-best-restaurants-in-israel-to-take-out-of-towners-for",
+          "https://www.timeout.com/israel/restaurants/the-best-restaurants-in-israel-to-take-out-of-towners-for",
       date: "14/2/2020",
       picUrl: "https://media.timeout.com/images/105420918/750/422/image.jpg"),
   new News(
       author: "TimeOut team",
       title: "Beans of gold: The best cafes in Jerusalem",
       description:
-      "Tel Aviv is a hummus haven, but these Middle Eastern hot spots separate the strong from the weak",
+          "Tel Aviv is a hummus haven, but these Middle Eastern hot spots separate the strong from the weak",
       url:
-      "https://www.timeout.com/israel/restaurants/beans-of-gold-the-best-cafes-in-jerusalem",
+          "https://www.timeout.com/israel/restaurants/beans-of-gold-the-best-cafes-in-jerusalem",
       date: "14/2/2020",
       picUrl: "https://media.timeout.com/images/105477434/750/422/image.jpg"),
 ];
