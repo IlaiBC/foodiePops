@@ -5,6 +5,7 @@ import 'package:foodiepops/services/fireStoreDatabase.dart';
 import 'package:provider/provider.dart';
 import 'authentication/authWidget.dart';
 import 'authentication/authWidgetBuilder.dart';
+import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 
 void main() => runApp(MyApp(
       authServiceBuilder: (_) => FirebaseAuthService(),
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
       child: AuthWidgetBuilder(
         databaseBuilder: databaseBuilder,
         builder: (BuildContext context, AsyncSnapshot<User> userSnapshot) {
+          FlutterStatusbarcolor.setStatusBarColor(Color(0xffe51923));
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             initialRoute: '/',
@@ -38,7 +40,7 @@ class MyApp extends StatelessWidget {
               MainScreen.routeName: (context) => MainScreen(),
             },
             title: 'FoodiePops Login',
-            theme: ThemeData(primarySwatch: Colors.red),
+            theme: ThemeData(primarySwatch: Colors.red, primaryColor: Color(0xffe51923)),
             home: AuthWidget(userSnapshot: userSnapshot),
           );
         },

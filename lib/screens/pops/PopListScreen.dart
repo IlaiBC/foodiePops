@@ -118,13 +118,13 @@ ContainerTransitionType _transitionType = ContainerTransitionType.fade;
                             minSymbol: ":",
                             secSymbol: "",
                             daysTextStyle:
-                                TextStyle(fontSize: 15, color: Colors.red),
+                                TextStyle(fontSize: 15, color: Color(0xffe51923)),
                             hoursTextStyle:
-                                TextStyle(fontSize: 15, color: Colors.red),
+                                TextStyle(fontSize: 15, color: Color(0xffe51923)),
                             minTextStyle:
-                                TextStyle(fontSize: 15, color: Colors.red),
+                                TextStyle(fontSize: 15, color: Color(0xffe51923)),
                             secTextStyle:
-                                TextStyle(fontSize: 15, color: Colors.red),
+                                TextStyle(fontSize: 15, color: Color(0xffe51923)),
                             daysSymbolTextStyle:
                                 TextStyle(fontSize: 15, color: Colors.black),
                             hoursSymbolTextStyle:

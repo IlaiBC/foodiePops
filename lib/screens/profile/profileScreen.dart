@@ -50,7 +50,7 @@ class ProfileScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 32.0),
-          RaisedButton(color: Colors.redAccent, child: Text("Change Favorite Foods"), onPressed: () {Navigator.push(
+          RaisedButton(color: Color(0xffe51923), child: Text("Change Favorite Foods", style: TextStyle(color: Colors.white),), onPressed: () {Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => MainScreen()));} ,)
 
