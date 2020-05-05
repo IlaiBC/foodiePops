@@ -26,6 +26,11 @@ List Descriptions = [
 
 List<Pop> mockPops = [
   new Pop(
+      name: "סדנאת טעימות יין בלייב מבלי לקום מהספה",
+      description: "בפעם הראשונה בעולם?! טעימת יין עיוורת בלייב, אצלכם בסלון. מה זה אמר בעצם? מזמינים את המארז שכולל 3 בקבוקי יין שבחרנו עבורכם וכו, וכו",
+      photo: "assets/event.jpeg",
+      time: 1588620556732),
+  new Pop(
       name: names[0],
       description: Descriptions[1],
       photo: "assets/vitrina.jpeg",
