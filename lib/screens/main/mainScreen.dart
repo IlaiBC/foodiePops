@@ -75,21 +75,21 @@ class MainScreen extends StatelessWidget {
                 onTap: () {
                   _swipeKey.currentState.rewind();
                 },
-                child: Image.asset('assets/foodie_rewind.png'),
+                child: Image.asset('assets/rewind.png'),
               )),
               Expanded(
                   child: GestureDetector(
                 onTap: () {
                   _swipeKey.currentState.swipeLeft();
                 },
-                child: Image.asset('assets/foodie_disgust.png'),
+                child: Image.asset('assets/dislike.png'),
               )),
               Expanded(
                   child: GestureDetector(
                 onTap: () {
                   _swipeKey.currentState.swipeRight();
                 },
-                child: Image.asset('assets/foodie_happy.png'),
+                child: Image.asset('assets/like.png'),
               ))
             ],
           )))
