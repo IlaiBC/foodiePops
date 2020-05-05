@@ -9,12 +9,12 @@ class MainScreen extends StatelessWidget {
   static const routeName = '/MainScreen';
   MainScreen({Key key}) : super(key: key);
 
-  List<SwipeCard> cardList = [new SwipeCard(title: "Burgers", imageUrl: "assets/foodie_burger.png"),
-  new SwipeCard(title: "Cocktails", imageUrl: "assets/foodie_cocktail.png"),
-  new SwipeCard(title: "Ice Cream", imageUrl: "assets/foodie_icecream.png"),
-  new SwipeCard(title: "Mexican", imageUrl: "assets/foodie_mexican.png"),
+  List<SwipeCard> cardList = [new SwipeCard(title: "Burgers", imageUrl: "assets/burger.jpg"),
+  new SwipeCard(title: "Cocktails", imageUrl: "assets/cocktails.jpg"),
+  new SwipeCard(title: "Ice Cream", imageUrl: "assets/deserts.jpg"),
+  new SwipeCard(title: "Mexican", imageUrl: "assets/tacos.jpg"),
   new SwipeCard(title: "Pizza", imageUrl: "assets/foodie_pizza.png"),
-  new SwipeCard(title: "Soup", imageUrl: "assets/foodie_soup.png"),
+  new SwipeCard(title: "Soup", imageUrl: "assets/soup.jpg"),
   new SwipeCard(title: "Sushi", imageUrl: "assets/foodie_sushi.png")];
 
   @override

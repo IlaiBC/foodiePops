@@ -176,6 +176,11 @@ class _DetailsPage extends StatelessWidget {
                 Container(
                     child: ButtonBar(children: <Widget>[
                       FlatButton.icon(
+                        icon: Icon(Icons.location_on, color: Color(0xffe51923)),
+                        label: Text(""),
+                        onPressed: () {},
+                      ),
+                      FlatButton.icon(
                         textColor: Colors.blue,
                         icon: Icon(Icons.open_in_new, color: Colors.blue),
                         label: Text('Visit Pops website'),
