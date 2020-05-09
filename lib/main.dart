@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:foodiepops/components/bottomNav.dart';
 import 'package:foodiepops/screens/main/mainScreen.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
 import 'package:foodiepops/services/fireStoreDatabase.dart';
@@ -39,9 +40,9 @@ class MyApp extends StatelessWidget {
             routes: {
               MainScreen.routeName: (context) => MainScreen(),
             },
-            title: 'FoodiePops Login',
+            title: 'FoodiePops',
             theme: ThemeData(primarySwatch: Colors.red, primaryColor: Color(0xffe51923)),
-            home: AuthWidget(userSnapshot: userSnapshot),
+            home: BottomNav(userSnapshot: userSnapshot),
           );
         },
       ),

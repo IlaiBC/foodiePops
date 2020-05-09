@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:foodiepops/components/bottomNav.dart';
 import 'package:foodiepops/screens/login/loginScreen.dart';
-import 'package:foodiepops/screens/main/mainScreen.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
 
 class AuthWidget extends StatelessWidget {
@@ -10,7 +10,7 @@ class AuthWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (userSnapshot.connectionState == ConnectionState.active) {
-      return userSnapshot.hasData ? MainScreen() : LoginScreen();
+      return userSnapshot.hasData ? BottomNav(userSnapshot: userSnapshot) : LoginScreen();
     }
     return Scaffold(
       body: Center(
