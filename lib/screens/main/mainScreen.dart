@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:foodiepops/components/bottomNav.dart';
+import 'package:foodiepops/widgets/bottomNav.dart';
 import 'package:foodiepops/models/swipeCard.dart';
 import 'package:swipe_stack/swipe_stack.dart';
 

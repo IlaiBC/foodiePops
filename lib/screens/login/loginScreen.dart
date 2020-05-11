@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:foodiepops/components/signInButton.dart';
+import 'package:foodiepops/screens/business/businessLogin.dart';
+import 'package:foodiepops/widgets/signInButton.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
 import 'package:provider/provider.dart';
 
@@ -29,6 +30,14 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void onFacebookSignInPressed(
+      BuildContext context, FirebaseAuthService authService) async {
+    toggleLoadingIndicator();
+    await authService.signInWithFacebook().catchError((onError) =>
+        print("login error occurred, user possibly canceled login"));
+    toggleLoadingIndicator();
+  }
+
+  void onBusinessSignInPressed(
       BuildContext context, FirebaseAuthService authService) async {
     toggleLoadingIndicator();
     await authService.signInWithFacebook().catchError((onError) =>
@@ -71,7 +80,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     buttonIconPath: "assets/facebook_logo.png",
                     buttonOnPressedAction: () =>
                         onFacebookSignInPressed(context, authService)),
-              ]),
+                                        SizedBox(height: 20),
+                SignInButton(
+                    buttonText: 'Business Login',
+                    buttonColor: Colors.green,
+                    buttonIconPath: "assets/business_login.png",
+                    buttonOnPressedAction: () {Navigator.push(
+                      context, MaterialPageRoute(builder: (context) => BusinessLogin()));}
+          )]),
         ),
       ),
     );

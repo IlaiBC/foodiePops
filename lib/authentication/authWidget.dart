@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:foodiepops/components/bottomNav.dart';
+import 'package:foodiepops/widgets/bottomNav.dart';
 import 'package:foodiepops/screens/login/loginScreen.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
 
