@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:foodiepops/data/mockData.dart';
-import 'package:foodiepops/screens/login/loginScreen.dart';
-import 'package:foodiepops/screens/news/newsScreen.dart';
-import 'package:foodiepops/screens/pops/PopListScreen.dart';
-import 'package:foodiepops/screens/profile/profileScreen.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
-import 'package:provider/provider.dart';
 
 class BottomNav extends StatefulWidget {
-  const BottomNav({Key key, @required this.userSnapshot}) : super(key: key);
+  const BottomNav({Key key, @required this.userSnapshot, @required this.navPages, @required this.navItems}) : super(key: key);
   final AsyncSnapshot<User> userSnapshot;
+  final navPages;
+  final navItems;
 
   @override
   State<StatefulWidget> createState() => _BottomNavState();
@@ -28,26 +24,9 @@ class _BottomNavState extends State<BottomNav> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.userSnapshot.connectionState == ConnectionState.active) {
-      final _kTabPages = <Widget>[
-        PopListScreen(),
-        NewsScreen(news: mockNews),
-        widget.userSnapshot.hasData ? ProfileScreen() : LoginScreen(),
-      ];
-      final _kBottmonNavBarItems = <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage("assets/foodie.png")),
-            title: Text('Pops')),
-        BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage("assets/news.png")),
-            title: Text('News')),
-        BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage("assets/profile.png")),
-            title: Text('Profile')),
-      ];
-      assert(_kTabPages.length == _kBottmonNavBarItems.length);
+      assert(widget.navPages.length == widget.navItems.length);
       final bottomNavBar = BottomNavigationBar(
-        items: _kBottmonNavBarItems,
+        items: widget.navItems,
         currentIndex: _currentPageIndex,
         type: BottomNavigationBarType.fixed,
         onTap: (int index) {
@@ -64,14 +43,8 @@ class _BottomNavState extends State<BottomNav> {
                 this._currentPageIndex = newPage;
               });
             },
-            children: _kTabPages),
+            children: widget.navPages),
         bottomNavigationBar: bottomNavBar,
       );
-    }
-    return Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
   }
 }

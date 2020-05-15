@@ -9,16 +9,17 @@ import 'package:foodiepops/widgets/platformAlertDialog.dart';
 import 'package:provider/provider.dart';
 
 class CredentialsSignInFormBuilder extends StatelessWidget {
-  const CredentialsSignInFormBuilder({Key key, this.onSignedIn})
+  const CredentialsSignInFormBuilder({Key key, @required this.isBusinessUser, this.onSignedIn})
       : super(key: key);
   final VoidCallback onSignedIn;
+  final bool isBusinessUser;
 
   @override
   Widget build(BuildContext context) {
     final FirebaseAuthService auth =
         Provider.of<FirebaseAuthService>(context, listen: false);
     return ChangeNotifierProvider<CredentialsLoginModel>(
-      create: (_) => CredentialsLoginModel(auth: auth),
+      create: (_) => CredentialsLoginModel(auth: auth, isBusinessUser: isBusinessUser),
       child: Consumer<CredentialsLoginModel>(
         builder: (_, CredentialsLoginModel model, __) =>
             CredentialsSignInForm(model: model, onSignedIn: onSignedIn),

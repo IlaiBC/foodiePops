@@ -8,6 +8,7 @@ enum CredentialsFormType { signIn, register, forgotPassword }
 class CredentialsLoginModel with CredentialsValidator, ChangeNotifier {
   CredentialsLoginModel({
     @required this.auth,
+    @required this.isBusinessUser,
     this.email = '',
     this.password = '',
     this.formType = CredentialsFormType.signIn,
@@ -22,6 +23,7 @@ class CredentialsLoginModel with CredentialsValidator, ChangeNotifier {
   CredentialsFormType formType;
   bool isLoading;
   bool submitted;
+  bool isBusinessUser;
 
   Future<bool> submit() async {
     try {
@@ -35,7 +37,7 @@ class CredentialsLoginModel with CredentialsValidator, ChangeNotifier {
           await auth.signInWithEmailAndPassword(email, password);
           break;
         case CredentialsFormType.register:
-          await auth.createUserWithEmailAndPassword(email, password);
+          await auth.createUserWithEmailAndPassword(email, password, isBusinessUser);
           break;
         case CredentialsFormType.forgotPassword:
           await auth.sendPasswordResetEmail(email);

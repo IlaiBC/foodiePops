@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:foodiepops/models/example.dart';
+import 'package:foodiepops/models/UserData.dart';
 import 'package:meta/meta.dart';
 
 import 'fireStorePath.dart';
@@ -14,8 +14,13 @@ class FirestoreDatabase {
 
   final _service = FirestoreService.instance;
 
-  Future<void> setExample(Example example) async => await _service.setData(
-        path: FirestorePath.example(uid, example.id),
-        data: example.toMap(),
+  Future<void> setUserInfo(UserData userData) async => await _service.setData(
+        path: FirestorePath.userData(uid),
+        data: userData.toMap(),
+  );
+
+  Stream<UserData> userInfoStream() => _service.documentStream(
+    path: FirestorePath.userData(uid) ,
+    builder: (data, documentId) => UserData.fromMap(data, documentId),
   );
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:foodiepops/widgets/bottomNav.dart';
 import 'package:foodiepops/models/swipeCard.dart';
 import 'package:swipe_stack/swipe_stack.dart';
 
@@ -56,9 +55,7 @@ class MainScreen extends StatelessWidget {
             stackFrom: StackFrom.Top,
             translationInterval: 6,
             scaleInterval: 0.03,
-            onEnd: () {Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => BottomNav()));},
+            onEnd: null,
             onSwipe: (int index, SwiperPosition position) =>
                 debugPrint("onSwipe $index $position"),
             onRewind: (int index, SwiperPosition position) =>

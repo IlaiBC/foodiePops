@@ -1,7 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:foodiepops/models/UserData.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'fireStorePath.dart';
+import 'firestoreService.dart';
 
 @immutable
 class User {
@@ -22,6 +25,7 @@ class FirebaseAuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FacebookLogin _facebookSignIn = FacebookLogin();
+  final _database = FirestoreService.instance;
 
   User _toUserFromFirebaseUser(FirebaseUser user) {
     if (user == null) {
@@ -57,6 +61,8 @@ class FirebaseAuthService {
 
     final AuthResult authResult = await _firebaseAuth.signInWithCredential(credential);
 
+    await _saveUserDataIfNeeded(authResult, false);
+
     return _toUserFromFirebaseUser(authResult.user);
 }
 
@@ -66,6 +72,8 @@ Future<dynamic> signInWithFacebook() async {
   final facebookAuthCred = FacebookAuthProvider.getCredential(accessToken: result.accessToken.token);
 
   final authResult = await _firebaseAuth.signInWithCredential(facebookAuthCred);
+
+  await _saveUserDataIfNeeded(authResult, false);
 
   return _toUserFromFirebaseUser(authResult.user);
 }
@@ -80,9 +88,12 @@ Future<dynamic> signInWithFacebook() async {
   }
 
   Future<User> createUserWithEmailAndPassword(
-      String email, String password) async {
+      String email, String password, bool isBusinessUser) async {
     final AuthResult authResult = await _firebaseAuth
         .createUserWithEmailAndPassword(email: email, password: password);
+
+    await _saveUserDataIfNeeded(authResult, isBusinessUser);
+    
     return _toUserFromFirebaseUser(authResult.user);
   }
 
@@ -109,4 +120,15 @@ Future<dynamic> signInWithFacebook() async {
 
     await _firebaseAuth.signOut();
   }
+
+  Future<void> _saveUserDataIfNeeded (AuthResult authResult, bool isBusinessUser) async{
+    if (authResult.additionalUserInfo.isNewUser) {
+      await setUserInfo(UserData(id: authResult.user.uid, isBusinessUser: isBusinessUser));
+    }
+  }
+
+  Future<void> setUserInfo(UserData userData) async => await _database.setData(
+        path: FirestorePath.userData(userData.id),
+        data: userData.toMap(),
+  );
 }

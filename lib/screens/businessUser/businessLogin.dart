@@ -25,7 +25,7 @@ class BusinessLogin extends StatelessWidget {
           Card(
             child: Padding(
               padding: EdgeInsets.all(16.0),
-              child: CredentialsSignInFormBuilder(onSignedIn: () => Navigator.of(context).pop(),)
+              child: CredentialsSignInFormBuilder(isBusinessUser: true)
             ),
           ),
           ],

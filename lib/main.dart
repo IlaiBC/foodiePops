@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:foodiepops/widgets/bottomNav.dart';
+import 'package:foodiepops/authentication/authWidget.dart';
 import 'package:foodiepops/screens/main/mainScreen.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
 import 'package:foodiepops/services/fireStoreDatabase.dart';
 import 'package:provider/provider.dart';
-import 'authentication/authWidget.dart';
 import 'authentication/authWidgetBuilder.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 
@@ -21,7 +20,7 @@ class MyApp extends StatelessWidget {
   final FirebaseAuthService Function(BuildContext context) authServiceBuilder;
   final FirestoreDatabase Function(BuildContext context, String uid)
       databaseBuilder;
-      
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -34,6 +33,7 @@ class MyApp extends StatelessWidget {
         databaseBuilder: databaseBuilder,
         builder: (BuildContext context, AsyncSnapshot<User> userSnapshot) {
           FlutterStatusbarcolor.setStatusBarColor(Color(0xffe51923));
+
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             initialRoute: '/',
@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
             },
             title: 'FoodiePops',
             theme: ThemeData(primarySwatch: Colors.red, primaryColor: Color(0xffe51923)),
-            home: BottomNav(userSnapshot: userSnapshot),
+            home: AuthWidget(userSnapshot: userSnapshot),
           );
         },
       ),
