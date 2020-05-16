@@ -5,6 +5,7 @@ import 'package:foodiepops/models/pop.dart';
 import 'package:foodiepops/util/imageUtil.dart';
 import 'package:flutter_countdown_timer/countdown_timer.dart';
 import 'package:animations/animations.dart';
+import 'package:geolocator/geolocator.dart';
 
 class PopListScreen extends StatefulWidget {
   @override
@@ -13,12 +14,17 @@ class PopListScreen extends StatefulWidget {
 
 class _PopListScreenState extends State<PopListScreen> {
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
-
   List<Pop> pops = [];
+  Geolocator geolocator = Geolocator();
+  Position userLocation;
 
   @override
   void initState() {
     super.initState();
+
+    _getLocation().then((position) {
+      userLocation = position;
+    });
 
     PopsRepository.getEvents().then((List<Pop> pops) {
       setState(() {
@@ -31,32 +37,53 @@ class _PopListScreenState extends State<PopListScreen> {
     });
   }
 
+  Future<Position> _getLocation() async {
+    var currentLocation;
+    try {
+      GeolocationStatus geolocationStatus =
+          await geolocator.checkGeolocationPermissionStatus();
+      if (geolocationStatus == GeolocationStatus.denied ||
+          geolocationStatus == GeolocationStatus.disabled) {
+        currentLocation = await geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.best);
+      }
+    } catch (e) {
+      currentLocation = null;
+    }
+    return currentLocation;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Foodie Pops you will love'),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(8.0),
-        children: <Widget>[
-          ...List<Widget>.generate(pops.length, (int index) {
-            return OpenContainer(
-              transitionType: _transitionType,
-              openBuilder: (BuildContext _, VoidCallback openContainer) {
-                return _DetailsPage(pop: pops[index]);
-              },
-              tappable: false,
-              closedShape: const RoundedRectangleBorder(),
-              closedElevation: 0.0,
-              closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                return _buildRow(pops[index], openContainer);
-              },
-            );
-          }),
-        ],
-      ),
-    );
+        appBar: AppBar(
+          title: const Text('Foodie Pops you will love'),
+        ),
+        body: new Container(
+          child: pops.length == 0
+              ? new Center(child: new CircularProgressIndicator())
+              : ListView(
+                  padding: const EdgeInsets.all(8.0),
+                  children: <Widget>[
+                    ...List<Widget>.generate(pops.length, (int index) {
+                      return OpenContainer(
+                        transitionType: _transitionType,
+                        openBuilder:
+                            (BuildContext _, VoidCallback openContainer) {
+                          return _DetailsPage(pop: pops[index]);
+                        },
+                        tappable: false,
+                        closedShape: const RoundedRectangleBorder(),
+                        closedElevation: 0.0,
+                        closedBuilder:
+                            (BuildContext _, VoidCallback openContainer) {
+                          return _buildRow(pops[index], openContainer);
+                        },
+                      );
+                    }),
+                  ],
+                ),
+        ));
   }
 }
 
@@ -175,18 +202,18 @@ class _DetailsPage extends StatelessWidget {
                 ),
                 Container(
                     child: ButtonBar(children: <Widget>[
-                      FlatButton.icon(
-                        icon: Icon(Icons.location_on, color: Color(0xffe51923)),
-                        label: Text(""),
-                        onPressed: () {},
-                      ),
-                      FlatButton.icon(
-                        textColor: Colors.blue,
-                        icon: Icon(Icons.open_in_new, color: Colors.blue),
-                        label: Text('Visit Pops website'),
-                        onPressed: () {},
-                      )
-                    ])),
+                  FlatButton.icon(
+                    icon: Icon(Icons.location_on, color: Color(0xffe51923)),
+                    label: Text(""),
+                    onPressed: () {},
+                  ),
+                  FlatButton.icon(
+                    textColor: Colors.blue,
+                    icon: Icon(Icons.open_in_new, color: Colors.blue),
+                    label: Text('Visit Pops website'),
+                    onPressed: () {},
+                  )
+                ])),
                 Container(
                     margin: EdgeInsets.all(50.0),
                     padding: const EdgeInsets.all(10.0),
