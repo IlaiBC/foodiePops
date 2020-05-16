@@ -24,7 +24,14 @@ class _PopListScreenState extends State<PopListScreen> {
       setState(() {
         this.pops = pops;
         this.pops.sort((a, b) {
-          return a.time.compareTo(b.time);
+          print("pop sort ${a.name}");
+          print("pop sort expiration ${a.expirationTime}");
+
+          print("pop sort other $b");
+          print("pop sort other ${b.expirationTime}");
+
+
+          return a.expirationTime.millisecondsSinceEpoch.compareTo(b.expirationTime.millisecondsSinceEpoch);
         });
         print("allData length is: " + pops.length.toString());
       });
@@ -105,7 +112,7 @@ Widget _buildRow(Pop pop, VoidCallback openContainer) {
                       new ClipRRect(
                         borderRadius: new BorderRadius.circular(4.0),
                         child: CountdownTimer(
-                          endTime: pop.time,
+                          endTime: pop.expirationTime.millisecondsSinceEpoch,
                           defaultDays: "==",
                           defaultHours: "--",
                           defaultMin: "**",
@@ -198,7 +205,7 @@ class _DetailsPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           CountdownTimer(
-                            endTime: pop.time,
+                            endTime: pop.expirationTime.millisecondsSinceEpoch,
                             defaultDays: "==",
                             defaultHours: "--",
                             defaultMin: "**",

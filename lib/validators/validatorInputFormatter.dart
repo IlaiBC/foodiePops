@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:foodiepops/screens/login/validators/stringValidator.dart';
+import 'package:foodiepops/validators/stringValidator.dart';
 
 class ValidatorInputFormatter implements TextInputFormatter {
   ValidatorInputFormatter({this.editingValidator});

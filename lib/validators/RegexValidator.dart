@@ -1,4 +1,4 @@
-import 'package:foodiepops/screens/login/validators/stringValidator.dart';
+import 'package:foodiepops/validators/stringValidator.dart';
 
 class RegexValidator implements StringValidator {
   RegexValidator({this.regexSource});

@@ -1,4 +1,7 @@
 class Texts {
+  // Errors
+  static const String unknownError = 'An Unknown error occurred';
+
   // Logout
   static const String logout = 'Logout';
   static const String logoutAreYouSure =
@@ -15,8 +18,20 @@ class Texts {
   static const String or = 'or';
   static const String ok = 'ok';
 
-  // Business pages:
+  // Business pages
   static const String businessLogin = "Business Login";
+  static const String popFormScreen = "New Pop Form";
+
+  // Business Add Pop Form
+  static const String cannotBeEmptyError = "Cannot be empty";
+  static const String expirationTimeError = "Invalid expiration time";
+  static const String popNameLabel = 'Pop Name';
+  static const String popNameHint = 'Vitrina Special';
+  static const String popDescriptionLabel = 'Pop Description';
+  static const String popDescriptionHint = 'Is there anything better than a good burger?';
+  static const String submit = 'Submit';
+  static const String popSubmitSuccessTitle = 'Offer Submitted successfuly!';
+  static const String popSubmitSuccessMessage = 'Just wait and watch the magic happen';
 
   // Email & Password page
   static const String register = 'Register';

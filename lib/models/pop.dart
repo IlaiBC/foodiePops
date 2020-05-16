@@ -5,45 +5,49 @@ class Pop {
   static final String popId = "_id";
   static final String popName = "name";
   static final String popSubtitle = "subtitle";
-  static final String popTime = "time";
+  static final String popExpirationTime = "expirationTime";
   static final String popDescription = "description";
   static final String popPhotoPath = "photo";
   static final String innerPhotoPath = "innerPhoto";
   static final String popUrl = "url";
-  static final String popLat = "lat";
-  static final String popLng = "lng";
+  static final String popLoction = "location";
+  static final String popBusinessId = "businessId";
+  static const int MAX_DESCRIPTION_LINES = 3;
+
 
   Pop({
     @required this.name,
-    @required this.time,
+    @required this.expirationTime,
     @required this.description,
     this.innerPhoto,
     this.subtitle,
     this.photo,
     this.url,
-    this.latLng,
+    this.location,
+    this.businessId,
   });
 
   final String name;
   final String subtitle;
-  final int time;
+  final DateTime expirationTime;
   final String description;
   final String photo;
   final String innerPhoto;
   final String url;
-  final LatLng latLng;
+  final LatLng location;
+  String businessId;
 
   Map toMap() {
     Map<String, dynamic> map = {
       popName: name,
-      popTime: time,
+      popExpirationTime: expirationTime,
       popDescription: description,
       popPhotoPath: photo,
-      popLat: latLng.latitude,
-      popLng: latLng.longitude,
+      popLoction: location,
       popSubtitle: subtitle,
       innerPhotoPath: innerPhoto,
-      popUrl: url
+      popUrl: url,
+      popBusinessId: businessId,
     };
 
     return map;
@@ -52,12 +56,14 @@ class Pop {
   static Pop fromMap(Map map) {
     return new Pop(
         name: map[popName],
-        time: map[popTime],
+        expirationTime: map[popExpirationTime],
         description: map[popDescription],
         photo: map[popPhotoPath],
         url: map[popUrl],
         subtitle: map[popSubtitle],
         innerPhoto: map[innerPhotoPath],
-        latLng: new LatLng(map[popLat], map[popLng]));
+        location: map[popLoction],
+        businessId: map[popBusinessId],
+    );
   }
 }

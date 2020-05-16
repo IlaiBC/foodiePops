@@ -1,8 +1,7 @@
 import 'package:flutter/services.dart';
-import 'package:foodiepops/screens/login/validators/stringValidator.dart';
-import 'package:foodiepops/screens/login/validators/validatorInputFormatter.dart';
-
-import 'RegexValidator.dart';
+import 'package:foodiepops/validators/RegexValidator.dart';
+import 'package:foodiepops/validators/stringValidator.dart';
+import 'package:foodiepops/validators/validatorInputFormatter.dart';
 
 class EmailEditingRegexValidator extends RegexValidator {
   EmailEditingRegexValidator() : super(regexSource: '^(|\\S)+\$');
