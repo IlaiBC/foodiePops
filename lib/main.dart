@@ -9,7 +9,7 @@ import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 
 void main() => runApp(MyApp(
       authServiceBuilder: (_) => FirebaseAuthService(),
-      databaseBuilder: (_, uid) => FirestoreDatabase(uid: uid),
+      databaseBuilder: (_) => FirestoreDatabase(),
     ));
 
 class MyApp extends StatelessWidget {
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   // Expose builders for 3rd party services at the root of the widget tree
   // This is useful when mocking services while testing
   final FirebaseAuthService Function(BuildContext context) authServiceBuilder;
-  final FirestoreDatabase Function(BuildContext context, String uid)
+  final FirestoreDatabase Function(BuildContext context)
       databaseBuilder;
 
   @override
@@ -28,9 +28,11 @@ class MyApp extends StatelessWidget {
         Provider<FirebaseAuthService>(
           create: authServiceBuilder,
         ),
+        Provider<FirestoreDatabase>(
+          create: databaseBuilder,
+        ),
       ],
       child: AuthWidgetBuilder(
-        databaseBuilder: databaseBuilder,
         builder: (BuildContext context, AsyncSnapshot<User> userSnapshot) {
           FlutterStatusbarcolor.setStatusBarColor(Color(0xffe51923));
 

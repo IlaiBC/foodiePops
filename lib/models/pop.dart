@@ -28,7 +28,6 @@ class Pop {
     this.businessId,
   });
 
-  final String id;
   final String name;
   final String subtitle;
   final DateTime expirationTime;
@@ -37,6 +36,7 @@ class Pop {
   final String innerPhoto;
   final String url;
   final LatLng location;
+  String id;
   String businessId;
 
   Map toMap() {

@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:foodiepops/services/fireStoreDatabase.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
 import 'package:provider/provider.dart';
 
 class AuthWidgetBuilder extends StatelessWidget {
   const AuthWidgetBuilder(
-      {Key key, @required this.builder, @required this.databaseBuilder})
+      {Key key, @required this.builder})
       : super(key: key);
   final Widget Function(BuildContext, AsyncSnapshot<User>) builder;
-  final FirestoreDatabase Function(BuildContext context, String uid)
-      databaseBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +20,6 @@ class AuthWidgetBuilder extends StatelessWidget {
           return MultiProvider(
             providers: [
               Provider<User>.value(value: user),
-              Provider<FirestoreDatabase>(
-                create: (context) => databaseBuilder(context, user.uid),
-              ),
             ],
             child: builder(context, snapshot),
           );

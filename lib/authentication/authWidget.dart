@@ -14,10 +14,10 @@ class AuthWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     if (userSnapshot.connectionState == ConnectionState.active) {
       if (userSnapshot.hasData) {
-        final database = Provider.of<FirestoreDatabase>(context, listen: false);
+        final database = Provider.of<FirestoreDatabase>(context, listen: false); 
 
         return StreamBuilder<UserData>(
-            stream: database.userInfoStream(),
+            stream: database.userInfoStream(userSnapshot.data.uid),
             builder: (context, snapshot) {
               final UserData userData = snapshot.data;
 

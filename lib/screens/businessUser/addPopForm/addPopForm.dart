@@ -5,6 +5,7 @@ import 'package:foodiepops/exceptions/platformExceptionAlertDialog.dart';
 import 'package:foodiepops/models/pop.dart';
 import 'package:foodiepops/screens/businessUser/addPopForm/addPopModel.dart';
 import 'package:foodiepops/services/fireStoreDatabase.dart';
+import 'package:foodiepops/services/firebaseAuthService.dart';
 import 'package:foodiepops/widgets/dateTimePicker.dart';
 import 'package:foodiepops/widgets/formSubmitButton.dart';
 import 'package:foodiepops/widgets/platformAlertDialog.dart';
@@ -16,9 +17,11 @@ class AddPopFormBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final FirestoreDatabase database =
-        Provider.of<FirestoreDatabase>(context, listen: false);
+    Provider.of<FirestoreDatabase>(context, listen: false);
+    final businessUser = Provider.of<User>(context, listen: false); 
+
     return ChangeNotifierProvider<AddPopModel>(
-      create: (_) => AddPopModel(database: database),
+      create: (_) => AddPopModel(database: database, businessUser: businessUser),
       child: Consumer<AddPopModel>(
         builder: (_, AddPopModel model, __) =>
             AddPopForm(model: model),

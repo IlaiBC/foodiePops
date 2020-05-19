@@ -2,9 +2,11 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:foodiepops/data/popsRepository.dart';
 import 'package:foodiepops/models/pop.dart';
+import 'package:foodiepops/services/fireStoreDatabase.dart';
 import 'package:foodiepops/util/imageUtil.dart';
 import 'package:flutter_countdown_timer/countdown_timer.dart';
 import 'package:animations/animations.dart';
+import 'package:provider/provider.dart';
 
 class PopListScreen extends StatefulWidget {
   @override
@@ -40,6 +42,8 @@ class _PopListScreenState extends State<PopListScreen> {
 
   @override
   Widget build(BuildContext context) {
+        final FirestoreDatabase database =
+    Provider.of<FirestoreDatabase>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Foodie Pops you will love'),
@@ -57,7 +61,7 @@ class _PopListScreenState extends State<PopListScreen> {
               closedShape: const RoundedRectangleBorder(),
               closedElevation: 0.0,
               closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                return _buildRow(pops[index], openContainer);
+                return _buildRow(pops[index], openContainer, database);
               },
             );
           }),
@@ -67,7 +71,7 @@ class _PopListScreenState extends State<PopListScreen> {
   }
 }
 
-Widget _buildRow(Pop pop, VoidCallback openContainer) {
+Widget _buildRow(Pop pop, VoidCallback openContainer, FirestoreDatabase database) {
   return new Card(
       child: ListTile(
           title: Padding(
@@ -143,7 +147,12 @@ Widget _buildRow(Pop pop, VoidCallback openContainer) {
               )
             ]),
           ),
-          onTap: openContainer));
+          onTap: () {
+            print('pop is: ${pop.businessId}');
+          database.addPopClick(pop);
+          openContainer();
+          }
+          ));
 }
 
 class _DetailsPage extends StatelessWidget {

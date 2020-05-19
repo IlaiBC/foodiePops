@@ -3,11 +3,13 @@ import 'package:foodiepops/constants/Texts.dart';
 import 'package:foodiepops/models/pop.dart';
 import 'package:foodiepops/screens/businessUser/addPopForm/validators/addPopValidator.dart';
 import 'package:foodiepops/services/fireStoreDatabase.dart';
+import 'package:foodiepops/services/firebaseAuthService.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class AddPopModel with AddPopValidator, ChangeNotifier {
   AddPopModel({
     @required this.database,
+    @required this.businessUser,
     this.popName = '',
     this.popDescription = '',
     this.popExpirationTime,
@@ -20,6 +22,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
   });
 
   final FirestoreDatabase database;
+  final User businessUser;
   String popName;
   String popDescription;
   DateTime popExpirationTime;
@@ -100,7 +103,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
 
   Pop _createPopFromFormData () {
     return Pop(name: popName, description:  popDescription, expirationTime: popExpirationTime,
-    photo: popPhotoPath, innerPhoto: popInnerPhotoPath, url: popUrl, location: popLocation);
+    photo: popPhotoPath, innerPhoto: popInnerPhotoPath, url: popUrl, location: popLocation, businessId: businessUser.uid);
   } 
 
   // Getters
