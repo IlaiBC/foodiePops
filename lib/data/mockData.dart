@@ -26,61 +26,73 @@ List Descriptions = [
 
 List<Pop> mockPops = [
   new Pop(
+      id: 'OJOdA2m5GrfyAdsgiisF',
       name: "סדנאת טעימות יין בלייב מבלי לקום מהספה",
       description: "בפעם הראשונה בעולם?! טעימת יין עיוורת בלייב, אצלכם בסלון. מה זה אמר בעצם? מזמינים את המארז שכולל 3 בקבוקי יין שבחרנו עבורכם וכו, וכו",
       photo: "assets/event.jpeg",
       expirationTime: DateTime(2020, 1, 1, 1, 1),),
   new Pop(
+      id: 'OJOdA2m5GrfyAdsgiisF',
       name: names[0],
       description: Descriptions[1],
       photo: "assets/vitrina.jpeg",
       expirationTime: DateTime(2020, 1, 1, 1, 1),),
   new Pop(
+      id: 'OJOdA2m5GrfyAdsgiisF',
       name: names[1],
       description: Descriptions[1],
       photo: "assets/frank.gif",
       expirationTime: DateTime(2020, 1, 1, 1, 1),),
   new Pop(
+      id: 'OJOdA2m5GrfyAdsgiisF',
       name: names[2],
       description: Descriptions[1],
       photo: "assets/benedicts.png",
       expirationTime: DateTime(2020, 1, 1, 1, 1),),
   new Pop(
+      id: 'OJOdA2m5GrfyAdsgiisF',
       name: names[3],
       description: Descriptions[1],
       photo: "assets/MAGAZZINO-250x250.png",
       expirationTime: DateTime(2020, 1, 1, 1, 1),),
   new Pop(
+      id: 'OJOdA2m5GrfyAdsgiisF',
       name: names[4],
       description: Descriptions[1],
       photo: "assets/MAGAZZINO-250x250.png",
       expirationTime: DateTime(2020, 1, 1, 1, 1),),
   new Pop(
+      id: 'OJOdA2m5GrfyAdsgiisF',
       name: names[5],
       description: Descriptions[1],
       photo: "assets/KFC_LOGO.png",
       expirationTime: DateTime(2020, 1, 1, 1, 1),),
   new Pop(
+      id: 'OJOdA2m5GrfyAdsgiisF',
       name: names[6],
       description: Descriptions[1],
       photo: "assets/wok.jpg",
       expirationTime: DateTime(2020, 1, 1, 1, 1),),
   new Pop(
+      id: 'OJOdA2m5GrfyAdsgiisF',
       name: names[7],
       description: Descriptions[1],
       photo: "assets/benedicts.png",
       expirationTime: DateTime(2020, 1, 1, 1, 1),),
   new Pop(
+      id: 'OJOdA2m5GrfyAdsgiisF',
       name: names[8],
       description: Descriptions[1],
       photo: "assets/frank.gif",
       expirationTime: DateTime(2020, 1, 1, 1, 1),),
   new Pop(
+      id: 'OJOdA2m5GrfyAdsgiisF',
       name: names[9],
       description: Descriptions[1],
       photo: "assets/vitrina.jpeg",
       expirationTime: DateTime(2020, 1, 1, 1, 1),),
   new Pop(
+      id: 'OJOdA2m5GrfyAdsgiisF',
       name: names[10],
       description: Descriptions[1],
       photo: "assets/KFC_LOGO.png",

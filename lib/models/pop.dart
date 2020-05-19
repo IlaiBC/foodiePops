@@ -2,7 +2,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:meta/meta.dart';
 
 class Pop {
-  static final String popId = "_id";
+  static final String popId = "id";
   static final String popName = "name";
   static final String popSubtitle = "subtitle";
   static final String popExpirationTime = "expirationTime";
@@ -19,6 +19,7 @@ class Pop {
     @required this.name,
     @required this.expirationTime,
     @required this.description,
+    this.id,
     this.innerPhoto,
     this.subtitle,
     this.photo,
@@ -27,6 +28,7 @@ class Pop {
     this.businessId,
   });
 
+  final String id;
   final String name;
   final String subtitle;
   final DateTime expirationTime;
@@ -39,6 +41,7 @@ class Pop {
 
   Map toMap() {
     Map<String, dynamic> map = {
+      popId: id,
       popName: name,
       popExpirationTime: expirationTime,
       popDescription: description,
@@ -55,6 +58,7 @@ class Pop {
 
   static Pop fromMap(Map map) {
     return new Pop(
+        id: map[popId],
         name: map[popName],
         expirationTime: map[popExpirationTime],
         description: map[popDescription],
