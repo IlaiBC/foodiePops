@@ -8,22 +8,28 @@ class FirestoreService {
   Future<void> setData({
     @required String path,
     @required Map<String, dynamic> data,
+    @required String documentId,
     bool merge = false,
   }) async {
     final reference = Firestore.instance.document(path);
+    data['id'] = documentId;
     print('$path: $data');
     await reference.setData(data, merge: merge);
   }
 
-  Future<void> addData({
+  Future<String> addData({
     @required String collectionPath,
     @required Map<String, dynamic> data,
     bool merge = false,
   }) async {
     final reference = Firestore.instance.collection(collectionPath).document();
-    data['id'] = reference.documentID;
+    String documentId = reference.documentID;
+    data['id'] = documentId;
     print('$collectionPath: $data');
+
     await reference.setData(data, merge: merge);
+
+    return documentId;
   }
 
   Future<void> deleteData({@required String path}) async {
