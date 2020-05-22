@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:foodiepops/constants/Texts.dart';
 import 'package:foodiepops/models/pop.dart';
@@ -29,7 +30,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
   String popPhotoPath;
   String popInnerPhotoPath;
   String popUrl;
-  LatLng popLocation;
+  GeoPoint popLocation;
   bool isLoading;
   bool submitted;
 

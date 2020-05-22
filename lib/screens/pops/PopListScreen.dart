@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:foodiepops/data/popsRepository.dart';
 import 'package:foodiepops/models/pop.dart';
 import 'package:foodiepops/services/fireStoreDatabase.dart';
 import 'package:foodiepops/util/imageUtil.dart';
@@ -16,62 +15,59 @@ class PopListScreen extends StatefulWidget {
 class _PopListScreenState extends State<PopListScreen> {
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
 
-  List<Pop> pops = [];
-
   @override
   void initState() {
     super.initState();
-
-    PopsRepository.getEvents().then((List<Pop> pops) {
-      setState(() {
-        this.pops = pops;
-        this.pops.sort((a, b) {
-          print("pop sort ${a.name}");
-          print("pop sort expiration ${a.expirationTime}");
-
-          print("pop sort other $b");
-          print("pop sort other ${b.expirationTime}");
-
-
-          return a.expirationTime.millisecondsSinceEpoch.compareTo(b.expirationTime.millisecondsSinceEpoch);
-        });
-        print("allData length is: " + pops.length.toString());
-      });
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-        final FirestoreDatabase database =
-    Provider.of<FirestoreDatabase>(context, listen: false);
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Foodie Pops you will love'),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(8.0),
-        children: <Widget>[
-          ...List<Widget>.generate(pops.length, (int index) {
-            return OpenContainer(
-              transitionType: _transitionType,
-              openBuilder: (BuildContext _, VoidCallback openContainer) {
-                return _DetailsPage(pop: pops[index]);
-              },
-              tappable: false,
-              closedShape: const RoundedRectangleBorder(),
-              closedElevation: 0.0,
-              closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                return _buildRow(pops[index], openContainer, database);
-              },
+    final FirestoreDatabase database =
+        Provider.of<FirestoreDatabase>(context, listen: false);
+
+    return StreamBuilder<List<Pop>>(
+        stream: database.getPopList(),
+        builder: (context, snapshot) {
+          if (snapshot.data != null) {
+            final List<Pop> pops = snapshot.data;
+            return Scaffold(
+              appBar: AppBar(
+                title: const Text('Foodie Pops you will love'),
+              ),
+              body: ListView(
+                padding: const EdgeInsets.all(8.0),
+                children: <Widget>[
+                  ...List<Widget>.generate(pops.length, (int index) {
+                    return OpenContainer(
+                      transitionType: _transitionType,
+                      openBuilder:
+                          (BuildContext _, VoidCallback openContainer) {
+                        return _DetailsPage(pop: pops[index]);
+                      },
+                      tappable: false,
+                      closedShape: const RoundedRectangleBorder(),
+                      closedElevation: 0.0,
+                      closedBuilder:
+                          (BuildContext _, VoidCallback openContainer) {
+                        return _buildRow(pops[index], openContainer, database);
+                      },
+                    );
+                  }),
+                ],
+              ),
             );
-          }),
-        ],
-      ),
-    );
+          }
+          return Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        });
   }
 }
 
-Widget _buildRow(Pop pop, VoidCallback openContainer, FirestoreDatabase database) {
+Widget _buildRow(
+    Pop pop, VoidCallback openContainer, FirestoreDatabase database) {
   return new Card(
       child: ListTile(
           title: Padding(
@@ -149,10 +145,9 @@ Widget _buildRow(Pop pop, VoidCallback openContainer, FirestoreDatabase database
           ),
           onTap: () {
             print('pop is: ${pop.businessId}');
-          database.addPopClick(pop);
-          openContainer();
-          }
-          ));
+            database.addPopClick(pop);
+            openContainer();
+          }));
 }
 
 class _DetailsPage extends StatelessWidget {
@@ -191,18 +186,18 @@ class _DetailsPage extends StatelessWidget {
                 ),
                 Container(
                     child: ButtonBar(children: <Widget>[
-                      FlatButton.icon(
-                        icon: Icon(Icons.location_on, color: Color(0xffe51923)),
-                        label: Text(""),
-                        onPressed: () {},
-                      ),
-                      FlatButton.icon(
-                        textColor: Colors.blue,
-                        icon: Icon(Icons.open_in_new, color: Colors.blue),
-                        label: Text('Visit Pops website'),
-                        onPressed: () {},
-                      )
-                    ])),
+                  FlatButton.icon(
+                    icon: Icon(Icons.location_on, color: Color(0xffe51923)),
+                    label: Text(""),
+                    onPressed: () {},
+                  ),
+                  FlatButton.icon(
+                    textColor: Colors.blue,
+                    icon: Icon(Icons.open_in_new, color: Colors.blue),
+                    label: Text('Visit Pops website'),
+                    onPressed: () {},
+                  )
+                ])),
                 Container(
                     margin: EdgeInsets.all(50.0),
                     padding: const EdgeInsets.all(10.0),

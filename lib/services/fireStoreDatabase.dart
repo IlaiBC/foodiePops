@@ -18,7 +18,7 @@ class FirestoreDatabase {
   );
 
   Future<void> addPop(Pop pop) async {
-    String popId = await _service.addData(collectionPath: FirestorePath.addPop(), data: pop.toMap());
+    String popId = await _service.addData(collectionPath: FirestorePath.pops(), data: pop.toMap());
 
     await _service.setData(path: FirestorePath.addPopToBusiness(pop.businessId, popId), data: pop.toMap(), documentId: popId);
   }
@@ -34,5 +34,11 @@ class FirestoreDatabase {
   Stream<UserData> userInfoStream(String uid) => _service.documentStream(
     path: FirestorePath.userData(uid) ,
     builder: (data, documentId) => UserData.fromMap(data, documentId),
+  );
+
+  Stream<List<Pop>> getPopList() => _service.collectionStream(
+    path: FirestorePath.pops() ,
+    builder: (data, documentId) => Pop.fromMap(data),
+    sort: (lhs, rhs) => lhs.expirationTime.millisecondsSinceEpoch.compareTo(rhs.expirationTime.millisecondsSinceEpoch),
   );
 }

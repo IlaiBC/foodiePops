@@ -1,4 +1,4 @@
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meta/meta.dart';
 
 class Pop {
@@ -35,7 +35,7 @@ class Pop {
   final String photo;
   final String innerPhoto;
   final String url;
-  final LatLng location;
+  final GeoPoint location;
   String id;
   String businessId;
 
@@ -60,7 +60,7 @@ class Pop {
     return new Pop(
         id: map[popId],
         name: map[popName],
-        expirationTime: map[popExpirationTime],
+        expirationTime: (map[popExpirationTime] as Timestamp).toDate(),
         description: map[popDescription],
         photo: map[popPhotoPath],
         url: map[popUrl],
