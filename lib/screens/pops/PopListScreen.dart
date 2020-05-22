@@ -17,24 +17,51 @@ class _PopListScreenState extends State<PopListScreen> {
   List<Pop> pops = [];
   Geolocator geolocator = Geolocator();
   Position userLocation;
+  int filterDistance = 10000;
 
   @override
   void initState() {
     super.initState();
 
     _getLocation().then((position) {
-      userLocation = position;
+      setState(() {
+        this.userLocation = position;
+      });
     });
 
     PopsRepository.getEvents().then((List<Pop> pops) {
       setState(() {
         this.pops = pops;
+        for (var pop in pops) {
+
+          if (userLocation != null) {
+          _getPlacemark(pop).then((List<Placemark> placemark) {
+            pop.placemark = placemark;
+          });
+
+          _getPlacemarkDistance(pop).then((double distance) {
+            debugPrint("Distance: $distance");
+            if (distance > this.filterDistance) {
+              pops.remove(pop);
+            }
+          });
+        }}
+
         this.pops.sort((a, b) {
           return a.time.compareTo(b.time);
         });
         print("allData length is: " + pops.length.toString());
       });
     });
+  }
+
+  Future<double> _getPlacemarkDistance(Pop pop) async {
+    return geolocator.distanceBetween(userLocation.latitude, userLocation.longitude,
+        pop.placemark[0].position.latitude, pop.placemark[0].position.longitude);
+  }
+
+  Future<List<Placemark>> _getPlacemark(Pop pop) async {
+    return Geolocator().placemarkFromAddress(pop.address, localeIdentifier: "en");
   }
 
   Future<Position> _getLocation() async {

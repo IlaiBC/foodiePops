@@ -1,3 +1,4 @@
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:meta/meta.dart';
 
@@ -10,8 +11,8 @@ class Pop {
   static final String popPhotoPath = "photo";
   static final String innerPhotoPath = "innerPhoto";
   static final String popUrl = "url";
-  static final String popLat = "lat";
-  static final String popLng = "lng";
+  static final String popAddress = "address";
+  List<Placemark> placemark;
 
   Pop({
     @required this.name,
@@ -21,7 +22,8 @@ class Pop {
     this.subtitle,
     this.photo,
     this.url,
-    this.latLng,
+    this.address,
+    this.placemark
   });
 
   final String name;
@@ -31,7 +33,7 @@ class Pop {
   final String photo;
   final String innerPhoto;
   final String url;
-  final LatLng latLng;
+  final String address;
 
   Map toMap() {
     Map<String, dynamic> map = {
@@ -39,8 +41,7 @@ class Pop {
       popTime: time,
       popDescription: description,
       popPhotoPath: photo,
-      popLat: latLng.latitude,
-      popLng: latLng.longitude,
+      popAddress: address,
       popSubtitle: subtitle,
       innerPhotoPath: innerPhoto,
       popUrl: url
@@ -58,6 +59,6 @@ class Pop {
         url: map[popUrl],
         subtitle: map[popSubtitle],
         innerPhoto: map[innerPhotoPath],
-        latLng: new LatLng(map[popLat], map[popLng]));
+        address: map[popAddress]);
   }
 }
