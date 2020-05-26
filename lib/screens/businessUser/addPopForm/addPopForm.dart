@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:foodiepops/constants/Texts.dart';
+import 'package:foodiepops/constants/api_key.dart';
 import 'package:foodiepops/exceptions/platformExceptionAlertDialog.dart';
 import 'package:foodiepops/models/pop.dart';
 import 'package:foodiepops/screens/businessUser/addPopForm/addPopModel.dart';
@@ -10,6 +11,7 @@ import 'package:foodiepops/widgets/dateTimePicker.dart';
 import 'package:foodiepops/widgets/formSubmitButton.dart';
 import 'package:foodiepops/widgets/platformAlertDialog.dart';
 import 'package:provider/provider.dart';
+import 'package:search_map_place/search_map_place.dart';
 
 class AddPopFormBuilder extends StatelessWidget {
   const AddPopFormBuilder({Key key}) : super(key: key);
@@ -165,6 +167,10 @@ class _AddPopFormState extends State<AddPopForm> {
           _buildPopDescriptionField(),
           SizedBox(height: 8.0),
           _buildPopExpirationDatePicker(),
+          SizedBox(height: 16.0),
+          SearchMapPlaceWidget(
+        apiKey: API_KEY
+      ),
           SizedBox(height: 16.0),
           FormSubmitButton(
             key: Key('primary-button'),

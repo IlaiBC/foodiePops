@@ -32,6 +32,7 @@ dependencies:
   flutter_webview_plugin: "^0.3.11"
   animations: ^1.0.0+5
   flutter_statusbarcolor: ^0.2.3
+  search_map_place: ^0.3.0
 
 flutter_icons:
   image_path: "assets/foodiepopsicon.png"
