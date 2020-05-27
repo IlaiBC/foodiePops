@@ -9,6 +9,7 @@ import 'package:foodiepops/services/fireStoreDatabase.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
 import 'package:foodiepops/widgets/dateTimePicker.dart';
 import 'package:foodiepops/widgets/formSubmitButton.dart';
+import 'package:foodiepops/widgets/formWidgets.dart';
 import 'package:foodiepops/widgets/platformAlertDialog.dart';
 import 'package:provider/provider.dart';
 import 'package:search_map_place/search_map_place.dart';
@@ -110,7 +111,7 @@ class _AddPopFormState extends State<AddPopForm> {
 
   Widget _buildPopExpirationDatePicker() {
     return DateTimePicker(
-      labelText: 'Start',
+      labelText: 'Expiration',
       selectedDate: _popExpirationDate,
       selectedTime: _popExpirationTime,
       onSelectedDate: (date) => setState(() => _popExpirationDate = date),
@@ -119,7 +120,7 @@ class _AddPopFormState extends State<AddPopForm> {
   }
 
   Widget _buildPopNameField() {
-    return TextField(
+    return FormWidgets.formFieldContainer(TextField(
       key: Key('popName'),
       controller: _popNameController,
       decoration: InputDecoration(
@@ -127,17 +128,19 @@ class _AddPopFormState extends State<AddPopForm> {
         hintText: Texts.popNameHint,
         errorText: model.popNameErrorText,
         enabled: !model.isLoading,
+        contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+        border: InputBorder.none,
       ),
       autocorrect: false,
       textInputAction: TextInputAction.next,
       keyboardAppearance: Brightness.light,
       onChanged: model.updatePopName,
       onEditingComplete: () => _isFieldEditingComplete(model.canSubmitPopName),
-    );
+    ));
   }
 
     Widget _buildPopDescriptionField() {
-      return TextField(
+      return FormWidgets.formFieldContainer(TextField(
         key: Key('description'),
         controller: _popDescriptionController,
         decoration: InputDecoration(
@@ -145,6 +148,9 @@ class _AddPopFormState extends State<AddPopForm> {
           hintText: Texts.popDescriptionHint,
           errorText: model.popDescriptionErrorText,
           enabled: !model.isLoading,
+          contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+          border: InputBorder.none,
+
         ),
         autocorrect: false,
         textInputAction: TextInputAction.next,
@@ -152,7 +158,7 @@ class _AddPopFormState extends State<AddPopForm> {
         onChanged: model.updatePopDescription,
         onEditingComplete: () => _isFieldEditingComplete(model.canSubmitPopDescription),
         maxLines: Pop.MAX_DESCRIPTION_LINES,
-      );
+      ));
   }
 
   Widget _buildContent() {

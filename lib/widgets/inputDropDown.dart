@@ -22,6 +22,7 @@ class InputDropdown extends StatelessWidget {
       child: InputDecorator(
         decoration: InputDecoration(
           labelText: labelText,
+          border: InputBorder.none,
         ),
         baseStyle: valueStyle,
         child: Row(

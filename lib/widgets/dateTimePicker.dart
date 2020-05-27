@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:foodiepops/widgets/formWidgets.dart';
 
 import 'inputDropDown.dart';
 
@@ -43,7 +44,7 @@ class DateTimePicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final valueStyle = Theme.of(context).textTheme.headline6;
-    return Row(
+    return FormWidgets.formFieldContainer(Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
         Expanded(
@@ -65,7 +66,7 @@ class DateTimePicker extends StatelessWidget {
           ),
         ),
       ],
-    );
+    ));
   }
 
   String _getStringFormat(DateTime datetime) {
