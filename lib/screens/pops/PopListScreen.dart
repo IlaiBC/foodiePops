@@ -27,25 +27,26 @@ class _PopListScreenState extends State<PopListScreen> {
       setState(() {
         this.userLocation = position;
       });
-    });
 
-    PopsRepository.getEvents().then((List<Pop> pops) {
-      setState(() {
-        this.pops = pops;
-        for (var pop in pops) {
+      PopsRepository.getEvents().then((List<Pop> pops) {
+        setState(() {
+          this.pops = pops;
+          for (var pop in this.pops) {
+            if (userLocation != null) {
+              _getPlacemark(pop).then((List<Placemark> placemark) {
+                pop.placemark = placemark;
 
-          if (userLocation != null) {
-          _getPlacemark(pop).then((List<Placemark> placemark) {
-            pop.placemark = placemark;
-          });
-
-          _getPlacemarkDistance(pop).then((double distance) {
-            debugPrint("Distance: $distance");
-            if (distance > this.filterDistance) {
-              pops.remove(pop);
+                _getPlacemarkDistance(pop).then((double distance) {
+                  debugPrint("Distance: $distance");
+                  if (distance > this.filterDistance) {
+                    debugPrint("should filter");
+                    this.pops.remove(pop);
+                  }
+                });
+              });
             }
-          });
-        }}
+          }
+        });
 
         this.pops.sort((a, b) {
           return a.time.compareTo(b.time);
@@ -56,12 +57,16 @@ class _PopListScreenState extends State<PopListScreen> {
   }
 
   Future<double> _getPlacemarkDistance(Pop pop) async {
-    return geolocator.distanceBetween(userLocation.latitude, userLocation.longitude,
-        pop.placemark[0].position.latitude, pop.placemark[0].position.longitude);
+    return geolocator.distanceBetween(
+        userLocation.latitude,
+        userLocation.longitude,
+        pop.placemark[0].position.latitude,
+        pop.placemark[0].position.longitude);
   }
 
   Future<List<Placemark>> _getPlacemark(Pop pop) async {
-    return Geolocator().placemarkFromAddress(pop.address, localeIdentifier: "en");
+    return Geolocator()
+        .placemarkFromAddress(pop.address, localeIdentifier: "en");
   }
 
   Future<Position> _getLocation() async {

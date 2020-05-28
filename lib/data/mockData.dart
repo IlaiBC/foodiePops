@@ -89,13 +89,14 @@ List<Pop> mockPops = [
       name: names[9],
       description: Descriptions[1],
       photo: "assets/vitrina.jpeg",
-      time: 1589939556732),
+      time: 1589939556732,
+      address: "Shlomo Ibn Gabirol St 36"),
   new Pop(
       name: names[10],
       description: Descriptions[1],
       photo: "assets/KFC_LOGO.png",
       time: 1598939556732,
-      address: "Shlomo Ibn Gabirol St 36"),
+      address: "Tarshish St 19, Eilat"),
 ];
 
 // news list
