@@ -29,31 +29,36 @@ class _PopListScreenState extends State<PopListScreen> {
       });
 
       PopsRepository.getEvents().then((List<Pop> pops) {
-        setState(() {
-          this.pops = pops;
-          for (var pop in this.pops) {
-            if (userLocation != null) {
-              _getPlacemark(pop).then((List<Placemark> placemark) {
-                pop.placemark = placemark;
-
-                _getPlacemarkDistance(pop).then((double distance) {
-                  debugPrint("Distance: $distance");
-                  if (distance > this.filterDistance) {
-                    debugPrint("should filter");
-                    this.pops.remove(pop);
-                  }
-                });
-              });
-            }
-          }
+        _filterPopsLocation(pops).then((List<Pop> pops2) {
+          setState(() {
+            this.pops = pops2;
+            this.pops.sort((a, b) {
+              return a.time.compareTo(b.time);
+            });
+            print("allData length is: " + pops.length.toString());
+          });
         });
-
-        this.pops.sort((a, b) {
-          return a.time.compareTo(b.time);
-        });
-        print("allData length is: " + pops.length.toString());
       });
     });
+  }
+
+  Future<List<Pop>> _filterPopsLocation(List<Pop> pops) async {
+    for (var pop in pops) {
+      if (userLocation != null) {
+        _getPlacemark(pop).then((List<Placemark> placemark) {
+          pop.placemark = placemark;
+
+          _getPlacemarkDistance(pop).then((double distance) {
+            debugPrint("Distance: $distance");
+            if (distance > this.filterDistance) {
+              debugPrint("should filter");
+              pops.remove(pop);
+            }
+          });
+        });
+      }
+    }
+    return pops;
   }
 
   Future<double> _getPlacemarkDistance(Pop pop) async {
