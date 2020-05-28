@@ -21,6 +21,8 @@ class Texts {
   // Business pages
   static const String businessLogin = "Business Login";
   static const String popFormScreen = "New Pop Form";
+  static const String analyticsScreen = "Analytics";
+
 
   // Business Add Pop Form
   static const String cannotBeEmptyError = "Cannot be empty";

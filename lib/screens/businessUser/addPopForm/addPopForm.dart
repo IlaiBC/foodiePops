@@ -175,7 +175,8 @@ class _AddPopFormState extends State<AddPopForm> {
           _buildPopExpirationDatePicker(),
           SizedBox(height: 16.0),
           SearchMapPlaceWidget(
-        apiKey: API_KEY
+        apiKey: API_KEY,
+        onSelected: (place) => print(place.fullJSON),
       ),
           SizedBox(height: 16.0),
           FormSubmitButton(

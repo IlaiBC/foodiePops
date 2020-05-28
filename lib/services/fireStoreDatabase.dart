@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:foodiepops/models/UserData.dart';
 import 'package:foodiepops/models/pop.dart';
+import 'package:foodiepops/models/popClick.dart';
 
 import 'fireStorePath.dart';
 import 'firestoreService.dart';
@@ -40,5 +42,15 @@ class FirestoreDatabase {
     path: FirestorePath.pops() ,
     builder: (data, documentId) => Pop.fromMap(data),
     sort: (lhs, rhs) => lhs.expirationTime.millisecondsSinceEpoch.compareTo(rhs.expirationTime.millisecondsSinceEpoch),
+  );
+
+  Stream<List<String>> getBusinessPopList(String businessId) => _service.collectionStream(
+    path: FirestorePath.businessPops(businessId) ,
+    builder: (data, documentId) => documentId
+  );
+
+  Stream<List<PopClick>> getPopClickList(String businessId, String popId) => _service.collectionStream(
+    path: FirestorePath.popClicks(businessId, popId) ,
+    builder: (data, documentId) => PopClick.fromMap(data),
   );
 }

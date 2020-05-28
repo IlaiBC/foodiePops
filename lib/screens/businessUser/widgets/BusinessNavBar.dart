@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:foodiepops/models/UserData.dart';
+import 'package:foodiepops/screens/businessUser/AnalyticsScreen.dart';
 import 'package:foodiepops/screens/businessUser/PopFormScreen.dart';
-import 'package:foodiepops/screens/login/loginScreen.dart';
-import 'package:foodiepops/screens/pops/PopListScreen.dart';
 import 'package:foodiepops/screens/profile/profileScreen.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
 import 'package:foodiepops/widgets/bottomNav.dart';
@@ -14,9 +13,9 @@ class BusinessNavBar extends StatelessWidget  {
 
   Widget build(BuildContext context) {
       final navPages = <Widget>[
-        PopListScreen(),
+        BusinessAnalyticsScreen(businessId: userData.id,),
         PopFormScreen(),
-        userSnapshot.hasData ? ProfileScreen() : LoginScreen(),
+        ProfileScreen(),
       ];
 
       final navItems = <BottomNavigationBarItem>[
