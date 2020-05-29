@@ -13,11 +13,11 @@ class BusinessAnalyticsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
       final FirestoreDatabase database =
       Provider.of<FirestoreDatabase>(context, listen: false);
-    return Container(child: StreamBuilder<List<String>>(
+    return Container(child: StreamBuilder<List<Pop>>(
         stream: database.getBusinessPopList(businessId),
         builder: (context, snapshot) {
           if (snapshot.data != null) {
-            final List<String> pops = snapshot.data;
+            final List<Pop> pops = snapshot.data;
             print('pops result $pops');
             return Scaffold(
               appBar: AppBar(
@@ -43,15 +43,18 @@ class BusinessAnalyticsScreen extends StatelessWidget {
 
   }
 
-  Widget _showPopClickData(String popId, FirestoreDatabase database) {
+  Widget _showPopClickData(Pop pop, FirestoreDatabase database) {
       return Container(height: 20, child: Center(child: 
        StreamBuilder<List<PopClick>>(
-        stream: database.getPopClickList(businessId, 'test'),
+        stream: database.getPopClickList(businessId, pop.id),
         builder: (context, snapshot) {
           if (snapshot.data != null) {
             final List<PopClick> popClicks = snapshot.data;
-            return Text(popClicks.length.toString());
-
+            return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+              Text('Pop name: ${pop.name}'),
+              const SizedBox(width: 20),
+              Text('Pop clicks: ${popClicks.length}'),
+            ]);
           }
           return Scaffold(
             body: Center(

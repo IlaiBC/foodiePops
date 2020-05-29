@@ -26,9 +26,8 @@ class FirestoreDatabase {
   }
 
     Future<void> addPopClick(Pop pop) async {
-      pop.businessId = 'USkhgEtNimT9ILUOq6uQTw36N1z2';
       Map<String, dynamic> data = {
-        'date': documentIdFromCurrentDate(),
+        'date': DateTime.now(),
       };
     await _service.addData(collectionPath: FirestorePath.addPopClick(pop.businessId, pop.id), data: data);
   }
@@ -44,9 +43,9 @@ class FirestoreDatabase {
     sort: (lhs, rhs) => lhs.expirationTime.millisecondsSinceEpoch.compareTo(rhs.expirationTime.millisecondsSinceEpoch),
   );
 
-  Stream<List<String>> getBusinessPopList(String businessId) => _service.collectionStream(
+  Stream<List<Pop>> getBusinessPopList(String businessId) => _service.collectionStream(
     path: FirestorePath.businessPops(businessId) ,
-    builder: (data, documentId) => documentId
+    builder: (data, documentId) => Pop.fromMap(data),
   );
 
   Stream<List<PopClick>> getPopClickList(String businessId, String popId) => _service.collectionStream(
