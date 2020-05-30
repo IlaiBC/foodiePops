@@ -6,6 +6,7 @@ import 'package:foodiepops/util/imageUtil.dart';
 import 'package:flutter_countdown_timer/countdown_timer.dart';
 import 'package:animations/animations.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:map_launcher/map_launcher.dart';
 
 class PopListScreen extends StatefulWidget {
   @override
@@ -43,10 +44,9 @@ class _PopListScreenState extends State<PopListScreen> {
   }
 
   Future<List<Pop>> _filterPopsLocation(List<Pop> pops) async {
-
     List<int> toFilter = [];
 
-     for (var i = 0; i < pops.length ; i++) {
+    for (var i = 0; i < pops.length; i++) {
       if (userLocation != null) {
         List<Placemark> placemark = await _getPlacemark(pops[i]);
         pops[i].placemark = placemark;
@@ -60,10 +60,10 @@ class _PopListScreenState extends State<PopListScreen> {
       }
     }
 
-     for (var index in toFilter) {
-       debugPrint("removed $index");
-       pops.removeAt(index);
-     }
+    for (var index in toFilter) {
+      debugPrint("removed $index");
+      pops.removeAt(index);
+    }
 
     debugPrint("finished filter");
     return pops;
@@ -86,7 +86,7 @@ class _PopListScreenState extends State<PopListScreen> {
     var currentLocation;
     try {
       GeolocationStatus geolocationStatus =
-      await geolocator.checkGeolocationPermissionStatus();
+          await geolocator.checkGeolocationPermissionStatus();
       debugPrint(geolocationStatus.toString());
       if (geolocationStatus == GeolocationStatus.denied ||
           geolocationStatus == GeolocationStatus.disabled) {
@@ -109,26 +109,26 @@ class _PopListScreenState extends State<PopListScreen> {
           child: pops.length == 0
               ? new Center(child: new CircularProgressIndicator())
               : ListView(
-            padding: const EdgeInsets.all(8.0),
-            children: <Widget>[
-              ...List<Widget>.generate(pops.length, (int index) {
-                return OpenContainer(
-                  transitionType: _transitionType,
-                  openBuilder:
-                      (BuildContext _, VoidCallback openContainer) {
-                    return _DetailsPage(pop: pops[index]);
-                  },
-                  tappable: false,
-                  closedShape: const RoundedRectangleBorder(),
-                  closedElevation: 0.0,
-                  closedBuilder:
-                      (BuildContext _, VoidCallback openContainer) {
-                    return _buildRow(pops[index], openContainer);
-                  },
-                );
-              }),
-            ],
-          ),
+                  padding: const EdgeInsets.all(8.0),
+                  children: <Widget>[
+                    ...List<Widget>.generate(pops.length, (int index) {
+                      return OpenContainer(
+                        transitionType: _transitionType,
+                        openBuilder:
+                            (BuildContext _, VoidCallback openContainer) {
+                          return _DetailsPage(pop: pops[index]);
+                        },
+                        tappable: false,
+                        closedShape: const RoundedRectangleBorder(),
+                        closedElevation: 0.0,
+                        closedBuilder:
+                            (BuildContext _, VoidCallback openContainer) {
+                          return _buildRow(pops[index], openContainer);
+                        },
+                      );
+                    }),
+                  ],
+                ),
         ));
   }
 }
@@ -154,15 +154,15 @@ Widget _buildRow(Pop pop, VoidCallback openContainer) {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
 //                  new SizedBox(height: 4.0),
-                        new Text(
-                          pop.name,
+                    new Text(
+                      pop.name,
 //                    textAlign: TextAlign.center,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              fontSize: 18.0, fontWeight: FontWeight.bold),
-                        )
-                      ])),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontSize: 18.0, fontWeight: FontWeight.bold),
+                    )
+                  ])),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: new Column(
@@ -188,21 +188,21 @@ Widget _buildRow(Pop pop, VoidCallback openContainer) {
                           minSymbol: ":",
                           secSymbol: "",
                           daysTextStyle:
-                          TextStyle(fontSize: 15, color: Color(0xffe51923)),
+                              TextStyle(fontSize: 15, color: Color(0xffe51923)),
                           hoursTextStyle:
-                          TextStyle(fontSize: 15, color: Color(0xffe51923)),
+                              TextStyle(fontSize: 15, color: Color(0xffe51923)),
                           minTextStyle:
-                          TextStyle(fontSize: 15, color: Color(0xffe51923)),
+                              TextStyle(fontSize: 15, color: Color(0xffe51923)),
                           secTextStyle:
-                          TextStyle(fontSize: 15, color: Color(0xffe51923)),
+                              TextStyle(fontSize: 15, color: Color(0xffe51923)),
                           daysSymbolTextStyle:
-                          TextStyle(fontSize: 15, color: Colors.black),
+                              TextStyle(fontSize: 15, color: Colors.black),
                           hoursSymbolTextStyle:
-                          TextStyle(fontSize: 15, color: Colors.black),
+                              TextStyle(fontSize: 15, color: Colors.black),
                           minSymbolTextStyle:
-                          TextStyle(fontSize: 15, color: Colors.black),
+                              TextStyle(fontSize: 15, color: Colors.black),
                           secSymbolTextStyle:
-                          TextStyle(fontSize: 15, color: Colors.black),
+                              TextStyle(fontSize: 15, color: Colors.black),
                         ),
                       ),
                     ]),
@@ -214,6 +214,48 @@ Widget _buildRow(Pop pop, VoidCallback openContainer) {
 
 class _DetailsPage extends StatelessWidget {
   final Pop pop;
+
+  openMapsSheet(context, Pop pop) async {
+    try {
+      final title = pop.name;
+      final description = pop.subtitle;
+      final coords = Coords(pop.placemark[0].position.latitude,
+          pop.placemark[0].position.longitude);
+      final availableMaps = await MapLauncher.installedMaps;
+
+      showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return SafeArea(
+            child: SingleChildScrollView(
+              child: Container(
+                child: Wrap(
+                  children: <Widget>[
+                    for (var map in availableMaps)
+                      ListTile(
+                        onTap: () => map.showMarker(
+                          coords: coords,
+                          title: title,
+                          description: description,
+                        ),
+                        title: Text(map.mapName),
+                        leading: Image(
+                          image: map.icon,
+                          height: 30.0,
+                          width: 30.0,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      print(e);
+    }
+  }
 
   _DetailsPage({Key key, this.pop}) : super(key: key);
 
@@ -234,13 +276,13 @@ class _DetailsPage extends StatelessWidget {
               children: <Widget>[
                 Center(
                     child: Text(
-                      pop.name,
-                      style: TextStyle(
-                          fontSize: 30.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
-                      textAlign: TextAlign.center,
-                    )),
+                  pop.name,
+                  style: TextStyle(
+                      fontSize: 30.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black),
+                  textAlign: TextAlign.center,
+                )),
                 const SizedBox(height: 10),
                 Text(
                   pop.description,
@@ -248,18 +290,18 @@ class _DetailsPage extends StatelessWidget {
                 ),
                 Container(
                     child: ButtonBar(children: <Widget>[
-                      FlatButton.icon(
-                        icon: Icon(Icons.location_on, color: Color(0xffe51923)),
-                        label: Text(""),
-                        onPressed: () {},
-                      ),
-                      FlatButton.icon(
-                        textColor: Colors.blue,
-                        icon: Icon(Icons.open_in_new, color: Colors.blue),
-                        label: Text('Visit Pops website'),
-                        onPressed: () {},
-                      )
-                    ])),
+                  FlatButton.icon(
+                    icon: Icon(Icons.location_on, color: Color(0xffe51923)),
+                    label: Text(""),
+                    onPressed: () => openMapsSheet(context, pop),
+                  ),
+                  FlatButton.icon(
+                    textColor: Colors.blue,
+                    icon: Icon(Icons.open_in_new, color: Colors.blue),
+                    label: Text('Visit Pops website'),
+                    onPressed: () {},
+                  )
+                ])),
                 Container(
                     margin: EdgeInsets.all(50.0),
                     padding: const EdgeInsets.all(10.0),
@@ -289,13 +331,13 @@ class _DetailsPage extends StatelessWidget {
                             secTextStyle: TextStyle(
                                 fontSize: 30, color: Color(0xffe51923)),
                             daysSymbolTextStyle:
-                            TextStyle(fontSize: 30, color: Colors.black),
+                                TextStyle(fontSize: 30, color: Colors.black),
                             hoursSymbolTextStyle:
-                            TextStyle(fontSize: 30, color: Colors.black),
+                                TextStyle(fontSize: 30, color: Colors.black),
                             minSymbolTextStyle:
-                            TextStyle(fontSize: 30, color: Colors.black),
+                                TextStyle(fontSize: 30, color: Colors.black),
                             secSymbolTextStyle:
-                            TextStyle(fontSize: 30, color: Colors.black),
+                                TextStyle(fontSize: 30, color: Colors.black),
                           )
                         ]))
               ],
