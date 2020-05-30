@@ -1,6 +1,7 @@
 class Texts {
   // Errors
   static const String unknownError = 'An Unknown error occurred';
+  static const String popImageUploadError = 'Failed to upload pop image, try again';
 
   // Logout
   static const String logout = 'Logout';
@@ -34,6 +35,13 @@ class Texts {
   static const String submit = 'Submit';
   static const String popSubmitSuccessTitle = 'Offer Submitted successfuly!';
   static const String popSubmitSuccessMessage = 'Just wait and watch the magic happen';
+  static const String uploadPopPhoto = 'Upload pop photo';
+  static const String uploadPopInnerPhoto = 'Upload pop inner photo';
+  static const String emptyPath = '';
+  static const String uploadedSuccessfully = 'Uploaded successfully';
+
+
+
 
   // Email & Password page
   static const String register = 'Register';

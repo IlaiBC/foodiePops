@@ -1,21 +1,29 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:foodiepops/constants/Texts.dart';
 import 'package:foodiepops/models/pop.dart';
 import 'package:foodiepops/screens/businessUser/addPopForm/validators/addPopValidator.dart';
 import 'package:foodiepops/services/fireStoreDatabase.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
+import 'package:foodiepops/services/firebaseStorageService.dart';
+import 'package:foodiepops/services/imagePickerService.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class AddPopModel with AddPopValidator, ChangeNotifier {
+
   AddPopModel({
     @required this.database,
     @required this.businessUser,
     this.popName = '',
     this.popDescription = '',
     this.popExpirationTime,
-    this.popPhotoPath = '',
-    this.popInnerPhotoPath = '',
+    this.popPhotoPath = Texts.emptyPath,
+    this.popInnerPhotoPath = Texts.emptyPath,
     this.popUrl = '',
     this.popLocation,
     this.isLoading = false,
@@ -36,18 +44,23 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
 
   void updatePopName(String popName) => updateWith(popName: popName);
 
-  void updatePopDescription(String popDescription) => updateWith(popDescription: popDescription);
+  void updatePopDescription(String popDescription) =>
+      updateWith(popDescription: popDescription);
 
-  void updatePopExpirationTime(DateTime popExpirationTime) => updateWith(popExpirationTime: popExpirationTime);
+  void updatePopExpirationTime(DateTime popExpirationTime) =>
+      updateWith(popExpirationTime: popExpirationTime);
 
-  void updatePopPhotoPath(String popPhotoPath) => updateWith(popPhotoPath: popPhotoPath);
+  void updatePopPhotoPath(String popPhotoPath) =>
+      updateWith(popPhotoPath: popPhotoPath);
 
-  void updatePopInnerPhotoPath(String popInnerPhotoPath) => updateWith(popInnerPhotoPath: popInnerPhotoPath);
+  void updatePopInnerPhotoPath(String popInnerPhotoPath) =>
+      updateWith(popInnerPhotoPath: popInnerPhotoPath);
 
   void updatePopUrl(String popUrl) => updateWith(popUrl: popUrl);
 
-  void updatePopLocation(LatLng popLocation) => updateWith(popLocation: popLocation);
- 
+  void updatePopLocation(LatLng popLocation) =>
+      updateWith(popLocation: popLocation);
+
   void updateWith({
     String popName,
     String popDescription,
@@ -76,13 +89,40 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
       popName: '',
       popDescription: '',
       popExpirationTime: null,
-      popPhotoPath: '',
-      popInnerPhotoPath: '',
+      popPhotoPath: Texts.emptyPath,
+      popInnerPhotoPath: Texts.emptyPath,
       popUrl: '',
       popLocation: null,
       isLoading: false,
       submitted: false,
     );
+  }
+
+  Future<void> choosePopPhoto(BuildContext context) async {
+    String popPhotoPath = await _uploadPhotoAndGetPhotoUrl(context);
+    updatePopPhotoPath(popPhotoPath);
+
+  }
+
+  Future<void> choosePopInnerPhoto(BuildContext context) async {
+    String popPhotoPath = await _uploadPhotoAndGetPhotoUrl(context);
+    updatePopInnerPhotoPath(popPhotoPath);
+  }
+
+  Future<String> _uploadPhotoAndGetPhotoUrl(BuildContext context) async {
+    final imagePicker = Provider.of<ImagePickerService>(context, listen: false);
+    final File file = await imagePicker.pickImage(source: ImageSource.gallery);
+    if (file != null) {
+      final storage =
+          Provider.of<FirebaseStorageService>(context, listen: false);
+      final String popPhotoPath = await storage.uploadPopImage(file: file);
+
+      await file.delete();
+
+      return popPhotoPath;
+    }
+
+    return null;
   }
 
   Future<bool> submit() async {
@@ -102,10 +142,17 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     }
   }
 
-  Pop _createPopFromFormData () {
-    return Pop(name: popName, description:  popDescription, expirationTime: popExpirationTime,
-    photo: popPhotoPath, innerPhoto: popInnerPhotoPath, url: popUrl, location: popLocation, businessId: businessUser.uid);
-  } 
+  Pop _createPopFromFormData() {
+    return Pop(
+        name: popName,
+        description: popDescription,
+        expirationTime: popExpirationTime,
+        photo: popPhotoPath,
+        innerPhoto: popInnerPhotoPath,
+        url: popUrl,
+        location: popLocation,
+        businessId: businessUser.uid);
+  }
 
   // Getters
   bool get canSubmitPopName {
@@ -121,7 +168,9 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
   }
 
   bool get canSubmit {
-    final bool canSubmitFields = canSubmitPopName && canSubmitPopDescription && canSubmitPopExpirationTime;
+    final bool canSubmitFields = canSubmitPopName &&
+        canSubmitPopDescription &&
+        canSubmitPopExpirationTime;
     return canSubmitFields && !isLoading;
   }
 

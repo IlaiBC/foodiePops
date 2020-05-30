@@ -3,6 +3,7 @@ import 'package:foodiepops/authentication/authWidget.dart';
 import 'package:foodiepops/screens/main/mainScreen.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
 import 'package:foodiepops/services/fireStoreDatabase.dart';
+import 'package:foodiepops/services/imagePickerService.dart';
 import 'package:provider/provider.dart';
 import 'authentication/authWidgetBuilder.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
@@ -31,6 +32,9 @@ class MyApp extends StatelessWidget {
         Provider<FirestoreDatabase>(
           create: databaseBuilder,
         ),
+        Provider<ImagePickerService>(
+          create: (_) => ImagePickerService(),
+        )
       ],
       child: AuthWidgetBuilder(
         builder: (BuildContext context, AsyncSnapshot<User> userSnapshot) {

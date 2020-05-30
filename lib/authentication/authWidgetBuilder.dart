@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
+import 'package:foodiepops/services/firebaseStorageService.dart';
 import 'package:provider/provider.dart';
 
 class AuthWidgetBuilder extends StatelessWidget {
@@ -20,6 +21,9 @@ class AuthWidgetBuilder extends StatelessWidget {
           return MultiProvider(
             providers: [
               Provider<User>.value(value: user),
+              Provider<FirebaseStorageService>(
+                create: (_) => FirebaseStorageService(uid: user.uid),
+              ),
             ],
             child: builder(context, snapshot),
           );

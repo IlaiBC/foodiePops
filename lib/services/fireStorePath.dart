@@ -5,5 +5,5 @@ class FirestorePath {
   static String businessPops(String businessUserId) => 'businesses/$businessUserId/pops';
   static String pops() => 'pops';
   static String addPopClick(String businessUserId, String popId) => 'businesses/$businessUserId/pops/$popId/clicks';
-
+  static String businessPopImages(String businessUserId, String imageName) => 'businesses/$businessUserId/$imageName';
 }

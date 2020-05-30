@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:foodiepops/constants/Texts.dart';
 import 'package:foodiepops/constants/api_key.dart';
+import 'package:foodiepops/constants/keys.dart';
 import 'package:foodiepops/exceptions/platformExceptionAlertDialog.dart';
 import 'package:foodiepops/models/pop.dart';
 import 'package:foodiepops/screens/businessUser/addPopForm/addPopModel.dart';
 import 'package:foodiepops/services/fireStoreDatabase.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
+import 'package:foodiepops/widgets/FormUploadButton.dart';
 import 'package:foodiepops/widgets/dateTimePicker.dart';
 import 'package:foodiepops/widgets/formSubmitButton.dart';
 import 'package:foodiepops/widgets/formWidgets.dart';
@@ -20,14 +22,14 @@ class AddPopFormBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final FirestoreDatabase database =
-    Provider.of<FirestoreDatabase>(context, listen: false);
-    final businessUser = Provider.of<User>(context, listen: false); 
+        Provider.of<FirestoreDatabase>(context, listen: false);
+    final businessUser = Provider.of<User>(context, listen: false);
 
     return ChangeNotifierProvider<AddPopModel>(
-      create: (_) => AddPopModel(database: database, businessUser: businessUser),
+      create: (_) =>
+          AddPopModel(database: database, businessUser: businessUser),
       child: Consumer<AddPopModel>(
-        builder: (_, AddPopModel model, __) =>
-            AddPopForm(model: model),
+        builder: (_, AddPopModel model, __) => AddPopForm(model: model),
       ),
     );
   }
@@ -45,17 +47,21 @@ class _AddPopFormState extends State<AddPopForm> {
   final FocusScopeNode _node = FocusScopeNode();
 
   final TextEditingController _popNameController = TextEditingController();
-  final TextEditingController _popDescriptionController = TextEditingController();
+  final TextEditingController _popDescriptionController =
+      TextEditingController();
 
   DateTime _popExpirationDate;
   TimeOfDay _popExpirationTime;
-
+  bool _isUploadingPopPhoto;
+  bool _isUploadingPopInnerPhoto;
 
   @override
   void initState() {
     super.initState();
     _popExpirationDate = DateTime.now();
     _popExpirationTime = TimeOfDay.now();
+    _isUploadingPopPhoto = false;
+    _isUploadingPopInnerPhoto = false;
   }
 
   AddPopModel get model => widget.model;
@@ -70,7 +76,7 @@ class _AddPopFormState extends State<AddPopForm> {
 
   @override
   Widget build(BuildContext context) {
-    return _buildContent();
+    return _buildContent(context);
   }
 
   Future<void> _submit() async {
@@ -79,22 +85,60 @@ class _AddPopFormState extends State<AddPopForm> {
     try {
       final bool success = await model.submit();
       if (success) {
-          await PlatformAlertDialog(
-            title: Texts.popSubmitSuccessTitle,
-            content: Texts.popSubmitSuccessMessage,
-            defaultActionText: Texts.ok,
-          ).show(context);
+        await PlatformAlertDialog(
+          title: Texts.popSubmitSuccessTitle,
+          content: Texts.popSubmitSuccessMessage,
+          defaultActionText: Texts.ok,
+        ).show(context);
 
-          _clearForm();
+        _clearForm();
       }
     } on PlatformException catch (e) {
       _showSubmitError(model, e);
     }
   }
 
-  DateTime _getPopExpirationTimeFromState () {
-    return DateTime(_popExpirationDate.year, _popExpirationDate.month,
-     _popExpirationDate.day, _popExpirationTime.hour, _popExpirationTime.minute); 
+  Future<void> _uploadPopPhoto(BuildContext context) async {
+    try {
+      setState(() {
+        _isUploadingPopPhoto = true;
+      });
+      await model.choosePopPhoto(context);
+      setState(() {
+        _isUploadingPopPhoto = false;
+      });
+    } on PlatformException catch (e) {
+      setState(() {
+        _isUploadingPopPhoto = false;
+      });
+      _showPopPhotoUploadError(model, e);
+    }
+  }
+
+  Future<void> _uploadPopInnerPhoto(BuildContext context) async {
+    try {
+      setState(() {
+        _isUploadingPopInnerPhoto = true;
+      });
+      await model.choosePopInnerPhoto(context);
+      setState(() {
+        _isUploadingPopInnerPhoto = false;
+      });
+    } on PlatformException catch (e) {
+      setState(() {
+        _isUploadingPopInnerPhoto = false;
+      });
+      _showPopPhotoUploadError(model, e);
+    }
+  }
+
+  DateTime _getPopExpirationTimeFromState() {
+    return DateTime(
+        _popExpirationDate.year,
+        _popExpirationDate.month,
+        _popExpirationDate.day,
+        _popExpirationTime.hour,
+        _popExpirationTime.minute);
   }
 
   void _clearForm() {
@@ -104,7 +148,7 @@ class _AddPopFormState extends State<AddPopForm> {
   }
 
   void _isFieldEditingComplete(bool canSubmitField) {
-    if(canSubmitField) {
+    if (canSubmitField) {
       _node.nextFocus();
     }
   }
@@ -139,29 +183,29 @@ class _AddPopFormState extends State<AddPopForm> {
     ));
   }
 
-    Widget _buildPopDescriptionField() {
-      return FormWidgets.formFieldContainer(TextField(
-        key: Key('description'),
-        controller: _popDescriptionController,
-        decoration: InputDecoration(
-          labelText: Texts.popDescriptionLabel,
-          hintText: Texts.popDescriptionHint,
-          errorText: model.popDescriptionErrorText,
-          enabled: !model.isLoading,
-          contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-          border: InputBorder.none,
-
-        ),
-        autocorrect: false,
-        textInputAction: TextInputAction.next,
-        keyboardAppearance: Brightness.light,
-        onChanged: model.updatePopDescription,
-        onEditingComplete: () => _isFieldEditingComplete(model.canSubmitPopDescription),
-        maxLines: Pop.MAX_DESCRIPTION_LINES,
-      ));
+  Widget _buildPopDescriptionField() {
+    return FormWidgets.formFieldContainer(TextField(
+      key: Key('description'),
+      controller: _popDescriptionController,
+      decoration: InputDecoration(
+        labelText: Texts.popDescriptionLabel,
+        hintText: Texts.popDescriptionHint,
+        errorText: model.popDescriptionErrorText,
+        enabled: !model.isLoading,
+        contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+        border: InputBorder.none,
+      ),
+      autocorrect: false,
+      textInputAction: TextInputAction.next,
+      keyboardAppearance: Brightness.light,
+      onChanged: model.updatePopDescription,
+      onEditingComplete: () =>
+          _isFieldEditingComplete(model.canSubmitPopDescription),
+      maxLines: Pop.MAX_DESCRIPTION_LINES,
+    ));
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(BuildContext context) {
     return FocusScope(
       node: _node,
       child: Column(
@@ -175,12 +219,38 @@ class _AddPopFormState extends State<AddPopForm> {
           _buildPopExpirationDatePicker(),
           SizedBox(height: 16.0),
           SearchMapPlaceWidget(
-        apiKey: API_KEY,
-        onSelected: (place) => print(place.fullJSON),
-      ),
+            apiKey: API_KEY,
+            onSelected: (place) => print(place.fullJSON),
+          ),
+          SizedBox(height: 16.0),
+          FormUploadButton(
+            key: Key(Keys.uploadPopPhoto),
+            text: model.popPhotoPath == Texts.emptyPath
+                ? Texts.uploadPopPhoto
+                : Texts.uploadedSuccessfully,
+            onPressed: _isUploadingPopPhoto
+                ? null
+                : () {
+                    _uploadPopPhoto(context);
+                  },
+            loading: _isUploadingPopPhoto,
+          ),
+          SizedBox(height: 16.0),
+          FormUploadButton(
+            key: Key(Keys.uploadPopInnerPhoto),
+            text: model.popInnerPhotoPath == Texts.emptyPath
+                ? Texts.uploadPopInnerPhoto
+                : Texts.uploadedSuccessfully,
+            onPressed: _isUploadingPopInnerPhoto
+                ? null
+                : () {
+                    _uploadPopInnerPhoto(context);
+                  },
+            loading: _isUploadingPopInnerPhoto,
+          ),
           SizedBox(height: 16.0),
           FormSubmitButton(
-            key: Key('primary-button'),
+            key: Key(Keys.businessFormSubmit),
             text: Texts.submit,
             loading: model.isLoading,
             onPressed: model.isLoading ? null : _submit,
@@ -190,10 +260,17 @@ class _AddPopFormState extends State<AddPopForm> {
     );
   }
 
-  void _showSubmitError(
-      AddPopModel model, PlatformException exception) {
+  void _showSubmitError(AddPopModel model, PlatformException exception) {
     PlatformExceptionAlertDialog(
       title: Texts.unknownError,
+      exception: exception,
+    ).show(context);
+  }
+
+  void _showPopPhotoUploadError(
+      AddPopModel model, PlatformException exception) {
+    PlatformExceptionAlertDialog(
+      title: Texts.popImageUploadError,
       exception: exception,
     ).show(context);
   }
