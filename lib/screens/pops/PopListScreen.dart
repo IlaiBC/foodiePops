@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_xlider/flutter_xlider.dart';
 import 'package:foodiepops/data/popsRepository.dart';
 import 'package:foodiepops/models/pop.dart';
 import 'package:foodiepops/util/imageUtil.dart';
@@ -18,6 +19,7 @@ class _PopListScreenState extends State<PopListScreen> {
   List<Pop> pops = [];
   Geolocator geolocator = Geolocator();
   Position userLocation;
+  bool _showFilter = false;
   int filterDistance = 10000;
 
   @override
@@ -104,33 +106,73 @@ class _PopListScreenState extends State<PopListScreen> {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Foodie Pops you will love'),
+          automaticallyImplyLeading: false,
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.filter_list),
+              onPressed: () => {
+                setState(() {
+                  this._showFilter = !this._showFilter;
+                })
+              },
+            )
+          ],
         ),
         body: new Container(
           child: pops.length == 0
               ? new Center(child: new CircularProgressIndicator())
-              : ListView(
-                  padding: const EdgeInsets.all(8.0),
-                  children: <Widget>[
-                    ...List<Widget>.generate(pops.length, (int index) {
-                      return OpenContainer(
-                        transitionType: _transitionType,
-                        openBuilder:
-                            (BuildContext _, VoidCallback openContainer) {
-                          return _DetailsPage(pop: pops[index]);
-                        },
-                        tappable: false,
-                        closedShape: const RoundedRectangleBorder(),
-                        closedElevation: 0.0,
-                        closedBuilder:
-                            (BuildContext _, VoidCallback openContainer) {
-                          return _buildRow(pops[index], openContainer);
-                        },
-                      );
-                    }),
-                  ],
-                ),
+              : new Column(
+              children: <Widget>[
+                this._showFilter ? Text("filter") : new Container(width: 0, height: 0),
+                  new Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.all(8.0),
+                    children: <Widget>[
+                      ...List<Widget>.generate(pops.length, (int index) {
+                        return OpenContainer(
+                          transitionType: _transitionType,
+                          openBuilder:
+                              (BuildContext _, VoidCallback openContainer) {
+                            return _DetailsPage(pop: pops[index]);
+                          },
+                          tappable: false,
+                          closedShape: const RoundedRectangleBorder(),
+                          closedElevation: 0.0,
+                          closedBuilder:
+                              (BuildContext _, VoidCallback openContainer) {
+                            return _buildRow(pops[index], openContainer);
+                          },
+                        );
+                      }),
+                    ],
+                  ))
+                ]),
         ));
   }
+}
+
+Widget _buildFilter(int filterDistance) {
+  return Container(
+    margin: EdgeInsets.only(top: 50, left: 50, right: 50),
+    alignment: Alignment.centerLeft,
+    child: FlutterSlider(
+      values: [10],
+      max: 200,
+      min: 5,
+      maximumDistance: 300,
+      rangeSlider: false,
+      handlerAnimation: FlutterSliderHandlerAnimation(
+          curve: Curves.elasticOut,
+          reverseCurve: null,
+          duration: Duration(milliseconds: 700),
+          scale: 1.4),
+      onDragging: (handlerIndex, lowerValue, upperValue) {
+        _lowerValue = lowerValue;
+        _upperValue = upperValue;
+        setState(() {});
+      },
+    ),
+  ),
 }
 
 Widget _buildRow(Pop pop, VoidCallback openContainer) {

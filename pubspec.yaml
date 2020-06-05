@@ -34,6 +34,7 @@ dependencies:
   flutter_statusbarcolor: ^0.2.3
   geolocator: ^5.1.3
   map_launcher: ^0.4.5
+  flutter_xlider: ^3.4.0
 
 flutter_icons:
   image_path: "assets/foodiepopsicon.png"
