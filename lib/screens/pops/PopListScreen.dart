@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
@@ -20,7 +21,7 @@ class _PopListScreenState extends State<PopListScreen> {
   Geolocator geolocator = Geolocator();
   Position userLocation;
   bool _showFilter = false;
-  int filterDistance = 10000;
+  double _filterDistance = 10000;
 
   @override
   void initState() {
@@ -55,7 +56,7 @@ class _PopListScreenState extends State<PopListScreen> {
 
         double distance = await _getPlacemarkDistance(pops[i]);
         debugPrint("Distance: $distance");
-        if (distance > this.filterDistance) {
+        if (distance > this._filterDistance) {
           debugPrint("should filter");
           toFilter.add(i);
         }
@@ -101,6 +102,32 @@ class _PopListScreenState extends State<PopListScreen> {
     return currentLocation;
   }
 
+  Widget _buildFilter() {
+    return Container(
+      margin: EdgeInsets.only(top: 50, left: 50, right: 50),
+      alignment: Alignment.centerLeft,
+      child: Column(
+          children: <Widget> [
+            Text("Set the maximum distance of pops from you",
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                  fontSize: 18.0, fontWeight: FontWeight.bold),),
+            Slider(
+        value: _filterDistance/1000,
+        max: 100,
+        min: 5.0,
+        divisions: 19,
+        label: '${_filterDistance.round()/1000}KM',
+        onChanged: (double value) {
+          _filterDistance = value * 1000;
+          setState(() {});
+        },
+      )]),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -123,7 +150,7 @@ class _PopListScreenState extends State<PopListScreen> {
               ? new Center(child: new CircularProgressIndicator())
               : new Column(
               children: <Widget>[
-                this._showFilter ? Text("filter") : new Container(width: 0, height: 0),
+                this._showFilter ? _buildFilter() : new Container(width: 0, height: 0),
                   new Expanded(
                   child: ListView(
                     padding: const EdgeInsets.all(8.0),
@@ -151,29 +178,7 @@ class _PopListScreenState extends State<PopListScreen> {
   }
 }
 
-Widget _buildFilter(int filterDistance) {
-  return Container(
-    margin: EdgeInsets.only(top: 50, left: 50, right: 50),
-    alignment: Alignment.centerLeft,
-    child: FlutterSlider(
-      values: [10],
-      max: 200,
-      min: 5,
-      maximumDistance: 300,
-      rangeSlider: false,
-      handlerAnimation: FlutterSliderHandlerAnimation(
-          curve: Curves.elasticOut,
-          reverseCurve: null,
-          duration: Duration(milliseconds: 700),
-          scale: 1.4),
-      onDragging: (handlerIndex, lowerValue, upperValue) {
-        _lowerValue = lowerValue;
-        _upperValue = upperValue;
-        setState(() {});
-      },
-    ),
-  ),
-}
+
 
 Widget _buildRow(Pop pop, VoidCallback openContainer) {
   return new Card(
@@ -195,7 +200,6 @@ Widget _buildRow(Pop pop, VoidCallback openContainer) {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-//                  new SizedBox(height: 4.0),
                     new Text(
                       pop.name,
 //                    textAlign: TextAlign.center,
