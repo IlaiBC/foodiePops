@@ -30,6 +30,10 @@ class Texts {
   static const String expirationTimeError = "Invalid expiration time";
   static const String popNameLabel = 'Pop Name';
   static const String popNameHint = 'Vitrina Special';
+  static const String popSubTitleLabel = 'Pop subtitle';
+  static const String popSubTitleHint = 'some call catch-phrase';
+  static const String popUrlLabel = 'Link to offer';
+  static const String popUrlHint = 'http://www.best-offer-ever.com';
   static const String popDescriptionLabel = 'Pop Description';
   static const String popDescriptionHint = 'Is there anything better than a good burger?';
   static const String submit = 'Submit';

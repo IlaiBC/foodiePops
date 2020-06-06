@@ -47,8 +47,9 @@ class _AddPopFormState extends State<AddPopForm> {
   final FocusScopeNode _node = FocusScopeNode();
 
   final TextEditingController _popNameController = TextEditingController();
-  final TextEditingController _popDescriptionController =
-      TextEditingController();
+  final TextEditingController _popDescriptionController = TextEditingController();
+  final TextEditingController _popSubTitleController = TextEditingController();
+  final TextEditingController _popUrlController = TextEditingController();
 
   DateTime _popExpirationDate;
   TimeOfDay _popExpirationTime;
@@ -71,6 +72,8 @@ class _AddPopFormState extends State<AddPopForm> {
     _node.dispose();
     _popNameController.dispose();
     _popDescriptionController.dispose();
+    _popSubTitleController.dispose();
+    _popUrlController.dispose();
     super.dispose();
   }
 
@@ -100,34 +103,36 @@ class _AddPopFormState extends State<AddPopForm> {
 
   Future<void> _uploadPopPhoto(BuildContext context) async {
     try {
-      setState(() {
-        _isUploadingPopPhoto = true;
-      });
+      _setUploadPopPhotoLoading(true);
       await model.choosePopPhoto(context);
-      setState(() {
-        _isUploadingPopPhoto = false;
-      });
+      _setUploadPopPhotoLoading(false);
     } on PlatformException catch (e) {
-      setState(() {
-        _isUploadingPopPhoto = false;
-      });
+      _setUploadPopPhotoLoading(false);
       _showPopPhotoUploadError(model, e);
     }
   }
 
+  _setUploadPopPhotoLoading(bool isLoading) {
+      setState(() {
+        _isUploadingPopPhoto = isLoading;
+      });
+      model.updateWith(isLoading: isLoading);
+  }
+
+  _setUploadPopInnerPhotoLoading(bool isLoading) {
+      setState(() {
+        _isUploadingPopInnerPhoto = isLoading;
+      });
+      model.updateWith(isLoading: isLoading);
+  }
+
   Future<void> _uploadPopInnerPhoto(BuildContext context) async {
     try {
-      setState(() {
-        _isUploadingPopInnerPhoto = true;
-      });
+      _setUploadPopInnerPhotoLoading(true);
       await model.choosePopInnerPhoto(context);
-      setState(() {
-        _isUploadingPopInnerPhoto = false;
-      });
+      _setUploadPopInnerPhotoLoading(false);
     } on PlatformException catch (e) {
-      setState(() {
-        _isUploadingPopInnerPhoto = false;
-      });
+      _setUploadPopInnerPhotoLoading(false);
       _showPopPhotoUploadError(model, e);
     }
   }
@@ -145,11 +150,19 @@ class _AddPopFormState extends State<AddPopForm> {
     model.clearData();
     _popNameController.clear();
     _popDescriptionController.clear();
+    _popSubTitleController.clear();
+    _popUrlController.clear();
+    _popExpirationDate = DateTime.now();
+    _popExpirationTime = TimeOfDay.now();
   }
 
   void _isFieldEditingComplete(bool canSubmitField) {
     if (canSubmitField) {
+      print('could submit field');
       _node.nextFocus();
+    } else {
+      print('cannot submit field');
+      
     }
   }
 
@@ -180,6 +193,46 @@ class _AddPopFormState extends State<AddPopForm> {
       keyboardAppearance: Brightness.light,
       onChanged: model.updatePopName,
       onEditingComplete: () => _isFieldEditingComplete(model.canSubmitPopName),
+    ));
+  }
+
+    Widget _buildPopSubTitleField() {
+    return FormWidgets.formFieldContainer(TextField(
+      key: Key('popSubTitle'),
+      controller: _popSubTitleController,
+      decoration: InputDecoration(
+        labelText: Texts.popSubTitleLabel,
+        hintText: Texts.popSubTitleHint,
+        errorText: model.popSubTitleErrorText,
+        enabled: !model.isLoading,
+        contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+        border: InputBorder.none,
+      ),
+      autocorrect: false,
+      textInputAction: TextInputAction.next,
+      keyboardAppearance: Brightness.light,
+      onChanged: model.updatePopSubTitle,
+      onEditingComplete: () => _isFieldEditingComplete(model.canSubmitPopSubTitle),
+    ));
+  }
+
+  Widget _buildPopUrlField() {
+    return FormWidgets.formFieldContainer(TextField(
+      key: Key('popUrl'),
+      controller: _popUrlController,
+      decoration: InputDecoration(
+        labelText: Texts.popUrlLabel,
+        hintText: Texts.popUrlHint,
+        errorText: model.popUrlErrorText,
+        enabled: !model.isLoading,
+        contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+        border: InputBorder.none,
+      ),
+      autocorrect: false,
+      textInputAction: TextInputAction.next,
+      keyboardAppearance: Brightness.light,
+      onChanged: model.updatePopUrl,
+      onEditingComplete: () => _isFieldEditingComplete(model.canSubmitPopUrl),
     ));
   }
 
@@ -214,7 +267,11 @@ class _AddPopFormState extends State<AddPopForm> {
           SizedBox(height: 8.0),
           _buildPopNameField(),
           SizedBox(height: 8.0),
+          _buildPopSubTitleField(),
+          SizedBox(height: 8.0),
           _buildPopDescriptionField(),
+          SizedBox(height: 8.0),
+          _buildPopUrlField(),
           SizedBox(height: 8.0),
           _buildPopExpirationDatePicker(),
           SizedBox(height: 16.0),
@@ -223,8 +280,6 @@ class _AddPopFormState extends State<AddPopForm> {
             onSelected: (place) async {
             print('place full json is: ${place.fullJSON}');
             print('place description: ${place.description}');
-
-
               final geolocation = await place.geolocation;
             print('geolocation is: $geolocation');
             print('geolocation coordinates are: ${geolocation.coordinates}');
