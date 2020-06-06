@@ -220,7 +220,17 @@ class _AddPopFormState extends State<AddPopForm> {
           SizedBox(height: 16.0),
           SearchMapPlaceWidget(
             apiKey: API_KEY,
-            onSelected: (place) => print(place.fullJSON),
+            onSelected: (place) async {
+            print('place full json is: ${place.fullJSON}');
+            print('place description: ${place.description}');
+
+
+              final geolocation = await place.geolocation;
+            print('geolocation is: $geolocation');
+            print('geolocation coordinates are: ${geolocation.coordinates}');
+            model.updatePopLocation(geolocation.coordinates);
+            model.updatePopAddress(place.description);
+            }
           ),
           SizedBox(height: 16.0),
           FormUploadButton(

@@ -26,6 +26,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     this.popInnerPhotoPath = Texts.emptyPath,
     this.popUrl = '',
     this.popLocation,
+    this.popAddress = '',
     this.isLoading = false,
     this.submitted = false,
   });
@@ -38,7 +39,8 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
   String popPhotoPath;
   String popInnerPhotoPath;
   String popUrl;
-  GeoPoint popLocation;
+  LatLng popLocation;
+  String popAddress;
   bool isLoading;
   bool submitted;
 
@@ -61,6 +63,9 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
   void updatePopLocation(LatLng popLocation) =>
       updateWith(popLocation: popLocation);
 
+  void updatePopAddress(String popAddress) =>
+      updateWith(popAddress: popAddress);
+
   void updateWith({
     String popName,
     String popDescription,
@@ -69,6 +74,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     String popInnerPhotoPath,
     String popUrl,
     LatLng popLocation,
+    String popAddress,
     bool isLoading,
     bool submitted,
   }) {
@@ -79,6 +85,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     this.popInnerPhotoPath = popInnerPhotoPath ?? this.popInnerPhotoPath;
     this.popUrl = popUrl ?? this.popUrl;
     this.popLocation = popLocation ?? this.popLocation;
+    this.popAddress = popAddress ?? this.popAddress;
     this.isLoading = isLoading ?? this.isLoading;
     this.submitted = submitted ?? this.submitted;
     notifyListeners();
@@ -93,6 +100,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
       popInnerPhotoPath: Texts.emptyPath,
       popUrl: '',
       popLocation: null,
+      popAddress: '',
       isLoading: false,
       submitted: false,
     );
@@ -150,7 +158,8 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
         photo: popPhotoPath,
         innerPhoto: popInnerPhotoPath,
         url: popUrl,
-        location: popLocation,
+        location: GeoPoint(popLocation.latitude, popLocation.longitude),
+        address: popAddress,
         businessId: businessUser.uid);
   }
 
