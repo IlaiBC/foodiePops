@@ -1,7 +1,5 @@
-import 'dart:ffi';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter_xlider/flutter_xlider.dart';
 import 'package:foodiepops/data/popsRepository.dart';
 import 'package:foodiepops/models/pop.dart';
 import 'package:foodiepops/util/imageUtil.dart';
@@ -36,6 +34,7 @@ class _PopListScreenState extends State<PopListScreen> {
         _filterPopsLocation(pops).then((List<Pop> pops) {
           setState(() {
             this.pops = pops;
+            //filter times up
             this.pops.sort((a, b) {
               return a.time.compareTo(b.time);
             });
@@ -45,6 +44,7 @@ class _PopListScreenState extends State<PopListScreen> {
       });
     });
   }
+
 
   Future<List<Pop>> _filterPopsLocation(List<Pop> pops) async {
     List<int> toFilter = [];
@@ -67,7 +67,8 @@ class _PopListScreenState extends State<PopListScreen> {
       debugPrint("removed $index");
       pops.removeAt(index);
     }
-
+    setState(() {
+    });
     debugPrint("finished filter");
     return pops;
   }
@@ -177,7 +178,6 @@ class _PopListScreenState extends State<PopListScreen> {
         ));
   }
 }
-
 
 
 Widget _buildRow(Pop pop, VoidCallback openContainer) {
