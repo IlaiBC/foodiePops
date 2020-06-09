@@ -28,6 +28,7 @@ class _PopListScreenState extends State<PopListScreen> {
     super.initState();
 
     _getLocation().then((position) {
+      print('getting location $position' );
       setState(() {
         this.userLocation = position;
       });
@@ -39,9 +40,11 @@ class _PopListScreenState extends State<PopListScreen> {
     List<int> toFilter = [];
 
     for (var i = 0; i < pops.length; i++) {
+      print('user location is: $userLocation');
       if (userLocation != null) {
         double distance = await _getUserDistanceFromPop(pops[i]);
         debugPrint("Distance: $distance");
+        print('distance is: $distance');
         if (distance > this._filterDistance) {
           debugPrint("should filter");
           toFilter.add(i);
@@ -49,13 +52,16 @@ class _PopListScreenState extends State<PopListScreen> {
       }
     }
 
+print('to filter is: $toFilter');
+print('pops is: $pops');
     for (var index in toFilter) {
       debugPrint("removed $index");
+
       pops.removeAt(index);
     }
-    setState(() {
-      this.pops = pops;
-    });
+
+    print('current pop length ${pops.length}');
+
     debugPrint("finished filter");
     return pops;
   }
@@ -75,12 +81,13 @@ class _PopListScreenState extends State<PopListScreen> {
       GeolocationStatus geolocationStatus =
           await geolocator.checkGeolocationPermissionStatus();
       debugPrint(geolocationStatus.toString());
-      if (geolocationStatus == GeolocationStatus.denied ||
-          geolocationStatus == GeolocationStatus.disabled) {
+      if (geolocationStatus != GeolocationStatus.denied ||
+          geolocationStatus != GeolocationStatus.disabled) {
         currentLocation = await geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.best);
       }
     } catch (e) {
+      print('error getting user location $e');
       currentLocation = null;
     }
     return currentLocation;
@@ -106,7 +113,7 @@ class _PopListScreenState extends State<PopListScreen> {
         label: '${_filterDistance.round()/1000}KM',
         onChanged: (double value) {
           _filterDistance = value * 1000;
-          setState(() {});
+          setState(() {_filterDistanceChanged = true;});
         },
       )]),
     );
@@ -122,7 +129,7 @@ class _PopListScreenState extends State<PopListScreen> {
         builder: (context, snapshot) {
           if (snapshot.data != null) {
             final List<Pop> popsFromDB = snapshot.data;
-            _filterPopsLocation(popsFromDB);
+
             return Scaffold(
             appBar: AppBar(
               title: const Text('Foodie Pops you will love'),
@@ -138,36 +145,45 @@ class _PopListScreenState extends State<PopListScreen> {
                 )
               ],
             ),
-        body: new Container(
-          child: this.pops.length == 0
-              ? new Center(child: new CircularProgressIndicator())
-              : new Column(
+        body: FutureBuilder<List<Pop>>(future: _filterPopsLocation(popsFromDB),
+        builder: (BuildContext context, AsyncSnapshot<List<Pop>> snapshot) {
+
+          if (snapshot.hasData) {
+          List<Pop> filteredPops = snapshot.data;
+            print('filtered pops length: ${filteredPops.length}');
+            return new Column(
               children: <Widget>[
                 this._showFilter ? _buildFilter() : new Container(width: 0, height: 0),
                   new Expanded(
                   child: ListView(
                     padding: const EdgeInsets.all(8.0),
                     children: <Widget>[
-                      ...List<Widget>.generate(this.pops.length, (int index) {
+                      ...List<Widget>.generate(filteredPops.length, (int index) {
                         return OpenContainer(
                           transitionType: _transitionType,
                           openBuilder:
                               (BuildContext _, VoidCallback openContainer) {
-                            return _DetailsPage(pop: this.pops[index]);
+                            return _DetailsPage(pop: filteredPops[index]);
                           },
                           tappable: false,
                           closedShape: const RoundedRectangleBorder(),
                           closedElevation: 0.0,
                           closedBuilder:
                               (BuildContext _, VoidCallback openContainer) {
-                            return _buildRow(this.pops[index], openContainer, database);
+                            return _buildRow(filteredPops[index], openContainer, database);
                           },
                         );
                       }),
                     ],
                   ))
-                ]),
-        )
+                ]);
+          }
+         
+          return new Center(child: new CircularProgressIndicator());
+        }
+          
+          
+          ) 
             );
           }
           return Scaffold(
