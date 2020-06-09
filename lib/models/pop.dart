@@ -15,7 +15,6 @@ class Pop {
   static final String popBusinessId = "businessId";
   static const int MAX_DESCRIPTION_LINES = 3;
 
-
   Pop({
     @required this.name,
     @required this.expirationTime,

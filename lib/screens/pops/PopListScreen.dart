@@ -6,6 +6,8 @@ import 'package:foodiepops/util/imageUtil.dart';
 import 'package:flutter_countdown_timer/countdown_timer.dart';
 import 'package:animations/animations.dart';
 import 'package:provider/provider.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:map_launcher/map_launcher.dart';
 
 class PopListScreen extends StatefulWidget {
   @override
@@ -15,9 +17,99 @@ class PopListScreen extends StatefulWidget {
 class _PopListScreenState extends State<PopListScreen> {
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
 
+  List<Pop> pops = [];
+  Geolocator geolocator = Geolocator();
+  Position userLocation;
+  bool _showFilter = false;
+  double _filterDistance = 10000;
+
   @override
   void initState() {
     super.initState();
+
+    _getLocation().then((position) {
+      setState(() {
+        this.userLocation = position;
+      });
+    });
+  }
+
+
+  Future<List<Pop>> _filterPopsLocation(List<Pop> pops) async {
+    List<int> toFilter = [];
+
+    for (var i = 0; i < pops.length; i++) {
+      if (userLocation != null) {
+        double distance = await _getUserDistanceFromPop(pops[i]);
+        debugPrint("Distance: $distance");
+        if (distance > this._filterDistance) {
+          debugPrint("should filter");
+          toFilter.add(i);
+        }
+      }
+    }
+
+    for (var index in toFilter) {
+      debugPrint("removed $index");
+      pops.removeAt(index);
+    }
+    setState(() {
+      this.pops = pops;
+    });
+    debugPrint("finished filter");
+    return pops;
+  }
+
+
+  Future<double> _getUserDistanceFromPop(Pop pop) async {
+    return geolocator.distanceBetween(
+        userLocation.latitude,
+        userLocation.longitude,
+        pop.location.latitude,
+        pop.location.longitude);
+  }
+
+  Future<Position> _getLocation() async {
+    var currentLocation;
+    try {
+      GeolocationStatus geolocationStatus =
+          await geolocator.checkGeolocationPermissionStatus();
+      debugPrint(geolocationStatus.toString());
+      if (geolocationStatus == GeolocationStatus.denied ||
+          geolocationStatus == GeolocationStatus.disabled) {
+        currentLocation = await geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.best);
+      }
+    } catch (e) {
+      currentLocation = null;
+    }
+    return currentLocation;
+  }
+
+  Widget _buildFilter() {
+    return Container(
+      margin: EdgeInsets.only(top: 50, left: 50, right: 50),
+      alignment: Alignment.centerLeft,
+      child: Column(
+          children: <Widget> [
+            Text("Set the maximum distance of pops from you",
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                  fontSize: 18.0, fontWeight: FontWeight.bold),),
+            Slider(
+        value: _filterDistance/1000,
+        max: 100,
+        min: 5.0,
+        divisions: 19,
+        label: '${_filterDistance.round()/1000}KM',
+        onChanged: (double value) {
+          _filterDistance = value * 1000;
+          setState(() {});
+        },
+      )]),
+    );
   }
 
   @override
@@ -29,32 +121,53 @@ class _PopListScreenState extends State<PopListScreen> {
         stream: database.getPopList(),
         builder: (context, snapshot) {
           if (snapshot.data != null) {
-            final List<Pop> pops = snapshot.data;
+            final List<Pop> popsFromDB = snapshot.data;
+            _filterPopsLocation(popsFromDB);
             return Scaffold(
-              appBar: AppBar(
-                title: const Text('Foodie Pops you will love'),
-              ),
-              body: ListView(
-                padding: const EdgeInsets.all(8.0),
-                children: <Widget>[
-                  ...List<Widget>.generate(pops.length, (int index) {
-                    return OpenContainer(
-                      transitionType: _transitionType,
-                      openBuilder:
-                          (BuildContext _, VoidCallback openContainer) {
-                        return _DetailsPage(pop: pops[index]);
-                      },
-                      tappable: false,
-                      closedShape: const RoundedRectangleBorder(),
-                      closedElevation: 0.0,
-                      closedBuilder:
-                          (BuildContext _, VoidCallback openContainer) {
-                        return _buildRow(pops[index], openContainer, database);
-                      },
-                    );
-                  }),
-                ],
-              ),
+            appBar: AppBar(
+              title: const Text('Foodie Pops you will love'),
+              automaticallyImplyLeading: false,
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.filter_list),
+                  onPressed: () => {
+                    setState(() {
+                      this._showFilter = !this._showFilter;
+                    })
+                  },
+                )
+              ],
+            ),
+        body: new Container(
+          child: this.pops.length == 0
+              ? new Center(child: new CircularProgressIndicator())
+              : new Column(
+              children: <Widget>[
+                this._showFilter ? _buildFilter() : new Container(width: 0, height: 0),
+                  new Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.all(8.0),
+                    children: <Widget>[
+                      ...List<Widget>.generate(this.pops.length, (int index) {
+                        return OpenContainer(
+                          transitionType: _transitionType,
+                          openBuilder:
+                              (BuildContext _, VoidCallback openContainer) {
+                            return _DetailsPage(pop: this.pops[index]);
+                          },
+                          tappable: false,
+                          closedShape: const RoundedRectangleBorder(),
+                          closedElevation: 0.0,
+                          closedBuilder:
+                              (BuildContext _, VoidCallback openContainer) {
+                            return _buildRow(this.pops[index], openContainer, database);
+                          },
+                        );
+                      }),
+                    ],
+                  ))
+                ]),
+        )
             );
           }
           return Scaffold(
@@ -87,7 +200,6 @@ Widget _buildRow(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-//                  new SizedBox(height: 4.0),
                     new Text(
                       pop.name,
 //                    textAlign: TextAlign.center,
@@ -153,6 +265,48 @@ Widget _buildRow(
 class _DetailsPage extends StatelessWidget {
   final Pop pop;
 
+  openMapsSheet(context, Pop pop) async {
+    try {
+      final title = pop.name;
+      final description = pop.subtitle;
+      final coords = Coords(pop.location.latitude,
+          pop.location.longitude);
+      final availableMaps = await MapLauncher.installedMaps;
+
+      showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return SafeArea(
+            child: SingleChildScrollView(
+              child: Container(
+                child: Wrap(
+                  children: <Widget>[
+                    for (var map in availableMaps)
+                      ListTile(
+                        onTap: () => map.showMarker(
+                          coords: coords,
+                          title: title,
+                          description: description,
+                        ),
+                        title: Text(map.mapName),
+                        leading: Image(
+                          image: map.icon,
+                          height: 30.0,
+                          width: 30.0,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      print(e);
+    }
+  }
+
   _DetailsPage({Key key, this.pop}) : super(key: key);
 
   @override
@@ -189,7 +343,7 @@ class _DetailsPage extends StatelessWidget {
                   FlatButton.icon(
                     icon: Icon(Icons.location_on, color: Color(0xffe51923)),
                     label: Text(""),
-                    onPressed: () {},
+                    onPressed: () => openMapsSheet(context, pop),
                   ),
                   FlatButton.icon(
                     textColor: Colors.blue,
