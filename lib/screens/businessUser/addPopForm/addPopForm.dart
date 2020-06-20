@@ -8,16 +8,17 @@ import 'package:foodiepops/models/pop.dart';
 import 'package:foodiepops/screens/businessUser/addPopForm/addPopModel.dart';
 import 'package:foodiepops/services/fireStoreDatabase.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
-import 'package:foodiepops/widgets/FormUploadButton.dart';
 import 'package:foodiepops/widgets/dateTimePicker.dart';
 import 'package:foodiepops/widgets/formSubmitButton.dart';
 import 'package:foodiepops/widgets/formWidgets.dart';
 import 'package:foodiepops/widgets/platformAlertDialog.dart';
 import 'package:provider/provider.dart';
 import 'package:search_map_place/search_map_place.dart';
+import 'package:foodiepops/widgets/ClickableImageUpload.dart';
 
 class AddPopFormBuilder extends StatelessWidget {
-  const AddPopFormBuilder({Key key}) : super(key: key);
+  const AddPopFormBuilder({Key key, this.popToEdit}) : super(key: key);
+  final Pop popToEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -29,15 +30,16 @@ class AddPopFormBuilder extends StatelessWidget {
       create: (_) =>
           AddPopModel(database: database, businessUser: businessUser),
       child: Consumer<AddPopModel>(
-        builder: (_, AddPopModel model, __) => AddPopForm(model: model),
+        builder: (_, AddPopModel model, __) => AddPopForm(model: model, popToEdit: popToEdit),
       ),
     );
   }
 }
 
 class AddPopForm extends StatefulWidget {
-  const AddPopForm({Key key, @required this.model}) : super(key: key);
+  const AddPopForm({Key key, @required this.model, this.popToEdit}) : super(key: key);
   final AddPopModel model;
+  final Pop popToEdit;
 
   @override
   _AddPopFormState createState() => _AddPopFormState();
@@ -59,10 +61,32 @@ class _AddPopFormState extends State<AddPopForm> {
   @override
   void initState() {
     super.initState();
-    _popExpirationDate = DateTime.now();
-    _popExpirationTime = TimeOfDay.now();
+
     _isUploadingPopPhoto = false;
     _isUploadingPopInnerPhoto = false;
+
+    if (widget.popToEdit != null) {
+      _setControllersWithPopData();
+      _setPopExpirationDateTime();
+      model.setPopToEdit(widget.popToEdit);
+    } else {
+      _popExpirationDate = DateTime.now();
+      _popExpirationTime = TimeOfDay.now();
+    }
+  }
+
+  void _setControllersWithPopData () {
+    _popNameController.text = widget.popToEdit.name;
+    _popDescriptionController.text = widget.popToEdit.description;
+    _popSubTitleController.text = widget.popToEdit.subtitle;
+    _popUrlController.text = widget.popToEdit.url;
+  }
+
+    void _setPopExpirationDateTime () {
+      DateTime popExpirationDateTime = widget.popToEdit.expirationTime;
+
+    _popExpirationDate = popExpirationDateTime;
+    _popExpirationTime = TimeOfDay(hour: popExpirationDateTime.hour, minute: popExpirationDateTime.minute);
   }
 
   AddPopModel get model => widget.model;
@@ -86,7 +110,7 @@ class _AddPopFormState extends State<AddPopForm> {
     model.updatePopExpirationTime(_getPopExpirationTimeFromState());
 
     try {
-      final bool success = await model.submit();
+      final bool success = await model.submit(widget.popToEdit);
       if (success) {
         await PlatformAlertDialog(
           title: Texts.popSubmitSuccessTitle,
@@ -277,6 +301,7 @@ class _AddPopFormState extends State<AddPopForm> {
           SizedBox(height: 16.0),
           SearchMapPlaceWidget(
             apiKey: API_KEY,
+            placeholder: widget.popToEdit != null ? widget.popToEdit.address : Texts.addressSearchPlaceHolder,
             onSelected: (place) async {
             print('place full json is: ${place.fullJSON}');
             print('place description: ${place.description}');
@@ -288,31 +313,18 @@ class _AddPopFormState extends State<AddPopForm> {
             }
           ),
           SizedBox(height: 16.0),
-          FormUploadButton(
-            key: Key(Keys.uploadPopPhoto),
-            text: model.popPhotoPath == Texts.emptyPath
-                ? Texts.uploadPopPhoto
-                : Texts.uploadedSuccessfully,
-            onPressed: _isUploadingPopPhoto
-                ? null
-                : () {
+          Text("choose pop photo", textAlign: TextAlign.center , style: TextStyle(color: Colors.black, fontSize: 20.0)),
+          SizedBox(height: 8.0),
+          ClickableImageUpload(height: 200, loading: _isUploadingPopPhoto, onPressed: () {
                     _uploadPopPhoto(context);
-                  },
-            loading: _isUploadingPopPhoto,
-          ),
+                  }, photoPath: model.popPhotoPath),
           SizedBox(height: 16.0),
-          FormUploadButton(
-            key: Key(Keys.uploadPopInnerPhoto),
-            text: model.popInnerPhotoPath == Texts.emptyPath
-                ? Texts.uploadPopInnerPhoto
-                : Texts.uploadedSuccessfully,
-            onPressed: _isUploadingPopInnerPhoto
-                ? null
-                : () {
+                    Text("choose pop inner photo", textAlign: TextAlign.center , style: TextStyle(color: Colors.black, fontSize: 20.0)),
+          SizedBox(height: 8.0),
+
+          ClickableImageUpload(height: 200, loading: _isUploadingPopInnerPhoto, onPressed: () {
                     _uploadPopInnerPhoto(context);
-                  },
-            loading: _isUploadingPopInnerPhoto,
-          ),
+                  }, photoPath: model.popInnerPhotoPath),
           SizedBox(height: 16.0),
           FormSubmitButton(
             key: Key(Keys.businessFormSubmit),

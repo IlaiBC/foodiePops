@@ -98,6 +98,19 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     notifyListeners();
   }
 
+  void setPopToEdit(Pop pop) {
+    print('pop name is ${pop.name}');
+    this.popName = pop.name;
+    this.popSubTitle = pop.subtitle;
+    this.popDescription = pop.description;
+    this.popExpirationTime = pop.expirationTime;
+    this.popPhotoPath = pop.photo;
+    this.popInnerPhotoPath = pop.innerPhoto;
+    this.popUrl = pop.url;
+    this.popLocation =  LatLng(pop.location.latitude, pop.location.longitude);
+    this.popAddress = pop.address;
+  }
+
   void clearData() {
     updateWith(
       popName: '',
@@ -141,7 +154,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     return null;
   }
 
-  Future<bool> submit() async {
+  Future<bool> submit(Pop editedPop) async {
     try {
       updateWith(submitted: true);
       if (!canSubmit) {
@@ -149,8 +162,15 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
       }
 
       updateWith(isLoading: true);
-      await database.addPop(_createPopFromFormData());
 
+      if (editedPop != null) {
+        await database.updatePop(_updatePopFromFormData(editedPop));
+        updateWith(isLoading: false);
+      } else {
+        await database.addPop(_createPopFromFormData());
+      }
+
+      updateWith(isLoading: false);
       return true;
     } catch (e) {
       updateWith(isLoading: false);
@@ -160,6 +180,21 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
 
   Pop _createPopFromFormData() {
     return Pop(
+        name: popName,
+        subtitle: popSubTitle,
+        description: popDescription,
+        expirationTime: popExpirationTime,
+        photo: popPhotoPath,
+        innerPhoto: popInnerPhotoPath,
+        url: popUrl,
+        location: GeoPoint(popLocation.latitude, popLocation.longitude),
+        address: popAddress,
+        businessId: businessUser.uid);
+  }
+
+  Pop _updatePopFromFormData(Pop editedPop) {
+      return Pop(
+        id: editedPop.id,
         name: popName,
         subtitle: popSubTitle,
         description: popDescription,
@@ -182,7 +217,8 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
   }
 
   bool get canSubmitPopUrl {
-    return Uri.parse(popUrl).isAbsolute;
+    String popUrlToParse = (popUrl.contains("http://") || popUrl.contains("https://")) ? popUrl : 'http://$popUrl'; 
+    return Uri.parse(popUrlToParse).isAbsolute;
   }
 
   bool get canSubmitPopDescription {
@@ -194,6 +230,15 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
   }
 
   bool get canSubmit {
+    print('checking if can submit');
+    print('checking if can submit canSubmitPopName $canSubmitPopName');
+    print('checking if can submit canSubmitPopDescription $canSubmitPopDescription');
+    print('checking if can submit canSubmitPopExpirationTime $canSubmitPopExpirationTime');
+    print('checking if can submit isLoading $isLoading');
+
+
+
+
     final bool canSubmitFields = canSubmitPopName &&
         canSubmitPopDescription &&
         canSubmitPopExpirationTime;

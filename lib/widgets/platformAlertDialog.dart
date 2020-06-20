@@ -9,7 +9,10 @@ class PlatformAlertDialog extends PlatformWidget {
     @required this.title,
     @required this.content,
     this.cancelActionText,
+    this.onCancelPressed,
     @required this.defaultActionText,
+    this.onDefaultActionPressed,
+
   })  : assert(title != null),
         assert(content != null),
         assert(defaultActionText != null);
@@ -18,6 +21,8 @@ class PlatformAlertDialog extends PlatformWidget {
   final String content;
   final String cancelActionText;
   final String defaultActionText;
+  final Function onCancelPressed;
+  final Function onDefaultActionPressed;
 
   Future<bool> show(BuildContext context) async {
     return Platform.isIOS
@@ -59,7 +64,7 @@ class PlatformAlertDialog extends PlatformWidget {
             cancelActionText,
             key: Key(Keys.alertCancel),
           ),
-          onPressed: () => Navigator.of(context).pop(false),
+          onPressed: () => onCancelPressed != null ? onCancelPressed() : Navigator.of(context).pop(true),
         ),
       );
     }
@@ -69,7 +74,7 @@ class PlatformAlertDialog extends PlatformWidget {
           defaultActionText,
           key: Key(Keys.alertDefault),
         ),
-        onPressed: () => Navigator.of(context).pop(true),
+        onPressed: () => onDefaultActionPressed != null ? onDefaultActionPressed() : Navigator.of(context).pop(true),
       ),
     );
     return actions;

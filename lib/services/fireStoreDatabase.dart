@@ -25,7 +25,13 @@ class FirestoreDatabase {
     await _service.setData(path: FirestorePath.addPopToBusiness(pop.businessId, popId), data: pop.toMap(), documentId: popId);
   }
 
-    Future<void> addPopClick(Pop pop) async {
+  Future<void> updatePop(Pop pop) async {
+    await _service.setData(path: FirestorePath.specificPop(pop.id), data: pop.toMap(), documentId: pop.id, merge: true);
+
+    await _service.setData(path: FirestorePath.specificBusinessPop(pop.businessId, pop.id), data: pop.toMap(), documentId: pop.id, merge: true);
+  }
+
+  Future<void> addPopClick(Pop pop) async {
       Map<String, dynamic> data = {
         'date': DateTime.now(),
       };
@@ -36,6 +42,11 @@ class FirestoreDatabase {
     path: FirestorePath.userData(uid) ,
     builder: (data, documentId) => UserData.fromMap(data, documentId),
   );
+
+  Future<void> deletePop(String popId, String businessId) async {
+    await _service.deleteData(path: FirestorePath.specificBusinessPop(businessId, popId));
+    await _service.deleteData(path: FirestorePath.specificPop(popId));
+  }
 
   Stream<List<Pop>> getPopList() => _service.collectionStream(
     path: FirestorePath.pops() ,

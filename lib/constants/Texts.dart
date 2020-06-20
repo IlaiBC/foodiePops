@@ -19,10 +19,24 @@ class Texts {
   static const String or = 'or';
   static const String ok = 'ok';
 
+  // General pages
+  static const String profilePage = "Profile";
+
   // Business pages
   static const String businessLogin = "Business Login";
   static const String popFormScreen = "New Pop Form";
   static const String analyticsScreen = "Analytics";
+  static const String addPop = "Add Pop";
+  static const String myPops = "My Pops";
+
+  // Business Pop list
+  static const String deletePopAlertTitle = "Delete this pop?";
+  static const String yes = 'Yes';
+  static const String cancel = 'Cancel';
+
+
+
+
 
 
   // Business Add Pop Form
@@ -43,6 +57,7 @@ class Texts {
   static const String uploadPopInnerPhoto = 'Upload pop inner photo';
   static const String emptyPath = '';
   static const String uploadedSuccessfully = 'Uploaded successfully';
+  static const String addressSearchPlaceHolder = "Search Address";
 
 
 

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:foodiepops/constants/Texts.dart';
 import 'addPopForm/addPopForm.dart';
+import 'package:foodiepops/models/pop.dart';
 
 class PopFormScreen extends StatelessWidget {
 
-  PopFormScreen({Key key}) : super(key: key);
+  PopFormScreen({Key key, this.pop}) : super(key: key);
+  final Pop pop;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +22,7 @@ class PopFormScreen extends StatelessWidget {
           Card(
             child: Padding(
               padding: EdgeInsets.all(16.0),
-              child: AddPopFormBuilder(),
+              child: AddPopFormBuilder(popToEdit: pop,),
             ),
           ),
           ],

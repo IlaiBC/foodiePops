@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:foodiepops/constants/Texts.dart';
 import 'package:foodiepops/models/UserData.dart';
 import 'package:foodiepops/screens/businessUser/AnalyticsScreen.dart';
+import 'package:foodiepops/screens/businessUser/BusinessPopList.dart';
 import 'package:foodiepops/screens/businessUser/PopFormScreen.dart';
 import 'package:foodiepops/screens/profile/profileScreen.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
@@ -14,6 +16,7 @@ class BusinessNavBar extends StatelessWidget  {
   Widget build(BuildContext context) {
       final navPages = <Widget>[
         BusinessAnalyticsScreen(businessId: userData.id,),
+        BusinessPopList(businessId: userData.id,),
         PopFormScreen(),
         ProfileScreen(),
       ];
@@ -21,13 +24,16 @@ class BusinessNavBar extends StatelessWidget  {
       final navItems = <BottomNavigationBarItem>[
         BottomNavigationBarItem(
             icon: ImageIcon(AssetImage("assets/foodie.png")),
-            title: Text('Pops')),
+            title: Text(Texts.analyticsScreen)),
+        BottomNavigationBarItem(
+            icon: ImageIcon(AssetImage("assets/foodie.png")),
+            title: Text(Texts.myPops)),
         BottomNavigationBarItem(
             icon: ImageIcon(AssetImage("assets/news.png")),
-            title: Text('Pop Form')),
+            title: Text(Texts.addPop)),
         BottomNavigationBarItem(
             icon: ImageIcon(AssetImage("assets/profile.png")),
-            title: Text('Profile')),
+            title: Text(Texts.profilePage)),
       ];
 
       return BottomNav(userSnapshot: userSnapshot, navPages: navPages, navItems: navItems);
