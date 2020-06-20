@@ -8,6 +8,8 @@ import 'package:animations/animations.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:map_launcher/map_launcher.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 class PopListScreen extends StatefulWidget {
   @override
@@ -351,6 +353,27 @@ class _DetailsPage extends StatelessWidget {
 
   _DetailsPage({Key key, this.pop}) : super(key: key);
 
+  Future<Null> _openInWebview(context, String url) async {
+    debugPrint("here1");
+    if (await url_launcher.canLaunch(url)) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (ctx) => WebviewScaffold(
+            initialChild: Center(child: CircularProgressIndicator()),
+            url: url,
+            appBar: AppBar(title: Text(url)),
+          ),
+        ),
+      );
+    } else {
+      Scaffold.of(context).showSnackBar(
+        SnackBar(
+          content: Text('URL $url can not be launched.'),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -391,7 +414,10 @@ class _DetailsPage extends StatelessWidget {
                     textColor: Colors.blue,
                     icon: Icon(Icons.open_in_new, color: Colors.blue),
                     label: Text('Visit Pops website'),
-                    onPressed: () {},
+                    onPressed: () {
+                    FocusScope.of(context).requestFocus(FocusNode());
+                    this._openInWebview(context, 'http://google.com');
+                    },
                   )
                 ])),
                 Container(
