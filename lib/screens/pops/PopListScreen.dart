@@ -113,7 +113,7 @@ print('pops is: $pops');
         label: '${_filterDistance.round()/1000}KM',
         onChanged: (double value) {
           _filterDistance = value * 1000;
-          setState(() {_filterDistanceChanged = true;});
+          setState(() {});
         },
       )]),
     );
