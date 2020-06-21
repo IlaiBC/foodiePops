@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:foodiepops/authentication/authWidget.dart';
 import 'package:foodiepops/screens/main/mainScreen.dart';
+import 'package:foodiepops/screens/onboarding/onboardingScreen.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
 import 'package:foodiepops/services/fireStoreDatabase.dart';
 import 'package:foodiepops/services/imagePickerService.dart';
@@ -45,10 +46,11 @@ class MyApp extends StatelessWidget {
             initialRoute: '/',
             routes: {
               MainScreen.routeName: (context) => MainScreen(),
+              '/auth': (context) => AuthWidget(userSnapshot: userSnapshot),
             },
             title: 'FoodiePops',
             theme: ThemeData(primarySwatch: Colors.red, primaryColor: Color(0xffe51923)),
-            home: AuthWidget(userSnapshot: userSnapshot),
+            home: OnboardingScreen(title: 'Fancy OnBoarding HomePage'),
           );
         },
       ),
