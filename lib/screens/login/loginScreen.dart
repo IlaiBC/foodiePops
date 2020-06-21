@@ -54,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Image(
-                    image: AssetImage("assets/foodiepopslogo.png"),
+                    image: AssetImage("assets/foodiepopslogo_no_bg.png"),
                     height: 250),
                 Stack(children: <Widget>[
                   Visibility(
