@@ -1,15 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:foodiepops/models/news.dart';
 import 'package:foodiepops/screens/news/newsFull.dart';
-import 'package:foodiepops/util/imageUtil.dart';
 import 'package:animations/animations.dart';
+import 'package:http/http.dart' as http;
+import 'package:webfeed/webfeed.dart';
 
-class NewsScreen extends StatelessWidget {
-  final List<News> news;
 
-  NewsScreen({Key key, this.news}) : super(key: key);
+class NewsScreen extends StatefulWidget {
+  @override
+  _NewsScreenState createState() => _NewsScreenState();
+}
 
-  final ContainerTransitionType _transitionType = ContainerTransitionType.fade;
+class _NewsScreenState extends State<NewsScreen> {
+   List<RssItem> news = [];
+   final ContainerTransitionType _transitionType = ContainerTransitionType.fade;
+
+   @override
+   void initState() {
+     super.initState();
+     _getNews().then((feed) {
+       if (feed != null) {
+       setState(() {
+         this.news = feed;
+       });
+     }});
+
+   }
+
+   Future<List<RssItem>> _getNews() async {
+     var client = new http.Client();
+
+     // rss feed
+     var feed = client.get("http://rcs.mako.co.il/rss/food-restaurants.xml").then((response) {
+       return response.body;
+     }).then((bodyString) {
+       var feed = new RssFeed.parse(bodyString);
+       print(feed.items.first.pubDate);
+       return feed.items;
+     });
+
+   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +56,7 @@ class NewsScreen extends StatelessWidget {
             return OpenContainer(
               transitionType: _transitionType,
               openBuilder: (BuildContext _, VoidCallback openContainer) {
-                return NewsFull(news[index].url);
+                return NewsFull(news[index].link);
               },
               tappable: false,
               closedShape: const RoundedRectangleBorder(),
@@ -39,7 +71,7 @@ class NewsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNewsCard(News newsItem, VoidCallback openContainer) {
+  Widget _buildNewsCard(RssItem newsItem, VoidCallback openContainer) {
     return Card(
         child: new Container(
             height: 120.0,
@@ -59,7 +91,7 @@ class NewsScreen extends StatelessWidget {
                           newsItem.author,
                           style: TextStyle(color: Colors.white),
                         ),
-                        Text(newsItem.date, style: TextStyle(color: Colors.white))
+                        Text(newsItem.pubDate, style: TextStyle(color: Colors.white))
                       ]),
                 ),
                 onTap: openContainer),
@@ -69,7 +101,7 @@ class NewsScreen extends StatelessWidget {
                   fit: BoxFit.cover,
                   colorFilter: new ColorFilter.mode(
                       Colors.black.withOpacity(0.5), BlendMode.dstATop),
-                  image: new NetworkImage(newsItem.picUrl),
+                  image: new NetworkImage(newsItem.media.toString()),
                 ))));
   }
 }

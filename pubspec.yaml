@@ -41,6 +41,7 @@ dependencies:
   url_launcher: ^5.4.11
   fancy_on_boarding: ^1.6.0
   shared_preferences: '>=0.5.7+3 <2.0.0'
+  webfeed: ^0.4.2
 
 flutter_icons:
   image_path: "assets/foodiepopsicon.png"
