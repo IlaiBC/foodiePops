@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
             title: 'FoodiePops',
             theme: ThemeData(
                 primarySwatch: Colors.red, primaryColor: Color(0xffe51923)),
-            home: Splash(),
+            home: OnboardingScreen(title: 'Fancy OnBoarding HomePage'),
           );
         },
       ),

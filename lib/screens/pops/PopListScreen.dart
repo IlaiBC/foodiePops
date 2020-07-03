@@ -536,7 +536,7 @@ class _DetailsPage extends StatelessWidget {
                     label: Text('Visit Pops website'),
                     onPressed: () {
                       FocusScope.of(context).requestFocus(FocusNode());
-                      this._openInWebview(context, 'http://google.com');
+                      this._openInWebview(context, pop.url);
                     },
                   )
                 ])),
