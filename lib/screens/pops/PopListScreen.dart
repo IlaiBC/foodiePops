@@ -10,6 +10,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:map_launcher/map_launcher.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
+import 'package:filter_list/filter_list.dart';
 
 class PopListScreen extends StatefulWidget {
   @override
@@ -18,13 +19,30 @@ class PopListScreen extends StatefulWidget {
 
 class _PopListScreenState extends State<PopListScreen> {
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
-
   List<Pop> pops = [];
   Geolocator geolocator = Geolocator();
   Position userLocation;
   bool _showFilter = false;
   int _radioVal = 0;
   double _filterDistance = 10000;
+  List<String> selectedKitchenTypes = [];
+  List<String> kitchenTypes = [
+    "Asian",
+    "Sushi",
+    "Pizza",
+    "Hamburger",
+    "Italian",
+    "American",
+    "Cafe",
+    "Bar",
+    "Meat",
+    "Fish",
+    "Indian",
+    "Hummus",
+    "Seafood",
+    "Bakery",
+    "Mexican"
+  ];
 
   @override
   void initState() {
@@ -97,14 +115,37 @@ class _PopListScreenState extends State<PopListScreen> {
     });
   }
 
+  void _openFilterList() async {
+    var list = await FilterList.showFilterList(
+      context,
+      allTextList: kitchenTypes,
+      height: 480,
+      borderRadius: 20,
+      headlineText: "Select Kitchen Types",
+      searchFieldHintText: "Search Here",
+      selectedTextList: selectedKitchenTypes,
+      applyButonTextBackgroundColor: Color(0xffe51923),
+      headerTextColor: Color(0xffe51923),
+      selectedTextBackgroundColor: Color(0xffe51923),
+      closeIconColor: Color(0xffe51923),
+      allResetButonColor: Color(0xffe51923),
+    );
+
+    if (list != null) {
+      setState(() {
+        selectedKitchenTypes = List.from(list);
+      });
+    }
+  }
+
   Widget _buildFilter() {
     return Card(
         child: Container(
-      margin: EdgeInsets.only(top: 50, left: 50, right: 50),
+      margin: EdgeInsets.only(top: 50, left: 50, right: 50, bottom: 50),
       alignment: Alignment.centerLeft,
       child: Column(children: <Widget>[
         Text(
-          "Set the maximum distance of pops from you",
+          "Distance Of Pops From You",
           textAlign: TextAlign.center,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
@@ -121,7 +162,7 @@ class _PopListScreenState extends State<PopListScreen> {
             setState(() {});
           },
         ),
-        new Divider(height: 5.0, color: Colors.black),
+        new Divider(height: 5.0, color: Color(0xffe51923)),
         new Padding(
           padding: new EdgeInsets.all(8.0),
         ),
@@ -135,6 +176,15 @@ class _PopListScreenState extends State<PopListScreen> {
         new Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            new Radio(
+              value: 0,
+              groupValue: _radioVal,
+              onChanged: _handleRadioValueChange,
+            ),
+            new Text(
+              'All',
+              style: new TextStyle(fontSize: 16.0),
+            ),
             new Radio(
               value: 1,
               groupValue: _radioVal,
@@ -166,6 +216,15 @@ class _PopListScreenState extends State<PopListScreen> {
             ),
           ],
         ),
+        new Divider(height: 5.0, color: Color(0xffe51923)),
+        new Padding(
+          padding: new EdgeInsets.all(8.0),
+        ),
+        new RaisedButton(
+            onPressed: _openFilterList,
+            color: Color(0xffe51923),
+            textColor: Colors.white,
+            child: Text('Choose Kitchen Types'))
       ]),
     ));
   }
@@ -307,48 +366,56 @@ Widget _buildRow(
                       Padding(
                         padding: EdgeInsets.only(top: 2.0),
                       ),
-            Container(
-                padding: const EdgeInsets.all(6.0),
-                decoration: BoxDecoration(
-                  color: Color(0xffe51923),
-                  border: Border.all(width: 1.0, color: Colors.red),
-                  borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                ),
-                child: new ClipRRect(
-                        borderRadius: new BorderRadius.circular(4.0),
-                        child: CountdownTimer(
-                          endTime: pop.expirationTime.millisecondsSinceEpoch,
-                          defaultDays: "==",
-                          defaultHours: "--",
-                          defaultMin: "**",
-                          defaultSec: "++",
-                          daysSymbol: ":",
-                          hoursSymbol: ":",
-                          minSymbol: "",
-                          secSymbol: "",
-                          daysTextStyle:
-                              TextStyle(fontSize: 14, color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                          hoursTextStyle:
-                              TextStyle(fontSize: 14, color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                          minTextStyle:
-                              TextStyle(fontSize: 14, color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                          secTextStyle:
-                              TextStyle(fontSize: 0, color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                          daysSymbolTextStyle:
-                              TextStyle(fontSize: 14, color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                          hoursSymbolTextStyle:
-                              TextStyle(fontSize: 14, color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                          minSymbolTextStyle:
-                              TextStyle(fontSize: 14, color: Colors.white,
-                                  fontWeight: FontWeight.bold)
-                        ),
-                      ))
+                      Container(
+                          padding: const EdgeInsets.all(6.0),
+                          decoration: BoxDecoration(
+                            color: Color(0xffe51923),
+                            border: Border.all(width: 1.0, color: Colors.red),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(30.0)),
+                          ),
+                          child: new ClipRRect(
+                            borderRadius: new BorderRadius.circular(4.0),
+                            child: CountdownTimer(
+                                endTime:
+                                    pop.expirationTime.millisecondsSinceEpoch,
+                                defaultDays: "==",
+                                defaultHours: "--",
+                                defaultMin: "**",
+                                defaultSec: "++",
+                                daysSymbol: ":",
+                                hoursSymbol: ":",
+                                minSymbol: "",
+                                secSymbol: "",
+                                daysTextStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                                hoursTextStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                                minTextStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                                secTextStyle: TextStyle(
+                                    fontSize: 0,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                                daysSymbolTextStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                                hoursSymbolTextStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                                minSymbolTextStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold)),
+                          ))
                     ]),
               )
             ]),
@@ -468,8 +535,8 @@ class _DetailsPage extends StatelessWidget {
                     icon: Icon(Icons.open_in_new, color: Colors.blue),
                     label: Text('Visit Pops website'),
                     onPressed: () {
-                    FocusScope.of(context).requestFocus(FocusNode());
-                    this._openInWebview(context, 'http://google.com');
+                      FocusScope.of(context).requestFocus(FocusNode());
+                      this._openInWebview(context, 'http://google.com');
                     },
                   )
                 ])),
