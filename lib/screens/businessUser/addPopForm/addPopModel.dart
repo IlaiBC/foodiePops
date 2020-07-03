@@ -46,11 +46,12 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
   bool isLoading;
   bool submitted;
   List<String> selectedKitchenTypes = [];
+  int minPrice = 0;
+  int maxPrice = 100;
 
   void updatePopName(String popName) => updateWith(popName: popName);
 
   void updatePopSubTitle(String popSubTitle) => updateWith(popSubTitle: popSubTitle);
-
 
   void updatePopDescription(String popDescription) =>
       updateWith(popDescription: popDescription);
@@ -76,6 +77,9 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
   void updateSelectedKitchenTypes(List<String> selectedKitchenTypes) =>
       updateWith(selectedKitchenTypes: selectedKitchenTypes);
 
+  void updateMinMaxPrice(int minPrice, int maxPrice) =>
+      updateWith(minPrice: minPrice, maxPrice: maxPrice);
+
   void updateWith({
     String popName,
     String popSubTitle,
@@ -89,6 +93,8 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     bool isLoading,
     bool submitted,
     List<String> selectedKitchenTypes,
+    int minPrice,
+    int maxPrice,
   }) {
     this.popName = popName ?? this.popName;
     this.popSubTitle = popSubTitle ?? this.popSubTitle;
@@ -101,7 +107,9 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     this.popAddress = popAddress ?? this.popAddress;
     this.isLoading = isLoading ?? this.isLoading;
     this.submitted = submitted ?? this.submitted;
-    this.selectedKitchenTypes = selectedKitchenTypes ?? this.submitted;
+    this.selectedKitchenTypes = selectedKitchenTypes ?? this.selectedKitchenTypes;
+    this.minPrice = minPrice ?? this.minPrice;
+    this.maxPrice = maxPrice ?? this.maxPrice;
     notifyListeners();
   }
 
@@ -196,7 +204,11 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
         url: popUrl,
         location: GeoPoint(popLocation.latitude, popLocation.longitude),
         address: popAddress,
-        businessId: businessUser.uid);
+        businessId: businessUser.uid,
+        kitchenTypes: selectedKitchenTypes,
+        minPrice: minPrice,
+        maxPrice: maxPrice,
+        );
   }
 
   Pop _updatePopFromFormData(Pop editedPop) {
@@ -211,7 +223,10 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
         url: popUrl,
         location: GeoPoint(popLocation.latitude, popLocation.longitude),
         address: popAddress,
-        businessId: businessUser.uid);
+        businessId: businessUser.uid,
+        kitchenTypes: selectedKitchenTypes,
+        minPrice: minPrice,
+        maxPrice: maxPrice,);
   }
 
   // Getters

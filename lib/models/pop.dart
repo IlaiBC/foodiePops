@@ -13,6 +13,10 @@ class Pop {
   static final String popLocation = "location";
   static final String popAddress = "address";
   static final String popBusinessId = "businessId";
+  static final String popKitchenTypes = "kitchenTypes";
+  static final String popMinPrice = "minPrice";
+  static final String popMaxPrice = "maxPrice";
+
   static const int MAX_DESCRIPTION_LINES = 3;
 
   Pop({
@@ -27,6 +31,9 @@ class Pop {
     this.location,
     this.address,
     this.businessId,
+    this.kitchenTypes,
+    this.minPrice,
+    this.maxPrice,
   });
 
   final String name;
@@ -40,6 +47,9 @@ class Pop {
   final String address;
   String id;
   String businessId;
+  List<String> kitchenTypes;
+  int minPrice;
+  int maxPrice;
 
   Map toMap() {
     Map<String, dynamic> map = {
@@ -54,12 +64,18 @@ class Pop {
       innerPhotoPath: innerPhoto,
       popUrl: url,
       popBusinessId: businessId,
+      popKitchenTypes: kitchenTypes,
+      popMinPrice: minPrice,
+      popMaxPrice: maxPrice,
     };
 
     return map;
   }
 
   static Pop fromMap(Map map) {
+    try {
+
+      print('map min price 222: ${map[popMinPrice].runtimeType}');
     return new Pop(
         id: map[popId],
         name: map[popName],
@@ -72,6 +88,15 @@ class Pop {
         location: map[popLocation],
         address: map[popAddress],
         businessId: map[popBusinessId],
+        kitchenTypes: List<String>.from(map[popKitchenTypes]),
+        minPrice: (map[popMinPrice] as int),
+        maxPrice: (map[popMaxPrice] as int),
     );
+    } catch (e) {
+      print('map values are: $map');
+      print('map values are2: ${map[popId]}');
+      print('map values are3: ${map[popName]}');
+      print('error is: $e');
+    }
   }
 }

@@ -58,6 +58,11 @@ class Texts {
   static const String emptyPath = '';
   static const String uploadedSuccessfully = 'Uploaded successfully';
   static const String addressSearchPlaceHolder = "Search Address";
+  static const String choosePopPhoto = "Choose pop photo";
+  static const String selectedPopPhoto = "Selected pop photo";
+  static const String choosePopInnerPhoto = "Choose pop inner photo";
+  static const String selectedPopInnerPhoto = "Selected pop inner photo";
+
 
 
 

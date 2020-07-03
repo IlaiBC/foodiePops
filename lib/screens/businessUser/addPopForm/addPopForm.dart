@@ -290,7 +290,10 @@ class _AddPopFormState extends State<AddPopForm> {
   }
 
   Widget _buildPriceRangeSlider() {
-    return SliderTheme(
+    return Container(child: Column(children: <Widget>[
+      Text('Price Range: ${_values.start.round()}₪ - ${_values.end.round()}₪', textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.black, fontSize: 20.0 )),
+SliderTheme(
         data: SliderThemeData(showValueIndicator: ShowValueIndicator.always),
         child: RangeSlider(
             values: _values,
@@ -310,8 +313,12 @@ class _AddPopFormState extends State<AddPopForm> {
                     _values = RangeValues(_values.end - 20, _values.end);
                   }
                 }
-              });
-            }));
+              }
+              );
+              model.updateMinMaxPrice(_values.start.round(), _values.end.round());
+
+            }))
+    ],)) ;
   }
 
   void _openKitchenTypesList() async {
@@ -422,24 +429,24 @@ GestureDetector(
           _buildKitchenTypesField(),
 
           SizedBox(height: 16.0),
-          Text("choose pop photo",
+          Text(model.popPhotoPath == Texts.emptyPath ? Texts.choosePopPhoto : Texts.selectedPopPhoto,
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.black, fontSize: 20.0)),
           SizedBox(height: 8.0),
           ClickableImageUpload(
-              height: 200,
+              height: model.popPhotoPath == Texts.emptyPath ? 70 : 200,
               loading: _isUploadingPopPhoto,
               onPressed: () {
                 _uploadPopPhoto(context);
               },
               photoPath: model.popPhotoPath),
           SizedBox(height: 16.0),
-          Text("choose pop inner photo",
+          Text(model.popInnerPhotoPath == Texts.emptyPath ? Texts.choosePopInnerPhoto : Texts.selectedPopInnerPhoto,
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.black, fontSize: 20.0)),
           SizedBox(height: 8.0),
           ClickableImageUpload(
-              height: 200,
+              height: model.popInnerPhotoPath == Texts.emptyPath ? 70 : 200,
               loading: _isUploadingPopInnerPhoto,
               onPressed: () {
                 _uploadPopInnerPhoto(context);

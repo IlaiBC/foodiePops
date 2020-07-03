@@ -49,7 +49,7 @@ class ClickableImageUpload extends StatelessWidget {
                 child: photoPath == Texts.emptyPath
                     ? Avatar(
                         photoUrl: null,
-                        radius: 100,
+                        radius: 70,
                         backgroundColor: Colors.white)
                     : Image(
                         image: NetworkImage(photoPath),
