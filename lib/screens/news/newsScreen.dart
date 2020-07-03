@@ -39,12 +39,12 @@ class NewsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNewsCard(News news, VoidCallback openContainer) {
+  Widget _buildNewsCard(News newsItem, VoidCallback openContainer) {
     return Card(
         child: new Container(
             height: 120.0,
             child: ListTile(
-                title: Text(news.title,
+                title: Text(newsItem.title,
                     style: TextStyle(
                         fontSize: 18.0,
                         fontWeight: FontWeight.bold,
@@ -56,10 +56,10 @@ class NewsScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Text(
-                          news.author,
+                          newsItem.author,
                           style: TextStyle(color: Colors.white),
                         ),
-                        Text(news.date, style: TextStyle(color: Colors.white))
+                        Text(newsItem.date, style: TextStyle(color: Colors.white))
                       ]),
                 ),
                 onTap: openContainer),
@@ -69,7 +69,7 @@ class NewsScreen extends StatelessWidget {
                   fit: BoxFit.cover,
                   colorFilter: new ColorFilter.mode(
                       Colors.black.withOpacity(0.5), BlendMode.dstATop),
-                  image: new NetworkImage(news.picUrl),
+                  image: new NetworkImage(newsItem.picUrl),
                 ))));
   }
 }

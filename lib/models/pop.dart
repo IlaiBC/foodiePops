@@ -10,7 +10,7 @@ class Pop {
   static final String popPhotoPath = "photo";
   static final String innerPhotoPath = "innerPhoto";
   static final String popUrl = "url";
-  static final String popLoction = "location";
+  static final String popLocation = "location";
   static final String popAddress = "address";
   static final String popBusinessId = "businessId";
   static const int MAX_DESCRIPTION_LINES = 3;
@@ -48,7 +48,7 @@ class Pop {
       popExpirationTime: expirationTime,
       popDescription: description,
       popPhotoPath: photo,
-      popLoction: location,
+      popLocation: location,
       popAddress: address,
       popSubtitle: subtitle,
       innerPhotoPath: innerPhoto,
@@ -69,7 +69,7 @@ class Pop {
         url: map[popUrl],
         subtitle: map[popSubtitle],
         innerPhoto: map[innerPhotoPath],
-        location: map[popLoction],
+        location: map[popLocation],
         address: map[popAddress],
         businessId: map[popBusinessId],
     );

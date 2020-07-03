@@ -13,13 +13,15 @@ class BusinessLogin extends StatelessWidget {
         elevation: 2.0,
         title: Text(Texts.businessLogin),
       ),
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-                  Image(
-          image: AssetImage("assets/foodiepopslogo.png"),
-          height: 250),
+        Padding(
+        padding: const EdgeInsets.only(top: 80.0),
+        child: Image(
+          image: AssetImage("assets/foodiepopslogo_no_bg.png"),
+          height: 250)),
                 SizedBox(height: 50),
 
           Card(

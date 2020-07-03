@@ -8,6 +8,9 @@ import 'package:animations/animations.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:map_launcher/map_launcher.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:url_launcher/url_launcher.dart' as url_launcher;
+import 'package:filter_list/filter_list.dart';
 
 class PopListScreen extends StatefulWidget {
   @override
@@ -16,25 +19,42 @@ class PopListScreen extends StatefulWidget {
 
 class _PopListScreenState extends State<PopListScreen> {
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
-
   List<Pop> pops = [];
   Geolocator geolocator = Geolocator();
   Position userLocation;
   bool _showFilter = false;
+  int _radioVal = 0;
   double _filterDistance = 10000;
+  List<String> selectedKitchenTypes = [];
+  List<String> kitchenTypes = [
+    "Asian",
+    "Sushi",
+    "Pizza",
+    "Hamburger",
+    "Italian",
+    "American",
+    "Cafe",
+    "Bar",
+    "Meat",
+    "Fish",
+    "Indian",
+    "Hummus",
+    "Seafood",
+    "Bakery",
+    "Mexican"
+  ];
 
   @override
   void initState() {
     super.initState();
 
     _getLocation().then((position) {
-      print('getting location $position' );
+      print('getting location $position');
       setState(() {
         this.userLocation = position;
       });
     });
   }
-
 
   Future<List<Pop>> _filterPopsLocation(List<Pop> pops) async {
     List<int> toFilter = [];
@@ -52,8 +72,8 @@ class _PopListScreenState extends State<PopListScreen> {
       }
     }
 
-print('to filter is: $toFilter');
-print('pops is: $pops');
+    print('to filter is: $toFilter');
+    print('pops is: $pops');
     for (var index in toFilter) {
       debugPrint("removed $index");
 
@@ -66,13 +86,9 @@ print('pops is: $pops');
     return pops;
   }
 
-
   Future<double> _getUserDistanceFromPop(Pop pop) async {
-    return geolocator.distanceBetween(
-        userLocation.latitude,
-        userLocation.longitude,
-        pop.location.latitude,
-        pop.location.longitude);
+    return geolocator.distanceBetween(userLocation.latitude,
+        userLocation.longitude, pop.location.latitude, pop.location.longitude);
   }
 
   Future<Position> _getLocation() async {
@@ -93,30 +109,125 @@ print('pops is: $pops');
     return currentLocation;
   }
 
-  Widget _buildFilter() {
-    return Container(
-      margin: EdgeInsets.only(top: 50, left: 50, right: 50),
-      alignment: Alignment.centerLeft,
-      child: Column(
-          children: <Widget> [
-            Text("Set the maximum distance of pops from you",
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                  fontSize: 18.0, fontWeight: FontWeight.bold),),
-            Slider(
-        value: _filterDistance/1000,
-        max: 100,
-        min: 5.0,
-        divisions: 19,
-        label: '${_filterDistance.round()/1000}KM',
-        onChanged: (double value) {
-          _filterDistance = value * 1000;
-          setState(() {});
-        },
-      )]),
+  _handleRadioValueChange(int value) {
+    setState(() {
+      this._radioVal = value;
+    });
+  }
+
+  void _openFilterList() async {
+    var list = await FilterList.showFilterList(
+      context,
+      allTextList: kitchenTypes,
+      height: 480,
+      borderRadius: 20,
+      headlineText: "Select Kitchen Types",
+      searchFieldHintText: "Search Here",
+      selectedTextList: selectedKitchenTypes,
+      applyButonTextBackgroundColor: Color(0xffe51923),
+      headerTextColor: Color(0xffe51923),
+      selectedTextBackgroundColor: Color(0xffe51923),
+      closeIconColor: Color(0xffe51923),
+      allResetButonColor: Color(0xffe51923),
     );
+
+    if (list != null) {
+      setState(() {
+        selectedKitchenTypes = List.from(list);
+      });
+    }
+  }
+
+  Widget _buildFilter() {
+    return Card(
+        child: Container(
+      margin: EdgeInsets.only(top: 50, left: 50, right: 50, bottom: 50),
+      alignment: Alignment.centerLeft,
+      child: Column(children: <Widget>[
+        Text(
+          "Distance Of Pops From You",
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+        ),
+        Slider(
+          value: _filterDistance / 1000,
+          max: 100,
+          min: 5.0,
+          divisions: 19,
+          label: '${_filterDistance.round() / 1000}KM',
+          onChanged: (double value) {
+            _filterDistance = value * 1000;
+            setState(() {});
+          },
+        ),
+        new Divider(height: 5.0, color: Color(0xffe51923)),
+        new Padding(
+          padding: new EdgeInsets.all(8.0),
+        ),
+        new Text(
+          'Price Range:',
+          style: new TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18.0,
+          ),
+        ),
+        new Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            new Radio(
+              value: 0,
+              groupValue: _radioVal,
+              onChanged: _handleRadioValueChange,
+            ),
+            new Text(
+              'All',
+              style: new TextStyle(fontSize: 16.0),
+            ),
+            new Radio(
+              value: 1,
+              groupValue: _radioVal,
+              onChanged: _handleRadioValueChange,
+            ),
+            new Text(
+              '₪',
+              style: new TextStyle(fontSize: 16.0),
+            ),
+            new Radio(
+              value: 2,
+              groupValue: _radioVal,
+              onChanged: _handleRadioValueChange,
+            ),
+            new Text(
+              '₪₪',
+              style: new TextStyle(
+                fontSize: 16.0,
+              ),
+            ),
+            new Radio(
+              value: 3,
+              groupValue: _radioVal,
+              onChanged: _handleRadioValueChange,
+            ),
+            new Text(
+              '₪₪₪',
+              style: new TextStyle(fontSize: 16.0),
+            ),
+          ],
+        ),
+        new Divider(height: 5.0, color: Color(0xffe51923)),
+        new Padding(
+          padding: new EdgeInsets.all(8.0),
+        ),
+        new RaisedButton(
+            onPressed: _openFilterList,
+            color: Color(0xffe51923),
+            textColor: Colors.white,
+            child: Text('Choose Kitchen Types',
+                style: TextStyle(fontSize: 18.0)))
+      ]),
+    ));
   }
 
   @override
@@ -131,60 +242,61 @@ print('pops is: $pops');
             final List<Pop> popsFromDB = snapshot.data;
 
             return Scaffold(
-            appBar: AppBar(
-              title: const Text('Foodie Pops you will love'),
-              automaticallyImplyLeading: false,
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.filter_list),
-                  onPressed: () => {
-                    setState(() {
-                      this._showFilter = !this._showFilter;
-                    })
-                  },
-                )
-              ],
-            ),
-        body: FutureBuilder<List<Pop>>(future: _filterPopsLocation(popsFromDB),
-        builder: (BuildContext context, AsyncSnapshot<List<Pop>> snapshot) {
+                appBar: AppBar(
+                  title: const Text('Foodie Pops you will love'),
+                  automaticallyImplyLeading: false,
+                  actions: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.filter_list),
+                      onPressed: () => {
+                        setState(() {
+                          this._showFilter = !this._showFilter;
+                        })
+                      },
+                    )
+                  ],
+                ),
+                body: FutureBuilder<List<Pop>>(
+                    future: _filterPopsLocation(popsFromDB),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<Pop>> snapshot) {
+                      if (snapshot.hasData) {
+                        List<Pop> filteredPops = snapshot.data;
+                        print('filtered pops length: ${filteredPops.length}');
+                        return new Column(children: <Widget>[
+                          this._showFilter
+                              ? _buildFilter()
+                              : new Container(width: 0, height: 0),
+                          new Expanded(
+                              child: ListView(
+                            padding: const EdgeInsets.all(8.0),
+                            children: <Widget>[
+                              ...List<Widget>.generate(filteredPops.length,
+                                  (int index) {
+                                return OpenContainer(
+                                  transitionType: _transitionType,
+                                  openBuilder: (BuildContext _,
+                                      VoidCallback openContainer) {
+                                    return _DetailsPage(
+                                        pop: filteredPops[index]);
+                                  },
+                                  tappable: false,
+                                  closedShape: const RoundedRectangleBorder(),
+                                  closedElevation: 0.0,
+                                  closedBuilder: (BuildContext _,
+                                      VoidCallback openContainer) {
+                                    return _buildRow(filteredPops[index],
+                                        openContainer, database);
+                                  },
+                                );
+                              }),
+                            ],
+                          ))
+                        ]);
+                      }
 
-          if (snapshot.hasData) {
-          List<Pop> filteredPops = snapshot.data;
-            print('filtered pops length: ${filteredPops.length}');
-            return new Column(
-              children: <Widget>[
-                this._showFilter ? _buildFilter() : new Container(width: 0, height: 0),
-                  new Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.all(8.0),
-                    children: <Widget>[
-                      ...List<Widget>.generate(filteredPops.length, (int index) {
-                        return OpenContainer(
-                          transitionType: _transitionType,
-                          openBuilder:
-                              (BuildContext _, VoidCallback openContainer) {
-                            return _DetailsPage(pop: filteredPops[index]);
-                          },
-                          tappable: false,
-                          closedShape: const RoundedRectangleBorder(),
-                          closedElevation: 0.0,
-                          closedBuilder:
-                              (BuildContext _, VoidCallback openContainer) {
-                            return _buildRow(filteredPops[index], openContainer, database);
-                          },
-                        );
-                      }),
-                    ],
-                  ))
-                ]);
-          }
-         
-          return new Center(child: new CircularProgressIndicator());
-        }
-          
-          
-          ) 
-            );
+                      return new Center(child: new CircularProgressIndicator());
+                    }));
           }
           return Scaffold(
             body: Center(
@@ -213,17 +325,35 @@ Widget _buildRow(
               ),
               new Expanded(
                   child: new Column(
-                      mainAxisSize: MainAxisSize.min,
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                     new Text(
                       pop.name,
-//                    textAlign: TextAlign.center,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                           fontSize: 18.0, fontWeight: FontWeight.bold),
-                    )
+                    ),
+                    new Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          new Text("5" + " KM |   ",
+                              style: TextStyle(
+                                  fontSize: 14.0,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold)),
+                          new Text("222",
+                              style: TextStyle(
+                                  fontSize: 14.0,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold)),
+                          new IconButton(
+                              icon: Icon(Icons.restaurant,
+                                  color: Color(0xffe51923)),
+                              onPressed: () => {})
+                        ])
                   ])),
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -237,36 +367,56 @@ Widget _buildRow(
                       Padding(
                         padding: EdgeInsets.only(top: 2.0),
                       ),
-                      new ClipRRect(
-                        borderRadius: new BorderRadius.circular(4.0),
-                        child: CountdownTimer(
-                          endTime: pop.expirationTime.millisecondsSinceEpoch,
-                          defaultDays: "==",
-                          defaultHours: "--",
-                          defaultMin: "**",
-                          defaultSec: "++",
-                          daysSymbol: ":",
-                          hoursSymbol: ":",
-                          minSymbol: ":",
-                          secSymbol: "",
-                          daysTextStyle:
-                              TextStyle(fontSize: 15, color: Color(0xffe51923)),
-                          hoursTextStyle:
-                              TextStyle(fontSize: 15, color: Color(0xffe51923)),
-                          minTextStyle:
-                              TextStyle(fontSize: 15, color: Color(0xffe51923)),
-                          secTextStyle:
-                              TextStyle(fontSize: 15, color: Color(0xffe51923)),
-                          daysSymbolTextStyle:
-                              TextStyle(fontSize: 15, color: Colors.black),
-                          hoursSymbolTextStyle:
-                              TextStyle(fontSize: 15, color: Colors.black),
-                          minSymbolTextStyle:
-                              TextStyle(fontSize: 15, color: Colors.black),
-                          secSymbolTextStyle:
-                              TextStyle(fontSize: 15, color: Colors.black),
-                        ),
-                      ),
+                      Container(
+                          padding: const EdgeInsets.all(6.0),
+                          decoration: BoxDecoration(
+                            color: Color(0xffe51923),
+                            border: Border.all(width: 1.0, color: Colors.red),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(30.0)),
+                          ),
+                          child: new ClipRRect(
+                            borderRadius: new BorderRadius.circular(4.0),
+                            child: CountdownTimer(
+                                endTime:
+                                    pop.expirationTime.millisecondsSinceEpoch,
+                                defaultDays: "==",
+                                defaultHours: "--",
+                                defaultMin: "**",
+                                defaultSec: "++",
+                                daysSymbol: ":",
+                                hoursSymbol: ":",
+                                minSymbol: "",
+                                secSymbol: "",
+                                daysTextStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                                hoursTextStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                                minTextStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                                secTextStyle: TextStyle(
+                                    fontSize: 0,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                                daysSymbolTextStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                                hoursSymbolTextStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                                minSymbolTextStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold)),
+                          ))
                     ]),
               )
             ]),
@@ -285,8 +435,7 @@ class _DetailsPage extends StatelessWidget {
     try {
       final title = pop.name;
       final description = pop.subtitle;
-      final coords = Coords(pop.location.latitude,
-          pop.location.longitude);
+      final coords = Coords(pop.location.latitude, pop.location.longitude);
       final availableMaps = await MapLauncher.installedMaps;
 
       showModalBottomSheet(
@@ -324,6 +473,27 @@ class _DetailsPage extends StatelessWidget {
   }
 
   _DetailsPage({Key key, this.pop}) : super(key: key);
+
+  Future<Null> _openInWebview(context, String url) async {
+    debugPrint("here1");
+    if (await url_launcher.canLaunch(url)) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (ctx) => WebviewScaffold(
+            initialChild: Center(child: CircularProgressIndicator()),
+            url: url,
+            appBar: AppBar(title: Text(url)),
+          ),
+        ),
+      );
+    } else {
+      Scaffold.of(context).showSnackBar(
+        SnackBar(
+          content: Text('URL $url can not be launched.'),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -365,14 +535,18 @@ class _DetailsPage extends StatelessWidget {
                     textColor: Colors.blue,
                     icon: Icon(Icons.open_in_new, color: Colors.blue),
                     label: Text('Visit Pops website'),
-                    onPressed: () {},
+                    onPressed: () {
+                      FocusScope.of(context).requestFocus(FocusNode());
+                      this._openInWebview(context, pop.url);
+                    },
                   )
                 ])),
                 Container(
                     margin: EdgeInsets.all(50.0),
                     padding: const EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
-                      border: Border.all(width: 3.0, color: Color(0xffe51923)),
+                      color: Color(0xffe51923),
+                      border: Border.all(width: 3.0, color: Colors.red),
                       borderRadius: BorderRadius.all(Radius.circular(30.0)),
                     ),
                     child: Row(
@@ -383,27 +557,25 @@ class _DetailsPage extends StatelessWidget {
                             defaultDays: "==",
                             defaultHours: "--",
                             defaultMin: "**",
-                            defaultSec: "++",
-                            daysSymbol: ":",
-                            hoursSymbol: ":",
-                            minSymbol: ":",
+                            defaultSec: "",
+                            daysSymbol: "d ",
+                            hoursSymbol: "h ",
+                            minSymbol: "m",
                             secSymbol: "",
-                            daysTextStyle: TextStyle(
-                                fontSize: 30, color: Color(0xffe51923)),
-                            hoursTextStyle: TextStyle(
-                                fontSize: 30, color: Color(0xffe51923)),
-                            minTextStyle: TextStyle(
-                                fontSize: 30, color: Color(0xffe51923)),
-                            secTextStyle: TextStyle(
-                                fontSize: 30, color: Color(0xffe51923)),
+                            daysTextStyle:
+                                TextStyle(fontSize: 30, color: Colors.white),
+                            hoursTextStyle:
+                                TextStyle(fontSize: 30, color: Colors.white),
+                            minTextStyle:
+                                TextStyle(fontSize: 30, color: Colors.white),
+                            secTextStyle:
+                                TextStyle(fontSize: 0, color: Colors.white),
                             daysSymbolTextStyle:
-                                TextStyle(fontSize: 30, color: Colors.black),
+                                TextStyle(fontSize: 30, color: Colors.white),
                             hoursSymbolTextStyle:
-                                TextStyle(fontSize: 30, color: Colors.black),
+                                TextStyle(fontSize: 30, color: Colors.white),
                             minSymbolTextStyle:
-                                TextStyle(fontSize: 30, color: Colors.black),
-                            secSymbolTextStyle:
-                                TextStyle(fontSize: 30, color: Colors.black),
+                                TextStyle(fontSize: 30, color: Colors.white),
                           )
                         ]))
               ],
