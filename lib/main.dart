@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
             title: 'FoodiePops',
             theme: ThemeData(
                 primarySwatch: Colors.red, primaryColor: Color(0xffe51923)),
-            home: OnboardingScreen(title: 'Fancy OnBoarding HomePage'),
+            home: Splash(userSnapshot: userSnapshot,),
           );
         },
       ),
@@ -60,44 +60,39 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class Splash extends StatefulWidget {
+class Splash extends StatelessWidget {
+  const Splash({Key key, @required this.userSnapshot}) : super(key: key);
+  final AsyncSnapshot<User> userSnapshot;
 
-  @override
-  SplashState createState() => new SplashState();
-}
-
-class SplashState extends State<Splash> {
-  AsyncSnapshot<User> _userSnapshot;
-
-  @override
-  void initState() {
-    super.initState();
-    checkFirstSeen();
-  }
-
-  Future checkFirstSeen() async {
+  Future<bool> checkFirstSeen() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool _seen = (prefs.getBool('seen') ?? false);
     debugPrint(_seen.toString());
     debugPrint("here");
 
-    if (_seen) {
-      Navigator.of(context).pushReplacementNamed('/auth');
-    } else {
+    if (_seen == false) {
       await prefs.setBool('seen', true);
-      Navigator.of(context).pushReplacement(new MaterialPageRoute(
-          builder: (context) =>
-              OnboardingScreen(title: 'Fancy OnBoarding HomePage')));
     }
-  }
 
+    return _seen;
+  }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       body: new Center(
-        child: new Text('Loading...'),
-      ),
+          child: FutureBuilder(
+              future: checkFirstSeen(),
+              builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                if (snapshot.hasData) {
+                  bool hasSeenSplash = snapshot.data;
+
+                  return hasSeenSplash ?  AuthWidget(userSnapshot: userSnapshot,) : OnboardingScreen(
+                            title: 'Fancy OnBoarding HomePage');
+                }
+
+                return Text('Loading...');
+              })),
     );
   }
 }
