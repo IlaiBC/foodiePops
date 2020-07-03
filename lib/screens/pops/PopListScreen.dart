@@ -23,6 +23,7 @@ class _PopListScreenState extends State<PopListScreen> {
   Geolocator geolocator = Geolocator();
   Position userLocation;
   bool _showFilter = false;
+  int _radioVal = 0;
   double _filterDistance = 10000;
 
   @override
@@ -90,8 +91,15 @@ class _PopListScreenState extends State<PopListScreen> {
     return currentLocation;
   }
 
+  _handleRadioValueChange(int value) {
+    setState(() {
+      this._radioVal = value;
+    });
+  }
+
   Widget _buildFilter() {
-    return Container(
+    return Card(
+        child: Container(
       margin: EdgeInsets.only(top: 50, left: 50, right: 50),
       alignment: Alignment.centerLeft,
       child: Column(children: <Widget>[
@@ -112,9 +120,54 @@ class _PopListScreenState extends State<PopListScreen> {
             _filterDistance = value * 1000;
             setState(() {});
           },
-        )
+        ),
+        new Divider(height: 5.0, color: Colors.black),
+        new Padding(
+          padding: new EdgeInsets.all(8.0),
+        ),
+        new Text(
+          'Price Range:',
+          style: new TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18.0,
+          ),
+        ),
+        new Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            new Radio(
+              value: 1,
+              groupValue: _radioVal,
+              onChanged: _handleRadioValueChange,
+            ),
+            new Text(
+              '₪',
+              style: new TextStyle(fontSize: 16.0),
+            ),
+            new Radio(
+              value: 2,
+              groupValue: _radioVal,
+              onChanged: _handleRadioValueChange,
+            ),
+            new Text(
+              '₪₪',
+              style: new TextStyle(
+                fontSize: 16.0,
+              ),
+            ),
+            new Radio(
+              value: 3,
+              groupValue: _radioVal,
+              onChanged: _handleRadioValueChange,
+            ),
+            new Text(
+              '₪₪₪',
+              style: new TextStyle(fontSize: 16.0),
+            ),
+          ],
+        ),
       ]),
-    );
+    ));
   }
 
   @override
