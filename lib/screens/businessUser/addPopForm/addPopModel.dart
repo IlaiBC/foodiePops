@@ -45,6 +45,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
   String popAddress;
   bool isLoading;
   bool submitted;
+  List<String> selectedKitchenTypes = [];
 
   void updatePopName(String popName) => updateWith(popName: popName);
 
@@ -71,6 +72,10 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
   void updatePopAddress(String popAddress) =>
       updateWith(popAddress: popAddress);
 
+      
+  void updateSelectedKitchenTypes(List<String> selectedKitchenTypes) =>
+      updateWith(selectedKitchenTypes: selectedKitchenTypes);
+
   void updateWith({
     String popName,
     String popSubTitle,
@@ -83,6 +88,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     String popAddress,
     bool isLoading,
     bool submitted,
+    List<String> selectedKitchenTypes,
   }) {
     this.popName = popName ?? this.popName;
     this.popSubTitle = popSubTitle ?? this.popSubTitle;
@@ -95,6 +101,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     this.popAddress = popAddress ?? this.popAddress;
     this.isLoading = isLoading ?? this.isLoading;
     this.submitted = submitted ?? this.submitted;
+    this.selectedKitchenTypes = selectedKitchenTypes ?? this.submitted;
     notifyListeners();
   }
 

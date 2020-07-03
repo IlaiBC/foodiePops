@@ -15,6 +15,8 @@ import 'package:foodiepops/widgets/platformAlertDialog.dart';
 import 'package:provider/provider.dart';
 import 'package:search_map_place/search_map_place.dart';
 import 'package:foodiepops/widgets/ClickableImageUpload.dart';
+import 'package:filter_list/filter_list.dart';
+import 'package:foodiepops/constants/generalConsts.dart';
 
 class AddPopFormBuilder extends StatelessWidget {
   const AddPopFormBuilder({Key key, this.popToEdit}) : super(key: key);
@@ -30,14 +32,16 @@ class AddPopFormBuilder extends StatelessWidget {
       create: (_) =>
           AddPopModel(database: database, businessUser: businessUser),
       child: Consumer<AddPopModel>(
-        builder: (_, AddPopModel model, __) => AddPopForm(model: model, popToEdit: popToEdit),
+        builder: (_, AddPopModel model, __) =>
+            AddPopForm(model: model, popToEdit: popToEdit),
       ),
     );
   }
 }
 
 class AddPopForm extends StatefulWidget {
-  const AddPopForm({Key key, @required this.model, this.popToEdit}) : super(key: key);
+  const AddPopForm({Key key, @required this.model, this.popToEdit})
+      : super(key: key);
   final AddPopModel model;
   final Pop popToEdit;
 
@@ -49,7 +53,8 @@ class _AddPopFormState extends State<AddPopForm> {
   final FocusScopeNode _node = FocusScopeNode();
 
   final TextEditingController _popNameController = TextEditingController();
-  final TextEditingController _popDescriptionController = TextEditingController();
+  final TextEditingController _popDescriptionController =
+      TextEditingController();
   final TextEditingController _popSubTitleController = TextEditingController();
   final TextEditingController _popUrlController = TextEditingController();
 
@@ -57,6 +62,7 @@ class _AddPopFormState extends State<AddPopForm> {
   TimeOfDay _popExpirationTime;
   bool _isUploadingPopPhoto;
   bool _isUploadingPopInnerPhoto;
+  RangeValues _values = RangeValues(0, 100);
 
   @override
   void initState() {
@@ -75,18 +81,19 @@ class _AddPopFormState extends State<AddPopForm> {
     }
   }
 
-  void _setControllersWithPopData () {
+  void _setControllersWithPopData() {
     _popNameController.text = widget.popToEdit.name;
     _popDescriptionController.text = widget.popToEdit.description;
     _popSubTitleController.text = widget.popToEdit.subtitle;
     _popUrlController.text = widget.popToEdit.url;
   }
 
-    void _setPopExpirationDateTime () {
-      DateTime popExpirationDateTime = widget.popToEdit.expirationTime;
+  void _setPopExpirationDateTime() {
+    DateTime popExpirationDateTime = widget.popToEdit.expirationTime;
 
     _popExpirationDate = popExpirationDateTime;
-    _popExpirationTime = TimeOfDay(hour: popExpirationDateTime.hour, minute: popExpirationDateTime.minute);
+    _popExpirationTime = TimeOfDay(
+        hour: popExpirationDateTime.hour, minute: popExpirationDateTime.minute);
   }
 
   AddPopModel get model => widget.model;
@@ -137,17 +144,17 @@ class _AddPopFormState extends State<AddPopForm> {
   }
 
   _setUploadPopPhotoLoading(bool isLoading) {
-      setState(() {
-        _isUploadingPopPhoto = isLoading;
-      });
-      model.updateWith(isLoading: isLoading);
+    setState(() {
+      _isUploadingPopPhoto = isLoading;
+    });
+    model.updateWith(isLoading: isLoading);
   }
 
   _setUploadPopInnerPhotoLoading(bool isLoading) {
-      setState(() {
-        _isUploadingPopInnerPhoto = isLoading;
-      });
-      model.updateWith(isLoading: isLoading);
+    setState(() {
+      _isUploadingPopInnerPhoto = isLoading;
+    });
+    model.updateWith(isLoading: isLoading);
   }
 
   Future<void> _uploadPopInnerPhoto(BuildContext context) async {
@@ -186,7 +193,6 @@ class _AddPopFormState extends State<AddPopForm> {
       _node.nextFocus();
     } else {
       print('cannot submit field');
-      
     }
   }
 
@@ -220,7 +226,7 @@ class _AddPopFormState extends State<AddPopForm> {
     ));
   }
 
-    Widget _buildPopSubTitleField() {
+  Widget _buildPopSubTitleField() {
     return FormWidgets.formFieldContainer(TextField(
       key: Key('popSubTitle'),
       controller: _popSubTitleController,
@@ -236,7 +242,8 @@ class _AddPopFormState extends State<AddPopForm> {
       textInputAction: TextInputAction.next,
       keyboardAppearance: Brightness.light,
       onChanged: model.updatePopSubTitle,
-      onEditingComplete: () => _isFieldEditingComplete(model.canSubmitPopSubTitle),
+      onEditingComplete: () =>
+          _isFieldEditingComplete(model.canSubmitPopSubTitle),
     ));
   }
 
@@ -282,6 +289,101 @@ class _AddPopFormState extends State<AddPopForm> {
     ));
   }
 
+  Widget _buildPriceRangeSlider() {
+    return SliderTheme(
+        data: SliderThemeData(showValueIndicator: ShowValueIndicator.always),
+        child: RangeSlider(
+            values: _values,
+            labels: RangeLabels(
+                '${_values.start.round()}₪', '${_values.end.round()}₪'),
+            min: 0,
+            max: 100,
+            divisions: 20,
+            onChanged: (RangeValues values) {
+              setState(() {
+                if (values.end - values.start >= 20) {
+                  _values = values;
+                } else {
+                  if (_values.start == values.start) {
+                    _values = RangeValues(_values.start, _values.start + 20);
+                  } else {
+                    _values = RangeValues(_values.end - 20, _values.end);
+                  }
+                }
+              });
+            }));
+  }
+
+  void _openKitchenTypesList() async {
+    var list = await FilterList.showFilterList(
+      context,
+      allTextList: GeneralConsts.kitchenTypes,
+      height: 480,
+      borderRadius: 20,
+      headlineText: "Select Kitchen Types",
+      searchFieldHintText: "Search Here",
+      selectedTextList: model.selectedKitchenTypes,
+      applyButonTextBackgroundColor: Color(0xffe51923),
+      headerTextColor: Color(0xffe51923),
+      selectedTextBackgroundColor: Color(0xffe51923),
+      closeIconColor: Color(0xffe51923),
+      allResetButonColor: Color(0xffe51923),
+    );
+
+    if (list != null) {
+      model.updateSelectedKitchenTypes(List.from(list));
+    }
+  }
+
+  Widget _buildKitchenTypesField () {
+    if (model.selectedKitchenTypes.length > 0) {
+      return Container(child: Column(children: <Widget>[
+        Text("Selected Kitchen types",
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.black, fontSize: 20.0)),
+          SizedBox(height: 8.0),
+      Wrap(alignment: WrapAlignment.center,
+        spacing: 20,
+        children:  <Widget>[
+           ...List<Widget>.generate(model.selectedKitchenTypes.length, (int index) {
+          final String currentKitchen = model.selectedKitchenTypes[index];
+
+            return Container(
+              padding: EdgeInsets.all(10),
+  decoration: BoxDecoration(
+    border: Border.all(
+      color: Colors.red[500],
+    ),
+    borderRadius: BorderRadius.all(Radius.circular(20))
+  ),
+  child: Text(currentKitchen),
+);
+            
+            
+           })
+        ]) 
+      ],)
+      
+      
+
+
+      );
+    }
+    return Container(child: Column(children: <Widget>[
+Text("Select Kitchen types",
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.black, fontSize: 20.0)),
+          SizedBox(height: 8.0),
+GestureDetector(
+  onTap: _openKitchenTypesList, // handle your image tap here
+  child: Icon(Icons.fastfood, size: 50, color: Colors.red,)
+,
+    )
+    ],))
+;
+          
+  }
+
   Widget _buildContent(BuildContext context) {
     return FocusScope(
       node: _node,
@@ -299,32 +401,50 @@ class _AddPopFormState extends State<AddPopForm> {
           SizedBox(height: 8.0),
           _buildPopExpirationDatePicker(),
           SizedBox(height: 16.0),
+          _buildPriceRangeSlider(),
+          SizedBox(height: 16.0),
           SearchMapPlaceWidget(
-            apiKey: API_KEY,
-            placeholder: widget.popToEdit != null ? widget.popToEdit.address : Texts.addressSearchPlaceHolder,
-            onSelected: (place) async {
-            print('place full json is: ${place.fullJSON}');
-            print('place description: ${place.description}');
-              final geolocation = await place.geolocation;
-            print('geolocation is: $geolocation');
-            print('geolocation coordinates are: ${geolocation.coordinates}');
-            model.updatePopLocation(geolocation.coordinates);
-            model.updatePopAddress(place.description);
-            }
-          ),
-          SizedBox(height: 16.0),
-          Text("choose pop photo", textAlign: TextAlign.center , style: TextStyle(color: Colors.black, fontSize: 20.0)),
-          SizedBox(height: 8.0),
-          ClickableImageUpload(height: 200, loading: _isUploadingPopPhoto, onPressed: () {
-                    _uploadPopPhoto(context);
-                  }, photoPath: model.popPhotoPath),
-          SizedBox(height: 16.0),
-                    Text("choose pop inner photo", textAlign: TextAlign.center , style: TextStyle(color: Colors.black, fontSize: 20.0)),
-          SizedBox(height: 8.0),
+              apiKey: API_KEY,
+              placeholder: widget.popToEdit != null
+                  ? widget.popToEdit.address
+                  : Texts.addressSearchPlaceHolder,
+              onSelected: (place) async {
+                print('place full json is: ${place.fullJSON}');
+                print('place description: ${place.description}');
+                final geolocation = await place.geolocation;
+                print('geolocation is: $geolocation');
+                print(
+                    'geolocation coordinates are: ${geolocation.coordinates}');
+                model.updatePopLocation(geolocation.coordinates);
+                model.updatePopAddress(place.description);
+              }),
+                        SizedBox(height: 16.0),
+          _buildKitchenTypesField(),
 
-          ClickableImageUpload(height: 200, loading: _isUploadingPopInnerPhoto, onPressed: () {
-                    _uploadPopInnerPhoto(context);
-                  }, photoPath: model.popInnerPhotoPath),
+          SizedBox(height: 16.0),
+          Text("choose pop photo",
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.black, fontSize: 20.0)),
+          SizedBox(height: 8.0),
+          ClickableImageUpload(
+              height: 200,
+              loading: _isUploadingPopPhoto,
+              onPressed: () {
+                _uploadPopPhoto(context);
+              },
+              photoPath: model.popPhotoPath),
+          SizedBox(height: 16.0),
+          Text("choose pop inner photo",
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.black, fontSize: 20.0)),
+          SizedBox(height: 8.0),
+          ClickableImageUpload(
+              height: 200,
+              loading: _isUploadingPopInnerPhoto,
+              onPressed: () {
+                _uploadPopInnerPhoto(context);
+              },
+              photoPath: model.popInnerPhotoPath),
           SizedBox(height: 16.0),
           FormSubmitButton(
             key: Key(Keys.businessFormSubmit),

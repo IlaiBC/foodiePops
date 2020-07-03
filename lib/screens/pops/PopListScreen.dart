@@ -11,6 +11,8 @@ import 'package:map_launcher/map_launcher.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:filter_list/filter_list.dart';
+import 'package:foodiepops/constants/generalConsts.dart';
+
 
 class PopListScreen extends StatefulWidget {
   @override
@@ -118,7 +120,7 @@ class _PopListScreenState extends State<PopListScreen> {
   void _openFilterList() async {
     var list = await FilterList.showFilterList(
       context,
-      allTextList: kitchenTypes,
+      allTextList: GeneralConsts.kitchenTypes,
       height: 480,
       borderRadius: 20,
       headlineText: "Select Kitchen Types",
