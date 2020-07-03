@@ -224,7 +224,8 @@ class _PopListScreenState extends State<PopListScreen> {
             onPressed: _openFilterList,
             color: Color(0xffe51923),
             textColor: Colors.white,
-            child: Text('Choose Kitchen Types'))
+            child: Text('Choose Kitchen Types',
+                style: TextStyle(fontSize: 18.0)))
       ]),
     ));
   }
