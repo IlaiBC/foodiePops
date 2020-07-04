@@ -124,6 +124,9 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     this.popUrl = pop.url;
     this.popLocation =  LatLng(pop.location.latitude, pop.location.longitude);
     this.popAddress = pop.address;
+    this.selectedKitchenTypes = pop.kitchenTypes;
+    this.minPrice = pop.minPrice;
+    this.maxPrice = pop.maxPrice;
   }
 
   void clearData() {
@@ -139,6 +142,9 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
       popAddress: '',
       isLoading: false,
       submitted: false,
+      selectedKitchenTypes: [],
+      minPrice: 0,
+      maxPrice: 100,
     );
   }
 

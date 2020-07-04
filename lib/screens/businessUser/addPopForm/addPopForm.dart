@@ -75,6 +75,7 @@ class _AddPopFormState extends State<AddPopForm> {
       _setControllersWithPopData();
       _setPopExpirationDateTime();
       model.setPopToEdit(widget.popToEdit);
+      _values = RangeValues(model.minPrice.toDouble(), model.maxPrice.toDouble());
     } else {
       _popExpirationDate = DateTime.now();
       _popExpirationTime = TimeOfDay.now();
@@ -185,6 +186,7 @@ class _AddPopFormState extends State<AddPopForm> {
     _popUrlController.clear();
     _popExpirationDate = DateTime.now();
     _popExpirationTime = TimeOfDay.now();
+    _values = RangeValues(0, 100);
   }
 
   void _isFieldEditingComplete(bool canSubmitField) {
