@@ -12,6 +12,8 @@ import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:filter_list/filter_list.dart';
 import 'package:foodiepops/constants/generalConsts.dart';
+import 'package:foodiepops/models/popLike.dart';
+import 'package:foodiepops/models/popClickCounter.dart';
 
 class PopListScreen extends StatefulWidget {
   @override
@@ -321,7 +323,7 @@ class _PopListScreenState extends State<PopListScreen> {
                                   closedBuilder: (BuildContext _,
                                       VoidCallback openContainer) {
                                     return _buildRow(filteredPops[index],
-                                        openContainer, database, userLocation);
+                                        openContainer, database, userLocation, context);
                                   },
                                 );
                               }),
@@ -343,8 +345,12 @@ class _PopListScreenState extends State<PopListScreen> {
 }
 
 Widget _buildRow(
-    Pop pop, VoidCallback openContainer, FirestoreDatabase database, Position userLocation) {
-  return new Card(
+    Pop pop, VoidCallback openContainer, FirestoreDatabase database, Position userLocation, BuildContext context) {
+      return StreamBuilder<PopClickCounter>(
+        stream: database.popLikeCounterStream(pop.id),
+        builder: (context, snapshot) {
+
+      return new Card(
       child: ListTile(
           title: Padding(
             padding: const EdgeInsets.all(0.0),
@@ -379,7 +385,7 @@ Widget _buildRow(
                                   fontSize: 14.0,
                                   color: Colors.grey,
                                   fontWeight: FontWeight.bold)),
-                          new Text("222",
+                          new Text(snapshot.data != null ? snapshot.data.counter.toString() : "0",
                               style: TextStyle(
                                   fontSize: 14.0,
                                   color: Colors.grey,
@@ -387,7 +393,7 @@ Widget _buildRow(
                           new IconButton(
                               icon: Icon(Icons.restaurant,
                                   color: Color(0xffe51923)),
-                              onPressed: () => {})
+                              onPressed: () => {database.addLikeToPop(pop, userLocation, snapshot.data != null ? snapshot.data.counter : 0)})
                         ])
                   ])),
               Padding(
@@ -461,6 +467,9 @@ Widget _buildRow(
             database.addPopClick(pop, userLocation);
             openContainer();
           }));
+
+        });
+
 }
 
 class _DetailsPage extends StatelessWidget {
