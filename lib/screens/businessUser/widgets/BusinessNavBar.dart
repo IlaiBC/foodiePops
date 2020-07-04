@@ -23,13 +23,13 @@ class BusinessNavBar extends StatelessWidget  {
 
       final navItems = <BottomNavigationBarItem>[
         BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage("assets/foodie.png")),
+            icon: Icon(Icons.show_chart),
             title: Text(Texts.analyticsScreen)),
         BottomNavigationBarItem(
             icon: ImageIcon(AssetImage("assets/foodie.png")),
             title: Text(Texts.myPops)),
         BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage("assets/news.png")),
+            icon: Icon(Icons.library_add),
             title: Text(Texts.addPop)),
         BottomNavigationBarItem(
             icon: ImageIcon(AssetImage("assets/profile.png")),

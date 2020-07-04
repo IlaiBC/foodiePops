@@ -62,7 +62,7 @@ class _AddPopFormState extends State<AddPopForm> {
   TimeOfDay _popExpirationTime;
   bool _isUploadingPopPhoto;
   bool _isUploadingPopInnerPhoto;
-  RangeValues _values = RangeValues(0, 100);
+  RangeValues _values = RangeValues(0, 200);
 
   @override
   void initState() {
@@ -291,7 +291,7 @@ class _AddPopFormState extends State<AddPopForm> {
 
   Widget _buildPriceRangeSlider() {
     return Container(child: Column(children: <Widget>[
-      Text('Price Range: ${_values.start.round()}₪ - ${_values.end.round()}₪', textAlign: TextAlign.center,
+      Text('Meal Price Range: ${_values.start.round()}₪ - ${_values.end.round()}₪', textAlign: TextAlign.center,
               style: TextStyle(color: Colors.black, fontSize: 20.0 )),
 SliderTheme(
         data: SliderThemeData(showValueIndicator: ShowValueIndicator.always),
@@ -300,7 +300,7 @@ SliderTheme(
             labels: RangeLabels(
                 '${_values.start.round()}₪', '${_values.end.round()}₪'),
             min: 0,
-            max: 100,
+            max: 200,
             divisions: 20,
             onChanged: (RangeValues values) {
               setState(() {
