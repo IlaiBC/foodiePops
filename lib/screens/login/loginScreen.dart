@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:foodiepops/screens/businessUser/businessLogin.dart';
 import 'package:foodiepops/widgets/signInButton.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
@@ -13,11 +14,10 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoadingIndicatorShowing = false;
 
   void toggleLoadingIndicator() {
-    if(mounted) {
-
-    setState(() {
-      _isLoadingIndicatorShowing = !_isLoadingIndicatorShowing;
-    });
+    if (mounted) {
+      setState(() {
+        _isLoadingIndicatorShowing = !_isLoadingIndicatorShowing;
+      });
     }
   }
 
@@ -38,7 +38,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void onBusinessSignInPressed(context) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => BusinessLogin()));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => BusinessLogin()));
   }
 
   @override
@@ -46,9 +47,11 @@ class _LoginScreenState extends State<LoginScreen> {
     final authService =
         Provider.of<FirebaseAuthService>(context, listen: false);
     return Scaffold(
-      body: Container(
-        color: Colors.white,
-        child: Center(
+        body: Container(
+      color: Colors.white,
+      child: Center(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(20.0),
           child: Column(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -76,15 +79,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     buttonIconPath: "assets/facebook_logo.png",
                     buttonOnPressedAction: () =>
                         onFacebookSignInPressed(context, authService)),
-                                        SizedBox(height: 20),
+                SizedBox(height: 20),
                 SignInButton(
-                    buttonText: 'Business Login',
-                    buttonColor: Colors.green,
-                    buttonIconPath: "assets/business_login.png",
-                    buttonOnPressedAction: () => onBusinessSignInPressed(context),
-          )]),
+                  buttonText: 'Business Login',
+                  buttonColor: Colors.green,
+                  buttonIconPath: "assets/business_login.png",
+                  buttonOnPressedAction: () => onBusinessSignInPressed(context),
+                )
+              ]),
         ),
       ),
-    );
+    ));
   }
 }
