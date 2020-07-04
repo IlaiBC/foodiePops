@@ -214,6 +214,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
         kitchenTypes: selectedKitchenTypes,
         minPrice: minPrice,
         maxPrice: maxPrice,
+        priceRank: _calculatePriceRank(),
         );
   }
 
@@ -232,7 +233,25 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
         businessId: businessUser.uid,
         kitchenTypes: selectedKitchenTypes,
         minPrice: minPrice,
-        maxPrice: maxPrice,);
+        maxPrice: maxPrice,
+        priceRank: _calculatePriceRank(),
+        );
+  }
+
+  int _calculatePriceRank (){
+    if (maxPrice <= 60) {
+      return 1;
+    }
+
+    if (maxPrice <= 80) {
+      return 2;
+    }
+
+    if (maxPrice <= 100) {
+      return 3;
+    }
+
+    return 3;
   }
 
   // Getters

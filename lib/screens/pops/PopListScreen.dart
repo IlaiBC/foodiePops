@@ -13,7 +13,6 @@ import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:filter_list/filter_list.dart';
 import 'package:foodiepops/constants/generalConsts.dart';
 
-
 class PopListScreen extends StatefulWidget {
   @override
   _PopListScreenState createState() => _PopListScreenState();
@@ -25,7 +24,7 @@ class _PopListScreenState extends State<PopListScreen> {
   Geolocator geolocator = Geolocator();
   Position userLocation;
   bool _showFilter = false;
-  int _radioVal = 0;
+  int _priceRank = 0;
   double _filterDistance = 10000;
   List<String> selectedKitchenTypes = [];
   List<String> kitchenTypes = [
@@ -113,7 +112,7 @@ class _PopListScreenState extends State<PopListScreen> {
 
   _handleRadioValueChange(int value) {
     setState(() {
-      this._radioVal = value;
+      this._priceRank = value;
     });
   }
 
@@ -180,7 +179,7 @@ class _PopListScreenState extends State<PopListScreen> {
           children: <Widget>[
             new Radio(
               value: 0,
-              groupValue: _radioVal,
+              groupValue: _priceRank,
               onChanged: _handleRadioValueChange,
             ),
             new Text(
@@ -189,7 +188,7 @@ class _PopListScreenState extends State<PopListScreen> {
             ),
             new Radio(
               value: 1,
-              groupValue: _radioVal,
+              groupValue: _priceRank,
               onChanged: _handleRadioValueChange,
             ),
             new Text(
@@ -198,7 +197,7 @@ class _PopListScreenState extends State<PopListScreen> {
             ),
             new Radio(
               value: 2,
-              groupValue: _radioVal,
+              groupValue: _priceRank,
               onChanged: _handleRadioValueChange,
             ),
             new Text(
@@ -209,7 +208,7 @@ class _PopListScreenState extends State<PopListScreen> {
             ),
             new Radio(
               value: 3,
-              groupValue: _radioVal,
+              groupValue: _priceRank,
               onChanged: _handleRadioValueChange,
             ),
             new Text(
@@ -230,6 +229,39 @@ class _PopListScreenState extends State<PopListScreen> {
                 style: TextStyle(fontSize: 18.0)))
       ]),
     ));
+  }
+
+  List<Pop> _applyAllFilters (List<Pop> locationFilteredPops) {
+    List<Pop> filteredPops = [];
+
+    for (int i = 0; i < locationFilteredPops.length; i++) {
+      Pop currentPop = locationFilteredPops[i];
+      
+      if (currentPop.priceRank == _priceRank || _priceRank == 0) {
+        if (selectedKitchenTypes.length == 0) {
+          filteredPops.add(currentPop);
+          continue;
+        } else {
+          
+          if (_popKitchenTypesContainedInSelectedKitchenTypes(currentPop.kitchenTypes)) {
+            filteredPops.add(currentPop);
+            continue;
+          }
+        }
+      }
+    }
+
+    return filteredPops;
+  }
+
+  bool _popKitchenTypesContainedInSelectedKitchenTypes (List<String> popKitchenTypes) {
+    for (int i = 0; i < popKitchenTypes.length; i++) {
+      if (selectedKitchenTypes.contains(popKitchenTypes[i]) == false) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   @override
@@ -263,7 +295,8 @@ class _PopListScreenState extends State<PopListScreen> {
                     builder: (BuildContext context,
                         AsyncSnapshot<List<Pop>> snapshot) {
                       if (snapshot.hasData) {
-                        List<Pop> filteredPops = snapshot.data;
+                        List<Pop> locationFilteredPops = snapshot.data;
+                        List<Pop> filteredPops = _applyAllFilters(locationFilteredPops);
                         print('filtered pops length: ${filteredPops.length}');
                         return new Column(children: <Widget>[
                           this._showFilter

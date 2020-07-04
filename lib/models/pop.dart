@@ -16,6 +16,7 @@ class Pop {
   static final String popKitchenTypes = "kitchenTypes";
   static final String popMinPrice = "minPrice";
   static final String popMaxPrice = "maxPrice";
+  static final String popPriceRank = "priceRank";
 
   static const int MAX_DESCRIPTION_LINES = 3;
 
@@ -34,6 +35,7 @@ class Pop {
     this.kitchenTypes,
     this.minPrice,
     this.maxPrice,
+    this.priceRank,
   });
 
   final String name;
@@ -50,6 +52,7 @@ class Pop {
   List<String> kitchenTypes;
   int minPrice;
   int maxPrice;
+  int priceRank;
 
   Map toMap() {
     Map<String, dynamic> map = {
@@ -67,6 +70,7 @@ class Pop {
       popKitchenTypes: kitchenTypes,
       popMinPrice: minPrice,
       popMaxPrice: maxPrice,
+      popPriceRank: priceRank,
     };
 
     return map;
@@ -91,6 +95,8 @@ class Pop {
         kitchenTypes: List<String>.from(map[popKitchenTypes]),
         minPrice: (map[popMinPrice] as int),
         maxPrice: (map[popMaxPrice] as int),
+        priceRank: (map[popPriceRank] as int),
+
     );
     } catch (e) {
       print('map values are: $map');
