@@ -385,7 +385,7 @@ Text("Select Kitchen types",
           SizedBox(height: 8.0),
 GestureDetector(
   onTap: _openKitchenTypesList, // handle your image tap here
-  child: Icon(Icons.fastfood, size: 50, color: Colors.red,)
+  child: Icon(Icons.restaurant, size: 50, color: Colors.red,)
 ,
     )
     ],))
