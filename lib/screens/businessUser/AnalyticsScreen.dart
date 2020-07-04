@@ -37,7 +37,17 @@ class BusinessAnalyticsScreen extends StatelessWidget {
                       style: TextStyle(
                           fontSize: 18.0, fontWeight: FontWeight.bold),
                     ),
+                                          Text(
+                      'Number of clicks by date',
+                      style: TextStyle(
+                          fontSize: 18.0, fontWeight: FontWeight.bold),
+                    ),
                       Container(height: 300, child: _showPopClickData(pops[index], database),),
+                                                           Text(
+                      'Number of clicks by location',
+                      style: TextStyle(
+                          fontSize: 18.0, fontWeight: FontWeight.bold),
+                    ),
                       Container(height: 300, child: _showPopClickLocationChart(pops[index], database),),
 
                     ],),));
@@ -128,8 +138,8 @@ class BusinessAnalyticsScreen extends StatelessWidget {
         //          insideLabelStyleSpec: new charts.TextStyleSpec(...),
         //          outsideLabelStyleSpec: new charts.TextStyleSpec(...)),
         defaultRenderer: new charts.ArcRendererConfig(
-            arcWidth: 60,
-            arcRendererDecorators: [new charts.ArcLabelDecorator()]));
+            arcWidth: 90,
+            arcRendererDecorators: [new charts.ArcLabelDecorator(labelPosition: charts.ArcLabelPosition.inside)]));
                       }
                       return Center(
               child: CircularProgressIndicator());
@@ -175,6 +185,11 @@ class BusinessAnalyticsScreen extends StatelessWidget {
 
     popClickDataMap.keys.forEach((element) {print('inserting to list $element'); popClickLocationAnalytics.add(PopClickLocationAnalytics(clickLocation: element, popClickCount: popClickDataMap[element]));});
 
+popClickLocationAnalytics.add(PopClickLocationAnalytics(clickLocation: 'Test', popClickCount: 10));
+popClickLocationAnalytics.add(PopClickLocationAnalytics(clickLocation: 'Test2', popClickCount: 1));
+popClickLocationAnalytics.add(PopClickLocationAnalytics(clickLocation: 'Test3', popClickCount: 5));
+
+
     return popClickLocationAnalytics;
   }
 
@@ -182,7 +197,7 @@ class BusinessAnalyticsScreen extends StatelessWidget {
     return [
       new charts.Series<PopClickAnalytics, DateTime>(
         id: 'popClicks',
-        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+        colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
         domainFn: (PopClickAnalytics popClick, _) => popClick.popClickDate,
         measureFn: (PopClickAnalytics popClick, _) => popClick.popClickCount,
         data: popClickAnalytics,
@@ -194,11 +209,13 @@ class BusinessAnalyticsScreen extends StatelessWidget {
     return [
       new charts.Series<PopClickLocationAnalytics, String>(
         id: 'popClicksByLocation',
-        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+        colorFn: (_, index){
+      return charts.MaterialPalette.red.makeShades(5)[index];
+    },
         domainFn: (PopClickLocationAnalytics popClick, _) => popClick.clickLocation,
         measureFn: (PopClickLocationAnalytics popClick, _) => popClick.popClickCount,
         data: popClickLocationAnalytics,
-        labelAccessorFn: (PopClickLocationAnalytics popClick, _) => '${popClick.clickLocation}: ${popClick.popClickCount}'
+        labelAccessorFn: (PopClickLocationAnalytics popClick, _) => '${popClick.clickLocation}:${popClick.popClickCount}'
       ),
     ];
   }
