@@ -236,7 +236,7 @@ class _PopListScreenState extends State<PopListScreen> {
 
     for (int i = 0; i < locationFilteredPops.length; i++) {
       Pop currentPop = locationFilteredPops[i];
-      
+
       if (currentPop.priceRank == _priceRank || _priceRank == 0) {
         if (selectedKitchenTypes.length == 0) {
           filteredPops.add(currentPop);
@@ -321,7 +321,7 @@ class _PopListScreenState extends State<PopListScreen> {
                                   closedBuilder: (BuildContext _,
                                       VoidCallback openContainer) {
                                     return _buildRow(filteredPops[index],
-                                        openContainer, database);
+                                        openContainer, database, userLocation);
                                   },
                                 );
                               }),
@@ -343,7 +343,7 @@ class _PopListScreenState extends State<PopListScreen> {
 }
 
 Widget _buildRow(
-    Pop pop, VoidCallback openContainer, FirestoreDatabase database) {
+    Pop pop, VoidCallback openContainer, FirestoreDatabase database, Position userLocation) {
   return new Card(
       child: ListTile(
           title: Padding(
@@ -458,7 +458,7 @@ Widget _buildRow(
           ),
           onTap: () {
             print('pop is: ${pop.businessId}');
-            database.addPopClick(pop);
+            database.addPopClick(pop, userLocation);
             openContainer();
           }));
 }

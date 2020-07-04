@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:foodiepops/models/UserData.dart';
 import 'package:foodiepops/models/pop.dart';
 import 'package:foodiepops/models/popClick.dart';
+import 'package:geolocator/geolocator.dart';
 
 import 'fireStorePath.dart';
 import 'firestoreService.dart';
@@ -31,9 +32,10 @@ class FirestoreDatabase {
     await _service.setData(path: FirestorePath.specificBusinessPop(pop.businessId, pop.id), data: pop.toMap(), documentId: pop.id, merge: true);
   }
 
-  Future<void> addPopClick(Pop pop) async {
+  Future<void> addPopClick(Pop pop, Position userLocation) async {
       Map<String, dynamic> data = {
         'date': DateTime.now(),
+        'userLocation': GeoPoint(userLocation.latitude, userLocation.longitude)
       };
     await _service.addData(collectionPath: FirestorePath.addPopClick(pop.businessId, pop.id), data: data);
   }
