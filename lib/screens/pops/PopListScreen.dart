@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:foodiepops/models/pop.dart';
@@ -23,6 +24,7 @@ class PopListScreen extends StatefulWidget {
 class _PopListScreenState extends State<PopListScreen> {
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
   List<Pop> pops = [];
+  HashSet<String> likedPopsSet = new HashSet<String>();
   Geolocator geolocator = Geolocator();
   Position userLocation;
   bool _showFilter = false;
@@ -342,9 +344,8 @@ class _PopListScreenState extends State<PopListScreen> {
           );
         });
   }
-}
 
-Widget _buildRow(
+  Widget _buildRow(
     Pop pop, VoidCallback openContainer, FirestoreDatabase database, Position userLocation, BuildContext context) {
       return StreamBuilder<PopClickCounter>(
         stream: database.popLikeCounterStream(pop.id),
@@ -392,8 +393,16 @@ Widget _buildRow(
                                   fontWeight: FontWeight.bold)),
                           new IconButton(
                               icon: Icon(Icons.restaurant,
-                                  color: Color(0xffe51923)),
-                              onPressed: () => {database.addLikeToPop(pop, userLocation, snapshot.data != null ? snapshot.data.counter : 0)})
+                                  color: likedPopsSet.contains(pop.id) ? Colors.red : Colors.grey),
+                              onPressed: () {
+                                if (!likedPopsSet.contains(pop.id)) {
+                                database.addLikeToPop(pop, userLocation, snapshot.data != null ? snapshot.data.counter : 0);
+                                likedPopsSet.add(pop.id);
+                                }
+                                }
+                                )
+
+                                
                         ])
                   ])),
               Padding(
@@ -471,6 +480,9 @@ Widget _buildRow(
         });
 
 }
+}
+
+
 
 class _DetailsPage extends StatelessWidget {
   final Pop pop;
