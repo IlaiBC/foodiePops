@@ -81,15 +81,10 @@ class BusinessAnalyticsScreen extends StatelessWidget {
       // Optionally pass in a [DateTimeFactory] used by the chart. The factory
       // should create the same type of [DateTime] as the data provided. If none
       // specified, the default creates local date time.
-      dateTimeFactory: const charts.LocalDateTimeFactory(),
-      domainAxis: charts.DateTimeAxisSpec(
-        tickFormatterSpec: charts.AutoDateTimeTickFormatterSpec(
-          day: charts.TimeFormatterSpec(
-            format: 'dd',
-            transitionFormat: 'dd MMM',
-          ),
-        ),
-      ),
+      domainAxis: new charts.DateTimeAxisSpec(
+            tickFormatterSpec: new charts.AutoDateTimeTickFormatterSpec(
+                day: new charts.TimeFormatterSpec(
+                    format: 'dd/MM', transitionFormat: 'dd/MM/yy')))
     );
             // return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
             //   Text('Pop name: ${pop.name}'),
@@ -113,6 +108,7 @@ class BusinessAnalyticsScreen extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.data != null) {
             final List<PopClick> popClicks = snapshot.data;
+            debugPrint("got pop clicks ${popClicks.length}");
             return FutureBuilder<List<PopClickLocationAnalytics>>(
               future: _parsePopClickLocationAnalytics(popClicks),
               builder: (BuildContext context,
@@ -164,7 +160,7 @@ class BusinessAnalyticsScreen extends StatelessWidget {
       DateTime dateTimeDayResolution = new DateTime(currentPopClick.date.year, currentPopClick.date.month, currentPopClick.date.day);
       print('dateTimeResolution: $dateTimeDayResolution');
 
-      popClickDataMap.update(new DateTime(2017, 9, 19), (value) => value + 1, ifAbsent: () => 1);
+      popClickDataMap.update(dateTimeDayResolution, (value) => value + 1, ifAbsent: () => 1);
     }
 
     popClickDataMap.keys.forEach((element) {print('inserting to list $element'); popClickAnalytics.add(PopClickAnalytics(popClickDate: element, popClickCount: popClickDataMap[element]));});
@@ -178,12 +174,21 @@ class BusinessAnalyticsScreen extends StatelessWidget {
 
     for (int i = 0; i < popClicksData.length; i++) {
       PopClick currentPopClick = popClicksData[i];
-      List<Placemark> placemark = await Geolocator().placemarkFromCoordinates(currentPopClick.userLocation.latitude, currentPopClick.userLocation.longitude);
+      debugPrint('before to get placeMakr popclick is: $currentPopClick');
 
-      popClickDataMap.update(placemark[0].locality, (value) => value + 1, ifAbsent: () => 1);
+      debugPrint('going to get placeMakr');
+      debugPrint('going to get placeMakr  ${currentPopClick.userLocation}');
+
+      List<Placemark> placemark = currentPopClick.userLocation != null ? await Geolocator().placemarkFromCoordinates(currentPopClick.userLocation.latitude, currentPopClick.userLocation.longitude) : [];
+
+      popClickDataMap.update(placemark.length > 0 ? placemark[0].locality : "N/A", (value) => value + 1, ifAbsent: () => 1);
     }
 
+    debugPrint('after popClickData update');
+
     popClickDataMap.keys.forEach((element) {print('inserting to list $element'); popClickLocationAnalytics.add(PopClickLocationAnalytics(clickLocation: element, popClickCount: popClickDataMap[element]));});
+
+    debugPrint('after popClickData update for each');
 
 popClickLocationAnalytics.add(PopClickLocationAnalytics(clickLocation: 'Test', popClickCount: 10));
 popClickLocationAnalytics.add(PopClickLocationAnalytics(clickLocation: 'Test2', popClickCount: 1));

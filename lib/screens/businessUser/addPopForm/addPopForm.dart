@@ -75,7 +75,8 @@ class _AddPopFormState extends State<AddPopForm> {
       _setControllersWithPopData();
       _setPopExpirationDateTime();
       model.setPopToEdit(widget.popToEdit);
-      _values = RangeValues(model.minPrice.toDouble(), model.maxPrice.toDouble());
+      _values =
+          RangeValues(model.minPrice.toDouble(), model.maxPrice.toDouble());
     } else {
       _popExpirationDate = DateTime.now();
       _popExpirationTime = TimeOfDay.now();
@@ -292,35 +293,40 @@ class _AddPopFormState extends State<AddPopForm> {
   }
 
   Widget _buildPriceRangeSlider() {
-    return Container(child: Column(children: <Widget>[
-      Text('Price Range: ${_values.start.round()}₪ - ${_values.end.round()}₪', textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.black, fontSize: 20.0 )),
-SliderTheme(
-        data: SliderThemeData(showValueIndicator: ShowValueIndicator.always),
-        child: RangeSlider(
-            values: _values,
-            labels: RangeLabels(
-                '${_values.start.round()}₪', '${_values.end.round()}₪'),
-            min: 0,
-            max: 100,
-            divisions: 20,
-            onChanged: (RangeValues values) {
-              setState(() {
-                if (values.end - values.start >= 20) {
-                  _values = values;
-                } else {
-                  if (_values.start == values.start) {
-                    _values = RangeValues(_values.start, _values.start + 20);
-                  } else {
-                    _values = RangeValues(_values.end - 20, _values.end);
-                  }
-                }
-              }
-              );
-              model.updateMinMaxPrice(_values.start.round(), _values.end.round());
-
-            }))
-    ],)) ;
+    return Container(
+        child: Column(
+      children: <Widget>[
+        Text('Price Range: ${_values.start.round()}₪ - ${_values.end.round()}₪',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.black, fontSize: 20.0)),
+        SliderTheme(
+            data:
+                SliderThemeData(showValueIndicator: ShowValueIndicator.always),
+            child: RangeSlider(
+                values: _values,
+                labels: RangeLabels(
+                    '${_values.start.round()}₪', '${_values.end.round()}₪'),
+                min: 0,
+                max: 100,
+                divisions: 20,
+                onChanged: (RangeValues values) {
+                  setState(() {
+                    if (values.end - values.start >= 20) {
+                      _values = values;
+                    } else {
+                      if (_values.start == values.start) {
+                        _values =
+                            RangeValues(_values.start, _values.start + 20);
+                      } else {
+                        _values = RangeValues(_values.end - 20, _values.end);
+                      }
+                    }
+                  });
+                  model.updateMinMaxPrice(
+                      _values.start.round(), _values.end.round());
+                }))
+      ],
+    ));
   }
 
   void _openKitchenTypesList() async {
@@ -344,53 +350,51 @@ SliderTheme(
     }
   }
 
-  Widget _buildKitchenTypesField () {
+  Widget _buildKitchenTypesField() {
     if (model.selectedKitchenTypes.length > 0) {
-      return Container(child: Column(children: <Widget>[
-        Text("Selected Kitchen types",
+      return Container(
+          child: Column(
+        children: <Widget>[
+          Text("Selected Kitchen types",
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.black, fontSize: 20.0)),
           SizedBox(height: 8.0),
-      Wrap(alignment: WrapAlignment.center,
-        spacing: 20,
-        children:  <Widget>[
-           ...List<Widget>.generate(model.selectedKitchenTypes.length, (int index) {
-          final String currentKitchen = model.selectedKitchenTypes[index];
+          Wrap(alignment: WrapAlignment.center, spacing: 20, children: <Widget>[
+            ...List<Widget>.generate(model.selectedKitchenTypes.length,
+                (int index) {
+              final String currentKitchen = model.selectedKitchenTypes[index];
 
-            return Container(
-              padding: EdgeInsets.all(10),
-  decoration: BoxDecoration(
-    border: Border.all(
-      color: Colors.red[500],
-    ),
-    borderRadius: BorderRadius.all(Radius.circular(20))
-  ),
-  child: Text(currentKitchen),
-);
-            
-            
-           })
-        ]) 
-      ],)
-      
-      
-
-
-      );
+              return Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.red[500],
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(20))),
+                child: Text(currentKitchen),
+              );
+            })
+          ])
+        ],
+      ));
     }
-    return Container(child: Column(children: <Widget>[
-Text("Select Kitchen types",
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.black, fontSize: 20.0)),
-          SizedBox(height: 8.0),
-GestureDetector(
-  onTap: _openKitchenTypesList, // handle your image tap here
-  child: Icon(Icons.restaurant, size: 50, color: Colors.red,)
-,
-    )
-    ],))
-;
-          
+    return Container(
+        child: Column(
+      children: <Widget>[
+        Text("Select Kitchen types",
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.black, fontSize: 20.0)),
+        SizedBox(height: 8.0),
+        GestureDetector(
+          onTap: _openKitchenTypesList, // handle your image tap here
+          child: Icon(
+            Icons.restaurant,
+            size: 50,
+            color: Colors.red,
+          ),
+        )
+      ],
+    ));
   }
 
   Widget _buildContent(BuildContext context) {
@@ -427,11 +431,13 @@ GestureDetector(
                 model.updatePopLocation(geolocation.coordinates);
                 model.updatePopAddress(place.description);
               }),
-                        SizedBox(height: 16.0),
-          _buildKitchenTypesField(),
-
           SizedBox(height: 16.0),
-          Text(model.popPhotoPath == Texts.emptyPath ? Texts.choosePopPhoto : Texts.selectedPopPhoto,
+          _buildKitchenTypesField(),
+          SizedBox(height: 16.0),
+          Text(
+              model.popPhotoPath == Texts.emptyPath
+                  ? Texts.choosePopPhoto
+                  : Texts.selectedPopPhoto,
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.black, fontSize: 20.0)),
           SizedBox(height: 8.0),
@@ -443,7 +449,10 @@ GestureDetector(
               },
               photoPath: model.popPhotoPath),
           SizedBox(height: 16.0),
-          Text(model.popInnerPhotoPath == Texts.emptyPath ? Texts.choosePopInnerPhoto : Texts.selectedPopInnerPhoto,
+          Text(
+              model.popInnerPhotoPath == Texts.emptyPath
+                  ? Texts.choosePopInnerPhoto
+                  : Texts.selectedPopInnerPhoto,
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.black, fontSize: 20.0)),
           SizedBox(height: 8.0),
