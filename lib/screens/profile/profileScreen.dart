@@ -25,36 +25,7 @@ class ProfileScreen extends StatelessWidget {
           child: _buildUserInfo(user),
         ),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(8.0),
-        children: <Widget>[
-          Center(child: const Text("Your favorite foods",  style: TextStyle(
-                            fontSize: 18.0, fontWeight: FontWeight.bold),)),
-
-          const SizedBox(height: 16.0),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: _FoodCard(
-                      image: 'assets/foodie_pizza.png',
-                      title: 'Pizza',
-                    )
-              ),
-              const SizedBox(width: 8.0),
-              Expanded(
-                child:_FoodCard(
-                      image: 'assets/foodie_sushi.png',
-                      title: 'Sushi',
-                    ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 32.0),
-          RaisedButton(color: Color(0xffe51923), child: Text("Change Favorite Foods", style: TextStyle(color: Colors.white),), onPressed: () {Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => MainScreen()));} ,)
-
-        ]));
+      );
   }
   
   Widget _buildUserInfo(User user) {
