@@ -42,7 +42,15 @@ class MyApp extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot<User> userSnapshot) {
           FlutterStatusbarcolor.setStatusBarColor(Color(0xffe51923));
 
-          return MaterialApp(
+          return GestureDetector(
+              onTap: () {
+            FocusScopeNode currentFocus = FocusScope.of(context);
+
+            if (!currentFocus.hasPrimaryFocus) {
+              currentFocus.unfocus();
+            }
+          },
+          child: MaterialApp(
             debugShowCheckedModeBanner: false,
             initialRoute: '/',
             routes: {
@@ -53,7 +61,7 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(
                 primarySwatch: Colors.red, primaryColor: Color(0xffe51923)),
             home: Splash(userSnapshot: userSnapshot,),
-          );
+          ));
         },
       ),
     );

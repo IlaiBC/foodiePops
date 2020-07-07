@@ -62,7 +62,7 @@ class _AddPopFormState extends State<AddPopForm> {
   TimeOfDay _popExpirationTime;
   bool _isUploadingPopPhoto;
   bool _isUploadingPopInnerPhoto;
-  RangeValues _values = RangeValues(0, 100);
+  RangeValues _values = RangeValues(0, 200);
 
   @override
   void initState() {

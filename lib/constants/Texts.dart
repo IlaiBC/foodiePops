@@ -24,7 +24,7 @@ class Texts {
 
   // Business pages
   static const String businessLogin = "Business Login";
-  static const String popFormScreen = "New Pop Form";
+  static const String popFormScreen = "Pop Form";
   static const String analyticsScreen = "Analytics";
   static const String addPop = "Add Pop";
   static const String myPops = "My Pops";
@@ -43,7 +43,7 @@ class Texts {
   static const String cannotBeEmptyError = "Cannot be empty";
   static const String expirationTimeError = "Invalid expiration time";
   static const String popNameLabel = 'Pop Name';
-  static const String popNameHint = 'Vitrina Special';
+  static const String popNameHint = 'Super Special Offer';
   static const String popSubTitleLabel = 'Pop subtitle';
   static const String popSubTitleHint = 'some call catch-phrase';
   static const String popUrlLabel = 'Link to offer';

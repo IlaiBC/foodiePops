@@ -18,7 +18,7 @@ class BusinessLogin extends StatelessWidget {
         child: Column(
           children: <Widget>[
         Padding(
-        padding: const EdgeInsets.only(top: 80.0),
+        padding: const EdgeInsets.only(top: 40.0),
         child: Image(
           image: AssetImage("assets/foodiepopslogo_no_bg.png"),
           height: 250)),
