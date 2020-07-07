@@ -13,7 +13,6 @@ import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:filter_list/filter_list.dart';
 import 'package:foodiepops/constants/generalConsts.dart';
-import 'package:foodiepops/models/popLike.dart';
 import 'package:foodiepops/models/popClickCounter.dart';
 
 class PopListScreen extends StatefulWidget {
@@ -25,6 +24,8 @@ class _PopListScreenState extends State<PopListScreen> {
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
   List<Pop> pops = [];
   HashSet<String> likedPopsSet = new HashSet<String>();
+  HashMap<String, double> popDistanceMap = new HashMap<String, double>();
+
   Geolocator geolocator = Geolocator();
   Position userLocation;
   bool _showFilter = false;
@@ -66,8 +67,11 @@ class _PopListScreenState extends State<PopListScreen> {
 
     for (var i = 0; i < pops.length; i++) {
       print('user location is: $userLocation');
+      print('pops.length is: : ${pops.length}}');
+
       if (userLocation != null) {
         double distance = await _getUserDistanceFromPop(pops[i]);
+        popDistanceMap.update(pops[i].id, (value) => distance, ifAbsent: () => distance);
         debugPrint("Distance: $distance");
         print('distance is: $distance');
         if (distance > this._filterDistance) {
@@ -345,6 +349,13 @@ class _PopListScreenState extends State<PopListScreen> {
         });
   }
 
+  String _getPopDistanceText (String popId) {
+    debugPrint('popDistanceMap: $popDistanceMap');
+    double popDistance = popDistanceMap[popId];
+
+    return popDistance != null ?'${((popDistance) / 1000).toStringAsFixed(2)} | KM' : 'KM';
+  }
+
   Widget _buildRow(
     Pop pop, VoidCallback openContainer, FirestoreDatabase database, Position userLocation, BuildContext context) {
       return StreamBuilder<PopClickCounter>(
@@ -381,16 +392,12 @@ class _PopListScreenState extends State<PopListScreen> {
                     new Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
-                          new Text("5" + " KM |   ",
+                          new Text(_getPopDistanceText(pop.id),
                               style: TextStyle(
                                   fontSize: 14.0,
                                   color: Colors.grey,
                                   fontWeight: FontWeight.bold)),
-                          new Text(snapshot.data != null ? snapshot.data.counter.toString() : "0",
-                              style: TextStyle(
-                                  fontSize: 14.0,
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.bold)),
+
                           new IconButton(
                               icon: Icon(Icons.restaurant,
                                   color: likedPopsSet.contains(pop.id) ? Colors.red : Colors.grey),
@@ -400,7 +407,12 @@ class _PopListScreenState extends State<PopListScreen> {
                                 likedPopsSet.add(pop.id);
                                 }
                                 }
-                                )
+                                ),
+                                                          new Text(snapshot.data != null ? snapshot.data.counter.toString() : "0",
+                              style: TextStyle(
+                                  fontSize: 14.0,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold)),
 
                                 
                         ])
