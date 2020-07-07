@@ -307,7 +307,7 @@ class _AddPopFormState extends State<AddPopForm> {
                 labels: RangeLabels(
                     '${_values.start.round()}₪', '${_values.end.round()}₪'),
                 min: 0,
-                max: 100,
+                max: 200,
                 divisions: 20,
                 onChanged: (RangeValues values) {
                   setState(() {
