@@ -18,13 +18,20 @@ class ImageUtil {
         fit: BoxFit.fitWidth);
   }
 
-  static Widget getPopImageWidget(Pop pop, double width, double height) {
+  static Widget getPopImageWidget(
+      Pop pop, double width, double height, bool inner) {
     return (pop.photo != null && pop.photo.isNotEmpty)
-        ? Image(
-            image: NetworkImage(pop.photo),
-            width: width,
-            height: height,
-            fit: BoxFit.fitWidth)
+        ? (inner
+            ? Image(
+                image: NetworkImage(pop.innerPhoto),
+                width: width,
+                height: height,
+                fit: BoxFit.fitWidth)
+            : Image(
+                image: NetworkImage(pop.photo),
+                width: width,
+                height: height,
+                fit: BoxFit.fitWidth))
         : Image.asset(
             ImageUtil.getAppLogo(),
             width: width,
@@ -35,6 +42,4 @@ class ImageUtil {
   static Widget getNewsIcon() {
     return ImageIcon(AssetImage(newsIcons[0]));
   }
-
-
 }
