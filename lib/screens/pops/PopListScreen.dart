@@ -382,7 +382,7 @@ class _PopListScreenState extends State<PopListScreen> {
                             new ClipRRect(
                               borderRadius: new BorderRadius.circular(4.0),
                               child:
-                                  ImageUtil.getPopImageWidget(pop, 80.0, 80.0),
+                                  ImageUtil.getPopImageWidget(pop, 80.0, 80.0, false),
                             ),
                           ]),
                       Padding(
@@ -594,7 +594,7 @@ class _DetailsPage extends StatelessWidget {
         children: <Widget>[
           Container(
             height: 250,
-            child: ImageUtil.getPopImageWidget(pop, 200.0, 200.0),
+            child: ImageUtil.getPopImageWidget(pop, 200.0, 200.0, true),
           ),
           Padding(
             padding: const EdgeInsets.all(20.0),
