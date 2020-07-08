@@ -190,11 +190,6 @@ class BusinessAnalyticsScreen extends StatelessWidget {
 
     debugPrint('after popClickData update for each');
 
-popClickLocationAnalytics.add(PopClickLocationAnalytics(clickLocation: 'Test', popClickCount: 10));
-popClickLocationAnalytics.add(PopClickLocationAnalytics(clickLocation: 'Test2', popClickCount: 1));
-popClickLocationAnalytics.add(PopClickLocationAnalytics(clickLocation: 'Test3', popClickCount: 5));
-
-
     return popClickLocationAnalytics;
   }
 

@@ -18,11 +18,11 @@ class BusinessLogin extends StatelessWidget {
         child: Column(
           children: <Widget>[
         Padding(
-        padding: const EdgeInsets.only(top: 40.0),
+        padding: const EdgeInsets.only(top: 50.0),
         child: Image(
           image: AssetImage("assets/foodiepopslogo_no_bg.png"),
           height: 250)),
-                SizedBox(height: 50),
+                SizedBox(height: 10),
 
           Card(
             child: Padding(

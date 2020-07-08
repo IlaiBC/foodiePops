@@ -1,7 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_countdown_timer/countdown_timer.dart';
 import 'package:foodiepops/constants/Texts.dart';
 import 'package:foodiepops/models/pop.dart';
+import 'package:foodiepops/screens/pops/PopListScreen.dart';
 import 'package:foodiepops/services/fireStoreDatabase.dart';
 import 'package:foodiepops/util/imageUtil.dart';
 import 'package:animations/animations.dart';
@@ -51,7 +53,7 @@ class _BusinessPopListState extends State<BusinessPopList> {
                       openBuilder:
                           (BuildContext _, VoidCallback openContainer) {
                         print('clicked on open');
-                        return _DetailsPage(pop: pops[index]);
+                        return DetailsPage(pop: pops[index]);
                       },
                       tappable: true,
                       closedShape: const RoundedRectangleBorder(),
@@ -136,112 +138,4 @@ Widget _buildRow(BuildContext context, Pop pop, VoidCallback openContainer,
       ]),
     ),
   ));
-}
-
-class _DetailsPage extends StatelessWidget {
-  final Pop pop;
-
-  openMapsSheet(context, Pop pop) async {
-    try {
-      final title = pop.name;
-      final description = pop.subtitle;
-      final coords = Coords(pop.location.latitude, pop.location.longitude);
-      final availableMaps = await MapLauncher.installedMaps;
-
-      showModalBottomSheet(
-        context: context,
-        builder: (BuildContext context) {
-          return SafeArea(
-            child: SingleChildScrollView(
-              child: Container(
-                child: Wrap(
-                  children: <Widget>[
-                    for (var map in availableMaps)
-                      ListTile(
-                        onTap: () => map.showMarker(
-                          coords: coords,
-                          title: title,
-                          description: description,
-                        ),
-                        title: Text(map.mapName),
-                        leading: Image(
-                          image: map.icon,
-                          height: 30.0,
-                          width: 30.0,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
-      );
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  _DetailsPage({Key key, this.pop}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Pop Details')),
-      body: ListView(
-        children: <Widget>[
-          Container(
-            height: 250,
-            child: ImageUtil.getPopImageWidget(pop, 200.0, 200.0, true),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Center(
-                    child: Text(
-                  pop.name,
-                  style: TextStyle(
-                      fontSize: 30.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black),
-                  textAlign: TextAlign.center,
-                )),
-                const SizedBox(height: 10),
-                Text(
-                  pop.description,
-                  style: TextStyle(fontSize: 16.0, color: Colors.grey),
-                ),
-                Container(
-                    child: ButtonBar(children: <Widget>[
-                  FlatButton.icon(
-                    icon: Icon(Icons.location_on, color: Color(0xffe51923)),
-                    label: Text(""),
-                    onPressed: () => openMapsSheet(context, pop),
-                  ),
-                  FlatButton.icon(
-                    textColor: Colors.blue,
-                    icon: Icon(Icons.open_in_new, color: Colors.blue),
-                    label: Text('Visit Pops website'),
-                    onPressed: () {},
-                  )
-                ])),
-                Container(
-                    margin: EdgeInsets.all(50.0),
-                    padding: const EdgeInsets.all(10.0),
-                    decoration: BoxDecoration(
-                      border: Border.all(width: 3.0, color: Color(0xffe51923)),
-                      borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                    ),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[]))
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

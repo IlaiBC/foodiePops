@@ -145,7 +145,7 @@ class _PopListScreenState extends State<PopListScreen> {
   Widget _buildFilter() {
     return Card(
         child: Container(
-      margin: EdgeInsets.only(top: 50, left: 50, right: 50, bottom: 50),
+      margin: EdgeInsets.fromLTRB(0, 50, 0, 50),
       alignment: Alignment.centerLeft,
       child: Column(children: <Widget>[
         Text(
@@ -317,7 +317,7 @@ class _PopListScreenState extends State<PopListScreen> {
                                   transitionType: _transitionType,
                                   openBuilder: (BuildContext _,
                                       VoidCallback openContainer) {
-                                    return _DetailsPage(
+                                    return DetailsPage(
                                         pop: filteredPops[index]);
                                   },
                                   tappable: false,
@@ -506,7 +506,7 @@ class _PopListScreenState extends State<PopListScreen> {
   }
 }
 
-class _DetailsPage extends StatelessWidget {
+class DetailsPage extends StatelessWidget {
   final Pop pop;
 
   getPopUrl(String url) {
@@ -557,7 +557,7 @@ class _DetailsPage extends StatelessWidget {
     }
   }
 
-  _DetailsPage({Key key, this.pop}) : super(key: key);
+  DetailsPage({Key key, this.pop}) : super(key: key);
 
   Future<Null> _openInWebview(context, String url) async {
     debugPrint("here1");

@@ -40,7 +40,7 @@ class AddPopFormBuilder extends StatelessWidget {
 }
 
 class AddPopForm extends StatefulWidget {
-  const AddPopForm({Key key, @required this.model, this.popToEdit})
+   AddPopForm({Key key, @required this.model, this.popToEdit})
       : super(key: key);
   final AddPopModel model;
   final Pop popToEdit;
@@ -63,6 +63,7 @@ class _AddPopFormState extends State<AddPopForm> {
   bool _isUploadingPopPhoto;
   bool _isUploadingPopInnerPhoto;
   RangeValues _values = RangeValues(0, 200);
+  bool isEditingPop = true;
 
   @override
   void initState() {
@@ -70,6 +71,7 @@ class _AddPopFormState extends State<AddPopForm> {
 
     _isUploadingPopPhoto = false;
     _isUploadingPopInnerPhoto = false;
+    isEditingPop = true;
 
     if (widget.popToEdit != null) {
       _setControllersWithPopData();
@@ -187,7 +189,8 @@ class _AddPopFormState extends State<AddPopForm> {
     _popUrlController.clear();
     _popExpirationDate = DateTime.now();
     _popExpirationTime = TimeOfDay.now();
-    _values = RangeValues(0, 100);
+    _values = RangeValues(0, 200);
+    isEditingPop = false;
   }
 
   void _isFieldEditingComplete(bool canSubmitField) {
@@ -418,7 +421,7 @@ class _AddPopFormState extends State<AddPopForm> {
           SizedBox(height: 16.0),
           SearchMapPlaceWidget(
               apiKey: API_KEY,
-              placeholder: widget.popToEdit != null
+              placeholder: isEditingPop == true && widget.popToEdit != null
                   ? widget.popToEdit.address
                   : Texts.addressSearchPlaceHolder,
               onSelected: (place) async {
