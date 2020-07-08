@@ -1,5 +1,6 @@
 import 'package:fancy_on_boarding/fancy_on_boarding.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingScreen extends StatefulWidget {
   OnboardingScreen({Key key, this.title}) : super(key: key);
@@ -37,8 +38,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               color: Colors.white,
               fontSize: 34.0,
             )),
-        body: Text(
-            'Get updated on the latest news in the foodie scene',
+        body: Text('Get updated on the latest news in the foodie scene',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.white,
@@ -54,7 +54,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             color: Colors.white,
             fontSize: 34.0,
           )),
-      body: Text('Login in to FoodiePops in the profile page for a more personalized expirience',
+      body: Text(
+          'Login in to FoodiePops in the profile page for a more personalized expirience',
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Colors.white,
@@ -63,37 +64,46 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       iconAssetPath: 'assets/profile.png',
     ),
     PageModel(
-        color: Color(0xffe51923),
-        heroAssetPath: 'assets/location.png',
-        title: Text('Location',
-            style: TextStyle(
-              fontWeight: FontWeight.w800,
-              color: Colors.white,
-              fontSize: 34.0,
-            )),
-        body: Text('FoodiePops uses your location data to customize pop offers for you',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18.0,
-            )),
-        iconAssetPath: 'assets/location.png',
-        ),
+      color: Color(0xffe51923),
+      heroAssetPath: 'assets/location.png',
+      title: Text('Location',
+          style: TextStyle(
+            fontWeight: FontWeight.w800,
+            color: Colors.white,
+            fontSize: 34.0,
+          )),
+      body: Text(
+          'FoodiePops uses your location data to customize pop offers for you',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18.0,
+          )),
+      iconAssetPath: 'assets/location.png',
+    ),
   ];
+
+  setSeen() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('seen', true);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //Pass pageList and the mainPage route.
-      body: FancyOnBoarding(
-        doneButtonText: "Lets Go",
-        skipButtonText: "Skip",
-        pageList: pageList,
-        onDoneButtonPressed: () =>
-            Navigator.of(context).pushReplacementNamed('/auth'),
-        onSkipButtonPressed: () =>
-            Navigator.of(context).pushReplacementNamed('/auth'),
-      ),
-    );
+        //Pass pageList and the mainPage route.
+        body: FancyOnBoarding(
+      doneButtonText: "Lets Go",
+      skipButtonText: "Skip",
+      pageList: pageList,
+      onDoneButtonPressed: () {
+        setSeen();
+        Navigator.of(context).pushReplacementNamed('/auth');
+      },
+      onSkipButtonPressed: () {
+        setSeen();
+        Navigator.of(context).pushReplacementNamed('/auth');
+      },
+    ));
   }
 }

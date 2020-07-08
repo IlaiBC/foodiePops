@@ -78,10 +78,6 @@ class Splash extends StatelessWidget {
     debugPrint(_seen.toString());
     debugPrint("here");
 
-    if (_seen == false) {
-      await prefs.setBool('seen', true);
-    }
-
     return _seen;
   }
 
