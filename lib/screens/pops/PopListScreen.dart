@@ -499,6 +499,11 @@ class _PopListScreenState extends State<PopListScreen> {
 class _DetailsPage extends StatelessWidget {
   final Pop pop;
 
+  getPopUrl(String url) {
+    String popUrlToParse = (url.contains("http://") || url.contains("https://")) ? url : 'https://$url';
+    return popUrlToParse;
+  }
+
   openMapsSheet(context, Pop pop) async {
     try {
       final title = pop.name;
@@ -605,7 +610,7 @@ class _DetailsPage extends StatelessWidget {
                     label: Text('Visit Pops website'),
                     onPressed: () {
                       FocusScope.of(context).requestFocus(FocusNode());
-                      this._openInWebview(context, pop.url);
+                      this._openInWebview(context, getPopUrl(pop.url));
                     },
                   )
                 ])),

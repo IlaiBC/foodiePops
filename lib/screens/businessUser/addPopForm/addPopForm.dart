@@ -296,7 +296,7 @@ class _AddPopFormState extends State<AddPopForm> {
     return Container(
         child: Column(
       children: <Widget>[
-        Text('Price Range: ${_values.start.round()}₪ - ${_values.end.round()}₪',
+        Text('Meal Price Range: ${_values.start.round()}₪ - ${_values.end.round()}₪',
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.black, fontSize: 20.0)),
         SliderTheme(
