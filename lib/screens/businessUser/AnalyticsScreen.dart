@@ -194,6 +194,7 @@ class BusinessAnalyticsScreen extends StatelessWidget {
   }
 
   List<charts.Series<PopClickAnalytics, DateTime>> _popClickAnalyticsToChart(List<PopClickAnalytics> popClickAnalytics) {
+    popClickAnalytics.sort((a, b) => a.popClickDate.compareTo(b.popClickDate));
     return [
       new charts.Series<PopClickAnalytics, DateTime>(
         id: 'popClicks',
