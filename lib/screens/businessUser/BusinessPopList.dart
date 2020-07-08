@@ -105,7 +105,7 @@ Widget _buildRow(BuildContext context, Pop pop, VoidCallback openContainer,
         new Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
           new ClipRRect(
             borderRadius: new BorderRadius.circular(4.0),
-            child: ImageUtil.getPopImageWidget(pop, 80.0, 80.0, false),
+            child: ImageUtil.getPopImageWidget(pop, 80.0, 80.0),
           ),
         ]),
         Padding(
@@ -192,7 +192,7 @@ class _DetailsPage extends StatelessWidget {
         children: <Widget>[
           Container(
             height: 250,
-            child: ImageUtil.getPopImageWidget(pop, 200.0, 200.0, true),
+            child: ImageUtil.getPopImageWidget(pop, 200.0, 200.0),
           ),
           Padding(
             padding: const EdgeInsets.all(20.0),

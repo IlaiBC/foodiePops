@@ -18,17 +18,13 @@ class ImageUtil {
         fit: BoxFit.fitWidth);
   }
 
-  static Widget getPopImageWidget(Pop pop, double width, double height, bool inner) {
+  static Widget getPopImageWidget(Pop pop, double width, double height) {
     return (pop.photo != null && pop.photo.isNotEmpty)
-        ? (inner ? Image(
-        image: NetworkImage(pop.innerPhoto),
-        width: width,
-        height: height,
-        fit: BoxFit.fitWidth) : Image(
+        ? Image(
             image: NetworkImage(pop.photo),
             width: width,
             height: height,
-            fit: BoxFit.fitWidth))
+            fit: BoxFit.fitWidth)
         : Image.asset(
             ImageUtil.getAppLogo(),
             width: width,
