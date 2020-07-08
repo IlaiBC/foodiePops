@@ -63,7 +63,7 @@ class _PopListScreenState extends State<PopListScreen> {
   }
 
   Future<List<Pop>> _filterPopsLocation(List<Pop> pops) async {
-    List<int> toFilter = [];
+    List<Pop> filteredPopsList = [];
 
     for (var i = 0; i < pops.length; i++) {
       print('user location is: $userLocation');
@@ -75,25 +75,19 @@ class _PopListScreenState extends State<PopListScreen> {
             ifAbsent: () => distance);
         debugPrint("Distance: $distance");
         print('distance is: $distance');
-        if (distance > this._filterDistance) {
+        print('distance is: $distance');
+
+        if (distance <= this._filterDistance) {
           debugPrint("should filter");
-          toFilter.add(i);
+          filteredPopsList.add(pops[i]);
         }
       }
-    }
-
-    print('to filter is: $toFilter');
-    print('pops is: $pops');
-    for (var index in toFilter) {
-      debugPrint("removed $index");
-
-      pops.removeAt(index);
     }
 
     print('current pop length ${pops.length}');
 
     debugPrint("finished filter");
-    return pops;
+    return filteredPopsList;
   }
 
   Future<double> _getUserDistanceFromPop(Pop pop) async {
@@ -163,9 +157,9 @@ class _PopListScreenState extends State<PopListScreen> {
         ),
         Slider(
           value: _filterDistance / 1000,
-          max: 50.0,
-          min: 10.0,
-          divisions: 8,
+          max: 40.0,
+          min: 2.0,
+          divisions: 19,
           label: '${_filterDistance.round() / 1000}KM',
           onChanged: (double value) {
             _filterDistance = value * 1000;
@@ -344,7 +338,7 @@ class _PopListScreenState extends State<PopListScreen> {
                           ))
                         ]);
                       }
-
+                      
                       return new Center(child: new CircularProgressIndicator());
                     }));
           }
