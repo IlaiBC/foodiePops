@@ -31,18 +31,21 @@ class BusinessAnalyticsScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 children: <Widget>[
                   ...List<Widget>.generate(pops.length, (int index) {
-                    return Container(height: 700, child: Center(child: Column(children: <Widget>[
+                    return Container(height: 730, child: Center(child: Column(children: <Widget>[
                       Text(
                       pops[index].name,
                       style: TextStyle(
                           fontSize: 18.0, fontWeight: FontWeight.bold),
                     ),
+                    SizedBox(height: 10),
                                           Text(
                       'Number of clicks by date',
                       style: TextStyle(
                           fontSize: 18.0, fontWeight: FontWeight.bold),
                     ),
                       Container(height: 300, child: _showPopClickData(pops[index], database),),
+                    SizedBox(height: 30),
+
                                                            Text(
                       'Number of clicks by location',
                       style: TextStyle(
