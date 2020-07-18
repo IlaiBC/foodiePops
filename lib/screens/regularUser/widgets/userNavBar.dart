@@ -15,7 +15,7 @@ class UserNavBar extends StatelessWidget  {
 
   Widget build(BuildContext context) {
       final navPages = <Widget>[
-        PopListScreen(),
+        PopListScreen(userSnapshot: userSnapshot, userData: userData,),
         NewsScreen(news: mockNews),
         userSnapshot.hasData ? ProfileScreen() : LoginScreen(),
       ];

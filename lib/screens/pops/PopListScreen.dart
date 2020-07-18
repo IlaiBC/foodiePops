@@ -2,8 +2,10 @@ import 'dart:collection';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:foodiepops/models/pop.dart';
+import 'package:foodiepops/models/UserData.dart';
 import 'package:foodiepops/screens/pops/popMapScreen.dart';
 import 'package:foodiepops/services/fireStoreDatabase.dart';
+import 'package:foodiepops/services/firebaseAuthService.dart';
 import 'package:foodiepops/util/imageUtil.dart';
 import 'package:flutter_countdown_timer/countdown_timer.dart';
 import 'package:animations/animations.dart';
@@ -17,6 +19,10 @@ import 'package:foodiepops/constants/generalConsts.dart';
 import 'package:foodiepops/models/popClickCounter.dart';
 
 class PopListScreen extends StatefulWidget {
+  PopListScreen({Key key, @required this.userSnapshot, @required this.userData}) : super(key: key);
+  final AsyncSnapshot<User> userSnapshot;
+  final UserData userData;
+  
   @override
   _PopListScreenState createState() => _PopListScreenState();
 }
@@ -24,7 +30,7 @@ class PopListScreen extends StatefulWidget {
 class _PopListScreenState extends State<PopListScreen> {
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
   List<Pop> pops = [];
-  HashSet<String> likedPopsSet = new HashSet<String>();
+  Set<String> likedPopsSet = {};
   HashMap<String, double> popDistanceMap = new HashMap<String, double>();
 
   Geolocator geolocator = Geolocator();
@@ -54,9 +60,7 @@ class _PopListScreenState extends State<PopListScreen> {
   @override
   void initState() {
     super.initState();
-
     _getLocation().then((position) {
-      print('getting location $position');
       setState(() {
         this.userLocation = position;
       });
@@ -67,27 +71,20 @@ class _PopListScreenState extends State<PopListScreen> {
     List<Pop> filteredPopsList = [];
 
     for (var i = 0; i < pops.length; i++) {
-      print('user location is: $userLocation');
-      print('pops.length is: : ${pops.length}}');
+
 
       if (userLocation != null) {
         double distance = await _getUserDistanceFromPop(pops[i]);
         popDistanceMap.update(pops[i].id, (value) => distance,
             ifAbsent: () => distance);
-        debugPrint("Distance: $distance");
-        print('distance is: $distance');
-        print('distance is: $distance');
+
 
         if (distance <= this._filterDistance) {
-          debugPrint("should filter");
           filteredPopsList.add(pops[i]);
         }
       }
     }
 
-    print('current pop length ${pops.length}');
-
-    debugPrint("finished filter");
     return filteredPopsList;
   }
 
@@ -101,7 +98,6 @@ class _PopListScreenState extends State<PopListScreen> {
     try {
       GeolocationStatus geolocationStatus =
           await geolocator.checkGeolocationPermissionStatus();
-      debugPrint(geolocationStatus.toString());
       if (geolocationStatus != GeolocationStatus.denied ||
           geolocationStatus != GeolocationStatus.disabled) {
         currentLocation = await geolocator.getCurrentPosition(
@@ -271,6 +267,10 @@ class _PopListScreenState extends State<PopListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('*************** calling build *************');
+    if (widget.userData != null) {
+    likedPopsSet = widget.userData.likedPops;
+    }
     final FirestoreDatabase database =
         Provider.of<FirestoreDatabase>(context, listen: false);
 
@@ -319,7 +319,6 @@ class _PopListScreenState extends State<PopListScreen> {
                             _applyAllFilters(locationFilteredPops);
                         this.pops = filteredPops;
 
-                        print('filtered pops length: ${filteredPops.length}');
                         return new Column(children: <Widget>[
                           this._showFilter
                               ? _buildFilter()
@@ -368,7 +367,6 @@ class _PopListScreenState extends State<PopListScreen> {
   }
 
   String _getPopDistanceText(String popId) {
-    debugPrint('popDistanceMap: $popDistanceMap');
     double popDistance = popDistanceMap[popId];
 
     return popDistance != null
@@ -426,15 +424,22 @@ class _PopListScreenState extends State<PopListScreen> {
                                               ? Colors.red
                                               : Colors.grey),
                                       onPressed: () {
-                                        if (!likedPopsSet.contains(pop.id)) {
+
+                                        if (widget.userData != null) {
+
                                           database.addLikeToPop(
+                                              widget.userSnapshot.hasData ? widget.userSnapshot.data.uid : null,
                                               pop,
                                               userLocation,
                                               snapshot.data != null
                                                   ? snapshot.data.counter
-                                                  : 0);
+                                                  : 0).catchError((e) => Scaffold.of(context).showSnackBar(SnackBar(content: Text(e))));
+
                                           likedPopsSet.add(pop.id);
+                                          database.setLikedPops(widget.userData, likedPopsSet, widget.userData.id);
                                         }
+
+                                        
                                       }),
                                   new Text(
                                       snapshot.data != null
@@ -515,7 +520,6 @@ class _PopListScreenState extends State<PopListScreen> {
                     ]),
                   ),
                   onTap: () {
-                    print('pop is: ${pop.businessId}');
                     database.addPopClick(pop, userLocation);
                     openContainer();
                   }));
@@ -577,7 +581,6 @@ class DetailsPage extends StatelessWidget {
   DetailsPage({Key key, this.pop}) : super(key: key);
 
   Future<Null> _openInWebview(context, String url) async {
-    debugPrint("here1");
     if (await url_launcher.canLaunch(url)) {
       Navigator.of(context).push(
         MaterialPageRoute(

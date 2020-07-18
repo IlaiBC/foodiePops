@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 class FirestoreService {
@@ -21,8 +22,31 @@ class FirestoreService {
     @required String collectionPath,
     @required Map<String, dynamic> data,
     bool merge = false,
+    String userId,
   }) async {
-    final reference = Firestore.instance.collection(collectionPath).document();
+
+    // Check special case where userId is provided and document already exists - if so - print error
+    if (userId != null) {
+      DocumentSnapshot documentSnapshot;
+      CollectionReference collectionReference = Firestore.instance.collection(collectionPath);
+      try {
+
+      documentSnapshot = await collectionReference.document(userId).get();
+      } 
+      catch (e) {
+      // Ignore this, probably a permission issue.
+    }
+      if (documentSnapshot != null && documentSnapshot.exists) {
+        throw("Document already exists!");
+    } 
+      
+      DocumentReference reference = Firestore.instance.collection(collectionPath).document(userId);
+      await reference.setData(data, merge: merge);
+      return userId;
+    }
+
+
+    DocumentReference reference = Firestore.instance.collection(collectionPath).document();
     String documentId = reference.documentID;
     data['id'] = documentId;
     print('$collectionPath: $data');
@@ -30,7 +54,8 @@ class FirestoreService {
     await reference.setData(data, merge: merge);
 
     return documentId;
-  }
+    }
+
 
   Future<void> deleteData({@required String path}) async {
     final reference = Firestore.instance.document(path);

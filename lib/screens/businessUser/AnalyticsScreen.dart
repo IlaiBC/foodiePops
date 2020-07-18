@@ -30,6 +30,9 @@ class BusinessAnalyticsScreenState extends State<BusinessAnalyticsScreen> {
         builder: (context, snapshot) {
           if (snapshot.data != null) {
             final List<Pop> pops = snapshot.data;
+            if (pops.length == 0) {
+              return Center(child: Text("No Analytics Data", style: TextStyle(fontSize: 20),));
+            }
             print('pops result $pops');
             return Scaffold(
               appBar: AppBar(

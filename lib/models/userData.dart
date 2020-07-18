@@ -1,13 +1,16 @@
+import 'dart:collection';
 import 'dart:ui';
 
 import 'package:meta/meta.dart';
 
 class UserData {
-  UserData({@required this.id, @required this.isBusinessUser});
+  UserData({@required this.id, @required this.isBusinessUser, @required this.likedPops});
   final String id;
   final bool isBusinessUser;
+  final Set<String> likedPops;
 
   factory UserData.fromMap(Map<String, dynamic> data, String documentId) {
+    try {
     if (data == null) {
       return null;
     }
@@ -15,12 +18,21 @@ class UserData {
     if (isBusinessUser == null) {
       return null;
     }
-    return UserData(id: documentId, isBusinessUser: isBusinessUser);
+
+    Set<String> setstuff = Set<String>.from(data['likedPops']);
+    print("****************** setstuff length: ${setstuff.length}");
+
+    return UserData(id: documentId, isBusinessUser: isBusinessUser, likedPops: Set<String>.from(data['likedPops']));
+
+    } catch (e) {
+      print("an error ocurred $e");
+    }
   }
 
   Map<String, dynamic> toMap() {
     return {
       'isBusinessUser': isBusinessUser,
+      'likedPops': likedPops.toList(),
     };
   }
 
