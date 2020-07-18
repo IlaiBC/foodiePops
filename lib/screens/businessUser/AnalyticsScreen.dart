@@ -37,9 +37,8 @@ class BusinessAnalyticsScreenState extends State<BusinessAnalyticsScreen> {
               ),
               body: SingleChildScrollView(child: Container(height: 750, child: Center(child: Column(children: <Widget>[
                  DropdownButton<String>(
-      value: selectedPopId,
-      hint: Text("Choose specific pop"),
-
+      value: selectedPopId != null ? selectedPopId : pops[0].id,
+      icon: Icon(Icons.restaurant,color: Colors.red,),
       elevation: 16,
       style: TextStyle(color: Colors.red, fontSize: 20),
       underline: Container(
