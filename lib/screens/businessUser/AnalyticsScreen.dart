@@ -9,16 +9,24 @@ import 'package:provider/provider.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:geolocator/geolocator.dart';
 
-class BusinessAnalyticsScreen extends StatelessWidget {
+class BusinessAnalyticsScreen extends StatefulWidget {
   BusinessAnalyticsScreen({Key key, @required this.businessId}) : super(key: key);
   final String businessId;
+
+@override
+  BusinessAnalyticsScreenState createState() => BusinessAnalyticsScreenState();
+}
+
+
+class BusinessAnalyticsScreenState extends State<BusinessAnalyticsScreen> {
+  String selectedPopId;
 
   @override
   Widget build(BuildContext context) {
       final FirestoreDatabase database =
       Provider.of<FirestoreDatabase>(context, listen: false);
     return Container(child: StreamBuilder<List<Pop>>(
-        stream: database.getBusinessPopList(businessId),
+        stream: database.getBusinessPopList(widget.businessId),
         builder: (context, snapshot) {
           if (snapshot.data != null) {
             final List<Pop> pops = snapshot.data;
@@ -27,23 +35,39 @@ class BusinessAnalyticsScreen extends StatelessWidget {
               appBar: AppBar(
                 title: const Text(Texts.analyticsScreen),
               ),
-              body: ListView(
-                padding: const EdgeInsets.all(8.0),
-                children: <Widget>[
-                  ...List<Widget>.generate(pops.length, (int index) {
-                    return Container(height: 730, child: Center(child: Column(children: <Widget>[
-                      Text(
-                      pops[index].name,
-                      style: TextStyle(
-                          fontSize: 18.0, fontWeight: FontWeight.bold),
-                    ),
+              body: SingleChildScrollView(child: Container(height: 750, child: Center(child: Column(children: <Widget>[
+                 DropdownButton<String>(
+      value: selectedPopId,
+      hint: Text("Choose specific pop"),
+
+      elevation: 16,
+      style: TextStyle(color: Colors.red, fontSize: 20),
+      underline: Container(
+        height: 2,
+        color: Colors.red,
+      ),
+      onChanged: (String selectedPopId) {
+
+          setState(() {
+          this.selectedPopId = selectedPopId;
+        });
+
+      },
+      items: pops
+          .map<DropdownMenuItem<String>>((Pop currentPop) {
+        return DropdownMenuItem<String>(
+          value: currentPop.id,
+          child: Text(currentPop.name),
+        );
+      }).toList()),
+                      
                     SizedBox(height: 10),
                                           Text(
                       'Number of clicks by date',
                       style: TextStyle(
                           fontSize: 18.0, fontWeight: FontWeight.bold),
                     ),
-                      Container(height: 300, child: _showPopClickData(pops[index], database),),
+                      Container(height: 300, child: _showPopClickData(selectedPopId != null ? selectedPopId : pops[0].id, database),),
                     SizedBox(height: 30),
 
                                                            Text(
@@ -51,12 +75,9 @@ class BusinessAnalyticsScreen extends StatelessWidget {
                       style: TextStyle(
                           fontSize: 18.0, fontWeight: FontWeight.bold),
                     ),
-                      Container(height: 300, child: _showPopClickLocationChart(pops[index], database),),
+                      Container(height: 300, child: _showPopClickLocationChart(selectedPopId != null ? selectedPopId : pops[0].id, database),),
 
-                    ],),));
-                  }),
-                ],
-              ),
+                    ],),))),
             );
           }
           return Scaffold(
@@ -69,10 +90,10 @@ class BusinessAnalyticsScreen extends StatelessWidget {
 
   }
 
-  Widget _showPopClickData(Pop pop, FirestoreDatabase database) {
+  Widget _showPopClickData(String popId, FirestoreDatabase database) {
       return 
        StreamBuilder<List<PopClick>>(
-        stream: database.getPopClickList(businessId, pop.id),
+        stream: database.getPopClickList(widget.businessId, popId),
         builder: (context, snapshot) {
           if (snapshot.data != null) {
             final List<PopClick> popClicks = snapshot.data;
@@ -104,10 +125,10 @@ class BusinessAnalyticsScreen extends StatelessWidget {
   }
 
   
-  Widget _showPopClickLocationChart(Pop pop, FirestoreDatabase database) {
+  Widget _showPopClickLocationChart(String popId, FirestoreDatabase database) {
       return 
        StreamBuilder<List<PopClick>>(
-        stream: database.getPopClickList(businessId, pop.id),
+        stream: database.getPopClickList(widget.businessId, popId),
         builder: (context, snapshot) {
           if (snapshot.data != null) {
             final List<PopClick> popClicks = snapshot.data;
