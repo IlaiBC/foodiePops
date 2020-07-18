@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:foodiepops/models/pop.dart';
+import 'package:foodiepops/screens/pops/popMapScreen.dart';
 import 'package:foodiepops/services/fireStoreDatabase.dart';
 import 'package:foodiepops/util/imageUtil.dart';
 import 'package:flutter_countdown_timer/countdown_timer.dart';
@@ -278,8 +279,10 @@ class _PopListScreenState extends State<PopListScreen> {
         builder: (context, snapshot) {
           if (snapshot.data != null) {
             final List<Pop> popsFromDB = snapshot.data;
-
+            this.pops = popsFromDB;
             return Scaffold(
+                floatingActionButtonLocation:
+                    FloatingActionButtonLocation.startFloat,
                 appBar: AppBar(
                   title: const Text('Foodie Pops you will love'),
                   automaticallyImplyLeading: false,
@@ -294,6 +297,18 @@ class _PopListScreenState extends State<PopListScreen> {
                     )
                   ],
                 ),
+                floatingActionButton: Container(height: 70, width: 70, child: Padding(
+                    padding: const EdgeInsets.only(bottom: 5.0),
+                    child: FloatingActionButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    PopMapScreen(pops: this.pops)));
+                      },
+                      child: Icon(Icons.map, size: 36.0),
+                    ))),
                 body: FutureBuilder<List<Pop>>(
                     future: _filterPopsLocation(popsFromDB),
                     builder: (BuildContext context,
@@ -302,6 +317,8 @@ class _PopListScreenState extends State<PopListScreen> {
                         List<Pop> locationFilteredPops = snapshot.data;
                         List<Pop> filteredPops =
                             _applyAllFilters(locationFilteredPops);
+                        this.pops = filteredPops;
+
                         print('filtered pops length: ${filteredPops.length}');
                         return new Column(children: <Widget>[
                           this._showFilter
@@ -338,7 +355,7 @@ class _PopListScreenState extends State<PopListScreen> {
                           ))
                         ]);
                       }
-                      
+
                       return new Center(child: new CircularProgressIndicator());
                     }));
           }
@@ -375,8 +392,8 @@ class _PopListScreenState extends State<PopListScreen> {
                           children: <Widget>[
                             new ClipRRect(
                               borderRadius: new BorderRadius.circular(4.0),
-                              child:
-                                  ImageUtil.getPopImageWidget(pop, 80.0, 80.0, false),
+                              child: ImageUtil.getPopImageWidget(
+                                  pop, 80.0, 80.0, false),
                             ),
                           ]),
                       Padding(
