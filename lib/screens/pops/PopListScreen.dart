@@ -14,6 +14,7 @@ import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:filter_list/filter_list.dart';
 import 'package:foodiepops/constants/generalConsts.dart';
 import 'package:foodiepops/models/popClickCounter.dart';
+import 'package:foodiepops/components/SliderShape.dart';
 
 class PopListScreen extends StatefulWidget {
   @override
@@ -149,13 +150,21 @@ class _PopListScreenState extends State<PopListScreen> {
       alignment: Alignment.centerLeft,
       child: Column(children: <Widget>[
         Text(
-          "Distance Of Pops From You",
+          "Distance Of Pops From You:",
           textAlign: TextAlign.center,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
         ),
-        Slider(
+        new Padding(
+          padding: new EdgeInsets.all(30.0),
+        ),
+          SliderTheme(
+              data: SliderThemeData(
+                showValueIndicator: ShowValueIndicator.never,
+                thumbShape: const ThumbShape(),
+              ),
+              child:Slider(
           value: _filterDistance / 1000,
           max: 40.0,
           min: 2.0,
@@ -165,7 +174,7 @@ class _PopListScreenState extends State<PopListScreen> {
             _filterDistance = value * 1000;
             setState(() {});
           },
-        ),
+        )),
         new Divider(height: 5.0, color: Color(0xffe51923)),
         new Padding(
           padding: new EdgeInsets.all(8.0),
@@ -509,6 +518,8 @@ class _PopListScreenState extends State<PopListScreen> {
 class DetailsPage extends StatelessWidget {
   final Pop pop;
 
+  DetailsPage({Key key, this.pop}) : super(key: key);
+
   getPopUrl(String url) {
     String popUrlToParse = (url.contains("http://") || url.contains("https://"))
         ? url
@@ -556,8 +567,6 @@ class DetailsPage extends StatelessWidget {
       print(e);
     }
   }
-
-  DetailsPage({Key key, this.pop}) : super(key: key);
 
   Future<Null> _openInWebview(context, String url) async {
     debugPrint("here1");
