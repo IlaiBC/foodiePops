@@ -159,22 +159,22 @@ class _PopListScreenState extends State<PopListScreen> {
         new Padding(
           padding: new EdgeInsets.all(30.0),
         ),
-          SliderTheme(
-              data: SliderThemeData(
-                showValueIndicator: ShowValueIndicator.never,
-                thumbShape: const ThumbShape(),
-              ),
-              child:Slider(
-          value: _filterDistance / 1000,
-          max: 40.0,
-          min: 2.0,
-          divisions: 19,
-          label: '${_filterDistance.round() / 1000}KM',
-          onChanged: (double value) {
-            _filterDistance = value * 1000;
-            setState(() {});
-          },
-        )),
+        SliderTheme(
+            data: SliderThemeData(
+              showValueIndicator: ShowValueIndicator.never,
+              thumbShape: const ThumbShape(),
+            ),
+            child: Slider(
+              value: _filterDistance / 1000,
+              max: 40.0,
+              min: 2.0,
+              divisions: 19,
+              label: '${_filterDistance.round() / 1000}KM',
+              onChanged: (double value) {
+                _filterDistance = value * 1000;
+                setState(() {});
+              },
+            )),
         new Divider(height: 5.0, color: Color(0xffe51923)),
         new Padding(
           padding: new EdgeInsets.all(8.0),
@@ -249,15 +249,18 @@ class _PopListScreenState extends State<PopListScreen> {
     for (int i = 0; i < locationFilteredPops.length; i++) {
       Pop currentPop = locationFilteredPops[i];
 
-      if (currentPop.priceRank == _priceRank || _priceRank == 0) {
-        if (selectedKitchenTypes.length == 0) {
-          filteredPops.add(currentPop);
-          continue;
-        } else {
-          if (_popKitchenTypesContainedInSelectedKitchenTypes(
-              currentPop.kitchenTypes)) {
+      if (currentPop.expirationTime.millisecondsSinceEpoch >
+          DateTime.now().millisecondsSinceEpoch) {
+        if (currentPop.priceRank == _priceRank || _priceRank == 0) {
+          if (selectedKitchenTypes.length == 0) {
             filteredPops.add(currentPop);
             continue;
+          } else {
+            if (_popKitchenTypesContainedInSelectedKitchenTypes(
+                currentPop.kitchenTypes)) {
+              filteredPops.add(currentPop);
+              continue;
+            }
           }
         }
       }
@@ -347,7 +350,7 @@ class _PopListScreenState extends State<PopListScreen> {
                           ))
                         ]);
                       }
-                      
+
                       return new Center(child: new CircularProgressIndicator());
                     }));
           }
@@ -384,8 +387,8 @@ class _PopListScreenState extends State<PopListScreen> {
                           children: <Widget>[
                             new ClipRRect(
                               borderRadius: new BorderRadius.circular(4.0),
-                              child:
-                                  ImageUtil.getPopImageWidget(pop, 80.0, 80.0, false),
+                              child: ImageUtil.getPopImageWidget(
+                                  pop, 80.0, 80.0, false),
                             ),
                           ]),
                       Padding(
@@ -569,7 +572,6 @@ class DetailsPage extends StatelessWidget {
   }
 
   Future<Null> _openInWebview(context, String url) async {
-    debugPrint("here1");
     if (await url_launcher.canLaunch(url)) {
       Navigator.of(context).push(
         MaterialPageRoute(
