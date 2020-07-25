@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:webfeed/webfeed.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
@@ -37,16 +38,24 @@ class RSSNewsState extends State<RSSNews> {
     });
   }
 
-  Future<void> openFeed(String url) async {
+  Future<Null> _openInWebview(context, String url) async {
     if (await canLaunch(url)) {
-      await launch(
-        url,
-        forceSafariVC: true,
-        forceWebView: false,
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (ctx) => WebviewScaffold(
+            initialChild: Center(child: CircularProgressIndicator()),
+            url: url,
+            appBar: AppBar(title: Text(url)),
+          ),
+        ),
       );
-      return;
+    } else {
+      Scaffold.of(context).showSnackBar(
+        SnackBar(
+          content: Text('URL $url can not be launched.'),
+        ),
+      );
     }
-    updateTitle(feedOpenErrorMsg);
   }
 
   load() async {
@@ -150,7 +159,7 @@ class RSSNewsState extends State<RSSNews> {
           leading: thumbnail(getImgUrlFromItem(item)),
           trailing: rightIcon(),
           contentPadding: EdgeInsets.all(5.0),
-          onTap: () => openFeed(item.link),
+          onTap: () => _openInWebview(context, item.link),
         );
       },
     );

@@ -85,7 +85,7 @@ class _PopListScreenState extends State<PopListScreen> {
       }
     }
 
-    print('current pop length ${pops.length}');
+    debugPrint('current pop length ${pops.length}');
 
     debugPrint("finished filter");
     return filteredPopsList;
