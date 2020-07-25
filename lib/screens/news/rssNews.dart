@@ -6,7 +6,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class RSSNews extends StatefulWidget {
-
   RSSNews() : super();
 
   final String title = 'Foodie News';
@@ -16,8 +15,7 @@ class RSSNews extends StatefulWidget {
 }
 
 class RSSNewsState extends State<RSSNews> {
-  static const String FEED_URL =
-      'http://www.rssmix.com/u/11835678/rss.xml';
+  static const String FEED_URL = 'http://www.rssmix.com/u/11835678/rss.xml';
   RssFeed _feed;
   String _title;
   static const String loadingFeedMsg = 'Loading Feed...';
@@ -92,7 +90,8 @@ class RSSNewsState extends State<RSSNews> {
   title(title) {
     return Text(
       title,
-      style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+      textAlign: TextAlign.right,
+      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
     );
@@ -101,6 +100,7 @@ class RSSNewsState extends State<RSSNews> {
   subtitle(subTitle) {
     return Text(
       subTitle,
+      textAlign: TextAlign.right,
       style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w100),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
@@ -113,8 +113,8 @@ class RSSNewsState extends State<RSSNews> {
       child: CachedNetworkImage(
         placeholder: (context, url) => Image.asset(placeholderImg),
         imageUrl: imageUrl,
-        height: 50,
-        width: 70,
+        height: 100,
+        width: 120,
         alignment: Alignment.center,
         fit: BoxFit.fill,
       ),
@@ -130,22 +130,22 @@ class RSSNewsState extends State<RSSNews> {
   }
 
   String getImgUrlFromItem(RssItem item) {
-      if (item.description.contains("<img ")) {
-        String cleanUrl = "";
-        if (item.description.contains(".jpg")) {
-          cleanUrl = item.description.substring(
-              item.description.indexOf("src=") + 5,
-              item.description.indexOf(".jpg") + 4);
-        } else if (item.description.contains(".jpeg")) {
-          cleanUrl = item.description.substring(
-              item.description.indexOf("src=") + 5,
-              item.description.indexOf(".jpeg") + 5);
-        }
-        return cleanUrl;
-      } else {
-        return "";
+    if (item.description.contains("<img ")) {
+      String cleanUrl = "";
+      if (item.description.contains(".jpg")) {
+        cleanUrl = item.description.substring(
+            item.description.indexOf("src=") + 5,
+            item.description.indexOf(".jpg") + 4);
+      } else if (item.description.contains(".jpeg")) {
+        cleanUrl = item.description.substring(
+            item.description.indexOf("src=") + 5,
+            item.description.indexOf(".jpeg") + 5);
       }
+      return cleanUrl;
+    } else {
+      return "";
     }
+  }
 
   list() {
     return ListView.builder(
@@ -153,14 +153,17 @@ class RSSNewsState extends State<RSSNews> {
       itemBuilder: (BuildContext context, int index) {
         final item = _feed.items[index];
         getImgUrlFromItem(item);
-        return ListTile(
-          title: title(item.title),
-          subtitle: subtitle(item.pubDate),
-          leading: thumbnail(getImgUrlFromItem(item)),
-          trailing: rightIcon(),
-          contentPadding: EdgeInsets.all(5.0),
-          onTap: () => _openInWebview(context, item.link),
-        );
+        return Card(
+            child: new Container(
+//                height: 100.0,
+                child: ListTile(
+                  title: title(item.title),
+                  subtitle: subtitle(item.pubDate),
+                  leading: thumbnail(getImgUrlFromItem(item)),
+                  trailing: rightIcon(),
+                  contentPadding: EdgeInsets.all(5.0),
+                  onTap: () => _openInWebview(context, item.link),
+                )));
       },
     );
   }
@@ -172,13 +175,13 @@ class RSSNewsState extends State<RSSNews> {
   body() {
     return isFeedEmpty()
         ? Center(
-      child: CircularProgressIndicator(),
-    )
+            child: CircularProgressIndicator(),
+          )
         : RefreshIndicator(
-      key: _refreshKey,
-      child: list(),
-      onRefresh: () => load(),
-    );
+            key: _refreshKey,
+            child: list(),
+            onRefresh: () => load(),
+          );
   }
 
   @override
