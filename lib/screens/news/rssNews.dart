@@ -21,7 +21,7 @@ class RSSNewsState extends State<RSSNews> {
   static const String loadingFeedMsg = 'Loading Feed...';
   static const String feedLoadErrorMsg = 'Error Loading Feed.';
   static const String feedOpenErrorMsg = 'Error Opening Feed.';
-  static const String placeholderImg = 'images/no_image.png';
+  static const String placeholderImg = 'assets/foodiepopsicon.png';
   GlobalKey<RefreshIndicatorState> _refreshKey;
 
   updateTitle(title) {
@@ -91,7 +91,7 @@ class RSSNewsState extends State<RSSNews> {
     return Text(
       title,
       textAlign: TextAlign.right,
-      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
     );
@@ -114,7 +114,7 @@ class RSSNewsState extends State<RSSNews> {
         placeholder: (context, url) => Image.asset(placeholderImg),
         imageUrl: imageUrl,
         height: 100,
-        width: 120,
+        width: 100,
         alignment: Alignment.center,
         fit: BoxFit.fill,
       ),
@@ -155,7 +155,6 @@ class RSSNewsState extends State<RSSNews> {
         getImgUrlFromItem(item);
         return Card(
             child: new Container(
-//                height: 100.0,
                 child: ListTile(
                   title: title(item.title),
                   subtitle: subtitle(item.pubDate),
