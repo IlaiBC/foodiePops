@@ -137,6 +137,11 @@ try {
     builder: (data, documentId) => PopClick.fromMap(data),
   );
 
+    Stream<List<PopClick>> getPopCouponsRedeemedList(String businessId, String popId) => _service.collectionStream(
+    path: FirestorePath.addCouponRedeemedToBusinessAnalytics(businessId, popId) ,
+    builder: (data, documentId) => PopClick.fromMap(data),
+  );
+
     Stream<List<PopClick>> getPopLike(String businessId, String popId) => _service.collectionStream(
     path: FirestorePath.popClicks(businessId, popId) ,
     builder: (data, documentId) => PopClick.fromMap(data),

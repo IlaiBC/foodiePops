@@ -686,7 +686,14 @@ class _DetailsPageState extends State<DetailsPage> {
         final int countToDisplay = redeemCount != null ? redeemCount.counter : 0;
                           return Center(child: Column(children: [
                             Text('$countToDisplay Coupons already redeemed!'),
-                          widget.redeemedCouponSet.contains(widget.pop.id)? Text('Coupon: ${widget.pop.coupon}') : RedeemCouponButton(loading: isRedeemingCoupon, text: "Redeem coupon", onPressed: () => _redeemCoupon(countToDisplay))]));
+                          widget.redeemedCouponSet.contains(widget.pop.id)? Text('Coupon: ${widget.pop.coupon}') : RedeemCouponButton(loading: isRedeemingCoupon, text: "Redeem coupon", onPressed: () {
+                             if (widget.userData != null) {
+                             _redeemCoupon(countToDisplay);
+
+                             } else {
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text("Login to redeem this coupon")));
+                             }
+                              }  )]));
 
                           
       }
