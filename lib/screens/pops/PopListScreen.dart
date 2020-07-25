@@ -437,6 +437,8 @@ class _PopListScreenState extends State<PopListScreen> {
 
                                           likedPopsSet.add(pop.id);
                                           database.setLikedPops(widget.userData, likedPopsSet, widget.userData.id);
+                                        } else {
+                                           Scaffold.of(context).showSnackBar(SnackBar(content: Text("Login to show your love")));
                                         }
 
                                         
