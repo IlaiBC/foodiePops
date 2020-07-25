@@ -4,10 +4,12 @@ import 'dart:ui';
 import 'package:meta/meta.dart';
 
 class UserData {
-  UserData({@required this.id, @required this.isBusinessUser, @required this.likedPops});
+  UserData({@required this.id, @required this.isBusinessUser, @required this.likedPops, @required this.redeemedPopCoupons});
   final String id;
   final bool isBusinessUser;
   final Set<String> likedPops;
+  final Set<String> redeemedPopCoupons;
+
 
   factory UserData.fromMap(Map<String, dynamic> data, String documentId) {
     try {
@@ -20,8 +22,9 @@ class UserData {
     }
 
     Set<String> likedPopsSet = data['likedPops'] != null ? Set<String>.from(data['likedPops']) : {};
+    Set<String> redeemedPopCouponsSet = data['redeemedPopCoupons'] != null ? Set<String>.from(data['redeemedPopCoupons']) : {};
 
-    return UserData(id: documentId, isBusinessUser: isBusinessUser, likedPops: likedPopsSet);
+    return UserData(id: documentId, isBusinessUser: isBusinessUser, likedPops: likedPopsSet, redeemedPopCoupons: redeemedPopCouponsSet);
 
     } catch (e) {
       print("an error ocurred $e");
@@ -32,6 +35,7 @@ class UserData {
     return {
       'isBusinessUser': isBusinessUser,
       'likedPops': likedPops.toList(),
+      'redeemedPopCoupons': redeemedPopCoupons.toList(),
     };
   }
 

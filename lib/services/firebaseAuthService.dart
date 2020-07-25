@@ -125,7 +125,7 @@ Future<dynamic> signInWithFacebook() async {
 
   Future<void> _saveUserDataIfNeeded (AuthResult authResult, bool isBusinessUser) async{
     if (authResult.additionalUserInfo.isNewUser) {
-      await _setUserData(UserData(id: authResult.user.uid, isBusinessUser: isBusinessUser, likedPops: new HashSet()));
+      await _setUserData(UserData(id: authResult.user.uid, isBusinessUser: isBusinessUser, likedPops: new HashSet(), redeemedPopCoupons: new HashSet()));
     }
   }
 

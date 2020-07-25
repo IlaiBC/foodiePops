@@ -289,7 +289,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
   }
 
     bool get canSubmitPopCoupon {
-    return popExpirationTimeValidator.isValid(popExpirationTime);
+    return popCouponValidator.isValid(popCoupon);
   }
 
   bool get canSubmit {

@@ -9,6 +9,7 @@ import 'package:foodiepops/services/firebaseAuthService.dart';
 import 'package:foodiepops/util/imageUtil.dart';
 import 'package:flutter_countdown_timer/countdown_timer.dart';
 import 'package:animations/animations.dart';
+import 'package:foodiepops/widgets/RedeemCouponButton.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:map_launcher/map_launcher.dart';
@@ -31,6 +32,8 @@ class _PopListScreenState extends State<PopListScreen> {
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
   List<Pop> pops = [];
   Set<String> likedPopsSet = {};
+  Set<String> redeemedPopCouponsSet = {};
+
   HashMap<String, double> popDistanceMap = new HashMap<String, double>();
 
   Geolocator geolocator = Geolocator();
@@ -270,6 +273,8 @@ class _PopListScreenState extends State<PopListScreen> {
     print('*************** calling build *************');
     if (widget.userData != null) {
     likedPopsSet = widget.userData.likedPops;
+    redeemedPopCouponsSet = widget.userData.redeemedPopCoupons;
+    debugPrint('redeemedPopCouponsSet is: $redeemedPopCouponsSet');
     }
     final FirestoreDatabase database =
         Provider.of<FirestoreDatabase>(context, listen: false);
@@ -333,8 +338,9 @@ class _PopListScreenState extends State<PopListScreen> {
                                   transitionType: _transitionType,
                                   openBuilder: (BuildContext _,
                                       VoidCallback openContainer) {
-                                    return DetailsPage(
-                                        pop: filteredPops[index]);
+                                        Pop currentPop = filteredPops[index];
+                                    return DetailsPage(database: database, userData: widget.userData,
+                                        pop: currentPop, redeemedCouponSet: redeemedPopCouponsSet);
                                   },
                                   tappable: false,
                                   closedShape: const RoundedRectangleBorder(),
@@ -436,7 +442,7 @@ class _PopListScreenState extends State<PopListScreen> {
                                                   : 0).catchError((e) => Scaffold.of(context).showSnackBar(SnackBar(content: Text(e))));
 
                                           likedPopsSet.add(pop.id);
-                                          database.setLikedPops(widget.userData, likedPopsSet, widget.userData.id);
+                                          database.setLikedPops(widget.userData, likedPopsSet);
                                         } else {
                                            Scaffold.of(context).showSnackBar(SnackBar(content: Text("Login to show your love")));
                                         }
@@ -529,8 +535,20 @@ class _PopListScreenState extends State<PopListScreen> {
   }
 }
 
-class DetailsPage extends StatelessWidget {
+class DetailsPage extends StatefulWidget {
+  DetailsPage({Key key, this.pop, this.redeemedCouponSet, this.database, this.userData, this.userLocation}) : super(key: key);
   final Pop pop;
+  final Set<String> redeemedCouponSet;
+  final FirestoreDatabase database; 
+  final UserData userData;
+  final Position userLocation;
+
+    @override
+  _DetailsPageState createState() => _DetailsPageState();
+}
+
+class _DetailsPageState extends State<DetailsPage> {
+  bool isRedeemingCoupon = false;
 
   getPopUrl(String url) {
     String popUrlToParse = (url.contains("http://") || url.contains("https://"))
@@ -580,7 +598,6 @@ class DetailsPage extends StatelessWidget {
     }
   }
 
-  DetailsPage({Key key, this.pop}) : super(key: key);
 
   Future<Null> _openInWebview(context, String url) async {
     if (await url_launcher.canLaunch(url)) {
@@ -602,15 +619,28 @@ class DetailsPage extends StatelessWidget {
     }
   }
 
+  void _redeemCoupon(previousRedeemCount) async {
+         setState(() {
+        this.isRedeemingCoupon = true;
+      });
+    await widget.database.redeemCoupon(widget.userData.id, widget.pop, widget.userLocation, previousRedeemCount);
+    widget.redeemedCouponSet.add(widget.pop.id);
+    await widget.database.setRedeemedCoupons(widget.userData, widget.redeemedCouponSet);
+             setState(() {
+        this.isRedeemingCoupon = false;
+      });
+  }
+
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(title: const Text('Pop Details')),
       body: ListView(
         children: <Widget>[
           Container(
             height: 250,
-            child: ImageUtil.getPopImageWidget(pop, 200.0, 200.0, true),
+            child: ImageUtil.getPopImageWidget(widget.pop, 200.0, 200.0, true),
           ),
           Padding(
             padding: const EdgeInsets.all(20.0),
@@ -619,7 +649,7 @@ class DetailsPage extends StatelessWidget {
               children: <Widget>[
                 Center(
                     child: Text(
-                  pop.name,
+                  widget.pop.name,
                   style: TextStyle(
                       fontSize: 30.0,
                       fontWeight: FontWeight.bold,
@@ -628,7 +658,7 @@ class DetailsPage extends StatelessWidget {
                 )),
                 const SizedBox(height: 10),
                 Text(
-                  pop.description,
+                  widget.pop.description,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16.0, color: Colors.grey),
                 ),
@@ -637,7 +667,7 @@ class DetailsPage extends StatelessWidget {
                   FlatButton.icon(
                     icon: Icon(Icons.location_on, color: Color(0xffe51923)),
                     label: Text(""),
-                    onPressed: () => openMapsSheet(context, pop),
+                    onPressed: () => openMapsSheet(context, widget.pop),
                   ),
                   FlatButton.icon(
                     textColor: Colors.blue,
@@ -645,10 +675,23 @@ class DetailsPage extends StatelessWidget {
                     label: Text('Visit Pops website'),
                     onPressed: () {
                       FocusScope.of(context).requestFocus(FocusNode());
-                      this._openInWebview(context, getPopUrl(pop.url));
+                      this._openInWebview(context, getPopUrl(widget.pop.url));
                     },
                   )
                 ])),
+                         StreamBuilder<PopClickCounter>(
+      stream: widget.database.popCouponRedeemCounterStream(widget.pop.id),
+      builder: (BuildContext context, AsyncSnapshot<PopClickCounter> snapshot) {
+        final PopClickCounter redeemCount = snapshot.data;
+        final int countToDisplay = redeemCount != null ? redeemCount.counter : 0;
+                          return Center(child: Column(children: [
+                            Text('$countToDisplay Coupons already redeemed!'),
+                          widget.redeemedCouponSet.contains(widget.pop.id)? Text('Coupon: ${widget.pop.coupon}') : RedeemCouponButton(loading: isRedeemingCoupon, text: "Redeem coupon", onPressed: () => _redeemCoupon(countToDisplay))]));
+
+                          
+      }
+    ),
+
                 Container(
                     margin: EdgeInsets.all(50.0),
                     padding: const EdgeInsets.all(10.0),
@@ -661,7 +704,7 @@ class DetailsPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           CountdownTimer(
-                            endTime: pop.expirationTime.millisecondsSinceEpoch,
+                            endTime: widget.pop.expirationTime.millisecondsSinceEpoch,
                             defaultDays: "==",
                             defaultHours: "--",
                             defaultMin: "**",
@@ -684,7 +727,7 @@ class DetailsPage extends StatelessWidget {
                                 TextStyle(fontSize: 30, color: Colors.white),
                             minSymbolTextStyle:
                                 TextStyle(fontSize: 30, color: Colors.white),
-                          )
+                          ),
                         ]))
               ],
             ),
