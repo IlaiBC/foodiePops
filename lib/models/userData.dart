@@ -19,10 +19,9 @@ class UserData {
       return null;
     }
 
-    Set<String> setstuff = Set<String>.from(data['likedPops']);
-    print("****************** setstuff length: ${setstuff.length}");
+    Set<String> likedPopsSet = data['likedPops'] != null ? Set<String>.from(data['likedPops']) : {};
 
-    return UserData(id: documentId, isBusinessUser: isBusinessUser, likedPops: Set<String>.from(data['likedPops']));
+    return UserData(id: documentId, isBusinessUser: isBusinessUser, likedPops: likedPopsSet);
 
     } catch (e) {
       print("an error ocurred $e");

@@ -17,6 +17,8 @@ class Pop {
   static final String popMinPrice = "minPrice";
   static final String popMaxPrice = "maxPrice";
   static final String popPriceRank = "priceRank";
+  static final String popCoupon = "coupon";
+
 
   static const int MAX_DESCRIPTION_LINES = 3;
 
@@ -36,6 +38,7 @@ class Pop {
     this.minPrice,
     this.maxPrice,
     this.priceRank,
+    this.coupon,
   });
 
   final String name;
@@ -53,6 +56,7 @@ class Pop {
   int minPrice;
   int maxPrice;
   int priceRank;
+  String coupon;
 
   Map toMap() {
     Map<String, dynamic> map = {
@@ -71,6 +75,7 @@ class Pop {
       popMinPrice: minPrice,
       popMaxPrice: maxPrice,
       popPriceRank: priceRank,
+      popCoupon: coupon,
     };
 
     return map;
@@ -96,6 +101,7 @@ class Pop {
         minPrice: (map[popMinPrice] as int),
         maxPrice: (map[popMaxPrice] as int),
         priceRank: (map[popPriceRank] as int),
+        coupon: map[popCoupon],
 
     );
     } catch (e) {

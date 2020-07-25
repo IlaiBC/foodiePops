@@ -28,6 +28,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     this.popUrl = '',
     this.popLocation,
     this.popAddress = '',
+    this.popCoupon = '',
     this.isLoading = false,
     this.submitted = false,
   });
@@ -43,6 +44,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
   String popUrl;
   LatLng popLocation;
   String popAddress;
+  String popCoupon;
   bool isLoading;
   bool submitted;
   List<String> selectedKitchenTypes = [];
@@ -80,6 +82,9 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
   void updateMinMaxPrice(int minPrice, int maxPrice) =>
       updateWith(minPrice: minPrice, maxPrice: maxPrice);
 
+  void updatePopCoupon(String coupon) =>
+      updateWith(popCoupon: coupon);
+
   void updateWith({
     String popName,
     String popSubTitle,
@@ -95,6 +100,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     List<String> selectedKitchenTypes,
     int minPrice,
     int maxPrice,
+    String popCoupon,
   }) {
     this.popName = popName ?? this.popName;
     this.popSubTitle = popSubTitle ?? this.popSubTitle;
@@ -110,6 +116,8 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     this.selectedKitchenTypes = selectedKitchenTypes ?? this.selectedKitchenTypes;
     this.minPrice = minPrice ?? this.minPrice;
     this.maxPrice = maxPrice ?? this.maxPrice;
+    this.popCoupon = popCoupon ?? this.popCoupon;
+
     notifyListeners();
   }
 
@@ -127,6 +135,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     this.selectedKitchenTypes = pop.kitchenTypes;
     this.minPrice = pop.minPrice;
     this.maxPrice = pop.maxPrice;
+    this.popCoupon = pop.coupon;
   }
 
   void clearData() {
@@ -140,6 +149,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
       popUrl: '',
       popLocation: null,
       popAddress: '',
+      popCoupon: '',
       isLoading: false,
       submitted: false,
       selectedKitchenTypes: [],
@@ -215,6 +225,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
         minPrice: minPrice,
         maxPrice: maxPrice,
         priceRank: _calculatePriceRank(),
+        coupon: popCoupon,
         );
   }
 
@@ -235,6 +246,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
         minPrice: minPrice,
         maxPrice: maxPrice,
         priceRank: _calculatePriceRank(),
+        coupon: popCoupon,
         );
   }
 
@@ -260,7 +272,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
   }
 
   bool get canSubmitPopSubTitle {
-    return popSubTitleValidator.isValid(popSubTitle);
+    return popCouponValidator.isValid(popSubTitle);
   }
 
   bool get canSubmitPopUrl {
@@ -276,6 +288,10 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     return popExpirationTimeValidator.isValid(popExpirationTime);
   }
 
+    bool get canSubmitPopCoupon {
+    return popExpirationTimeValidator.isValid(popExpirationTime);
+  }
+
   bool get canSubmit {
     print('checking if can submit');
     print('checking if can submit canSubmitPopName $canSubmitPopName');
@@ -286,7 +302,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
 
 
 
-    final bool canSubmitFields = canSubmitPopName &&
+  final bool canSubmitFields = canSubmitPopName &&
         canSubmitPopDescription &&
         canSubmitPopExpirationTime;
     return canSubmitFields && !isLoading;
@@ -302,7 +318,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     return showErrorText ? Texts.cannotBeEmptyError : null;
   }
 
-    String get popUrlErrorText {
+  String get popUrlErrorText {
     final bool showErrorText = submitted && !canSubmitPopUrl;
     return showErrorText ? Texts.cannotBeEmptyError : null;
   }
@@ -315,5 +331,10 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
   String get popExpirationTimeErrorText {
     final bool showErrorText = submitted && !canSubmitPopExpirationTime;
     return showErrorText ? Texts.expirationTimeError : null;
+  }
+
+  String get popCouponErrorText {
+    final bool showErrorText = submitted && !canSubmitPopCoupon;
+    return showErrorText ? Texts.cannotBeEmptyError : null;
   }
 }
