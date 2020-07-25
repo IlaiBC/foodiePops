@@ -109,7 +109,7 @@ class RSSNewsState extends State<RSSNews> {
 
   thumbnail(imageUrl) {
     return Padding(
-      padding: EdgeInsets.only(left: 15.0),
+      padding: EdgeInsets.only(left: 10.0),
       child: CachedNetworkImage(
         placeholder: (context, url) => Image.asset(placeholderImg),
         imageUrl: imageUrl,
