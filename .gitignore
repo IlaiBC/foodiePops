@@ -68,6 +68,9 @@
 
 # Api Keys
 lib/constants/api_key.dart
+**/android/app/src/main/res/values/keys.xml
+
+
 
 # Exceptions to above rules.
 !**/ios/**/default.mode1v3

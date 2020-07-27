@@ -28,6 +28,12 @@ class AuthWidget extends StatelessWidget {
             builder: (context, snapshot) {
               final UserData userData = snapshot.data;
     debugPrint("in auth widget4");
+    debugPrint("in auth widget4 userData : $userData");
+
+    debugPrint("in auth widget4 userData?.isBusinessUser ${userData?.isBusinessUser}");
+    debugPrint("in auth widget4 userSnapshot.data.uid ${userSnapshot.data.uid}");
+
+
 
 
               return userData?.isBusinessUser == true

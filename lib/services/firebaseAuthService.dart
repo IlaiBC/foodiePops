@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:foodiepops/models/UserData.dart';
@@ -123,7 +125,7 @@ Future<dynamic> signInWithFacebook() async {
 
   Future<void> _saveUserDataIfNeeded (AuthResult authResult, bool isBusinessUser) async{
     if (authResult.additionalUserInfo.isNewUser) {
-      await _setUserData(UserData(id: authResult.user.uid, isBusinessUser: isBusinessUser));
+      await _setUserData(UserData(id: authResult.user.uid, isBusinessUser: isBusinessUser, likedPops: new HashSet(), redeemedPopCoupons: new HashSet()));
     }
   }
 

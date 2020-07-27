@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:foodiepops/constants/Texts.dart';
@@ -12,11 +15,13 @@ import 'package:foodiepops/widgets/dateTimePicker.dart';
 import 'package:foodiepops/widgets/formSubmitButton.dart';
 import 'package:foodiepops/widgets/formWidgets.dart';
 import 'package:foodiepops/widgets/platformAlertDialog.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:search_map_place/search_map_place.dart';
 import 'package:foodiepops/widgets/ClickableImageUpload.dart';
 import 'package:filter_list/filter_list.dart';
 import 'package:foodiepops/constants/generalConsts.dart';
+import 'package:http/http.dart' as http;
 
 class AddPopFormBuilder extends StatelessWidget {
   const AddPopFormBuilder({Key key, this.popToEdit}) : super(key: key);
@@ -40,7 +45,7 @@ class AddPopFormBuilder extends StatelessWidget {
 }
 
 class AddPopForm extends StatefulWidget {
-   AddPopForm({Key key, @required this.model, this.popToEdit})
+  AddPopForm({Key key, @required this.model, this.popToEdit})
       : super(key: key);
   final AddPopModel model;
   final Pop popToEdit;
@@ -57,6 +62,8 @@ class _AddPopFormState extends State<AddPopForm> {
       TextEditingController();
   final TextEditingController _popSubTitleController = TextEditingController();
   final TextEditingController _popUrlController = TextEditingController();
+  final TextEditingController _popCouponController = TextEditingController();
+
 
   DateTime _popExpirationDate;
   TimeOfDay _popExpirationTime;
@@ -64,11 +71,28 @@ class _AddPopFormState extends State<AddPopForm> {
   bool _isUploadingPopInnerPhoto;
   RangeValues _values = RangeValues(0, 200);
   bool isEditingPop = true;
+  Future<LatLng> location;
+
+  Future<LatLng> fetchLocation() async {
+  final response = await http.get('https://api.ipify.org');
+
+  if (response.statusCode == 200) {
+    String ip = response.body;
+    final locationResponse = await http.get('http://ip-api.com/json/$ip?fields=lat,lon');
+
+    if (locationResponse.statusCode == 200) {
+      Map<String, dynamic> locationJson = jsonDecode(locationResponse.body);
+      return LatLng(locationJson['lat'], locationJson['lon']);
+    }
+
+  } 
+    return null;
+  }
 
   @override
   void initState() {
     super.initState();
-
+    location = fetchLocation();
     _isUploadingPopPhoto = false;
     _isUploadingPopInnerPhoto = false;
     isEditingPop = true;
@@ -90,6 +114,7 @@ class _AddPopFormState extends State<AddPopForm> {
     _popDescriptionController.text = widget.popToEdit.description;
     _popSubTitleController.text = widget.popToEdit.subtitle;
     _popUrlController.text = widget.popToEdit.url;
+    _popCouponController.text = widget.popToEdit.coupon;
   }
 
   void _setPopExpirationDateTime() {
@@ -109,12 +134,23 @@ class _AddPopFormState extends State<AddPopForm> {
     _popDescriptionController.dispose();
     _popSubTitleController.dispose();
     _popUrlController.dispose();
+    _popCouponController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return _buildContent(context);
+    
+    return FutureBuilder<LatLng>(
+                    future: location,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<LatLng> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return _buildContent(context, snapshot.data);
+                      }
+                      
+                      return Container(height:MediaQuery.of(context).size.height, child: Center(child: new CircularProgressIndicator()));
+                    });
   }
 
   Future<void> _submit() async {
@@ -187,6 +223,7 @@ class _AddPopFormState extends State<AddPopForm> {
     _popDescriptionController.clear();
     _popSubTitleController.clear();
     _popUrlController.clear();
+    _popCouponController.clear();
     _popExpirationDate = DateTime.now();
     _popExpirationTime = TimeOfDay.now();
     _values = RangeValues(0, 200);
@@ -250,6 +287,27 @@ class _AddPopFormState extends State<AddPopForm> {
       onChanged: model.updatePopSubTitle,
       onEditingComplete: () =>
           _isFieldEditingComplete(model.canSubmitPopSubTitle),
+    ));
+  }
+
+  Widget _buildPopCouponField() {
+    return FormWidgets.formFieldContainer(TextField(
+      key: Key('popCoupon'),
+      controller: _popCouponController,
+      decoration: InputDecoration(
+        labelText: Texts.popCouponLabel,
+        hintText: Texts.popCouponHint,
+        errorText: model.popSubTitleErrorText,
+        enabled: !model.isLoading,
+        contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+        border: InputBorder.none,
+      ),
+      autocorrect: false,
+      textInputAction: TextInputAction.next,
+      keyboardAppearance: Brightness.light,
+      onChanged: model.updatePopCoupon,
+      onEditingComplete: () =>
+          _isFieldEditingComplete(model.canSubmitPopCoupon),
     ));
   }
 
@@ -400,7 +458,7 @@ class _AddPopFormState extends State<AddPopForm> {
     ));
   }
 
-  Widget _buildContent(BuildContext context) {
+  Widget _buildContent(BuildContext context, LatLng location) {
     return FocusScope(
       node: _node,
       child: Column(
@@ -413,6 +471,8 @@ class _AddPopFormState extends State<AddPopForm> {
           SizedBox(height: 8.0),
           _buildPopDescriptionField(),
           SizedBox(height: 8.0),
+          _buildPopCouponField(),
+          SizedBox(height: 8.0),
           _buildPopUrlField(),
           SizedBox(height: 8.0),
           _buildPopExpirationDatePicker(),
@@ -421,6 +481,8 @@ class _AddPopFormState extends State<AddPopForm> {
           SizedBox(height: 16.0),
           SearchMapPlaceWidget(
               apiKey: API_KEY,
+              location: location,
+              radius: location != null ? 50 * 1000 : null,
               placeholder: isEditingPop == true && widget.popToEdit != null
                   ? widget.popToEdit.address
                   : Texts.addressSearchPlaceHolder,

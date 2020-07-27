@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:foodiepops/models/UserData.dart';
 import 'package:foodiepops/models/pop.dart';
 import 'package:foodiepops/models/popClick.dart';
@@ -14,11 +16,20 @@ String documentIdFromCurrentDate() => DateTime.now().toIso8601String();
 class FirestoreDatabase {
   final _service = FirestoreService.instance;
 
-  Future<void> setUserInfo(UserData userData, String uid) async => await _service.setData(
-        path: FirestorePath.userData(uid),
-        data: userData.toMap(),
-        documentId: uid,
-  );
+  Future<void> setLikedPops(UserData userData, Set<String> likedPops) async  {
+    await _service.setData(
+        path: FirestorePath.userData(userData.id),
+        data: UserData(id: userData.id, isBusinessUser: userData.isBusinessUser, likedPops: likedPops, redeemedPopCoupons: userData.redeemedPopCoupons).toMap(),
+        documentId: userData.id);
+  }
+
+  Future<void> setRedeemedCoupons(UserData userData, Set<String> redeemedCoupons) async  {
+    await _service.setData(
+        path: FirestorePath.userData(userData.id),
+        data: UserData(id: userData.id, isBusinessUser: userData.isBusinessUser, likedPops: userData.likedPops, redeemedPopCoupons: redeemedCoupons).toMap(),
+        documentId: userData.id);
+  }
+
 
   Future<void> addPop(Pop pop) async {
     String popId = await _service.addData(collectionPath: FirestorePath.pops(), data: pop.toMap());
@@ -40,7 +51,7 @@ class FirestoreDatabase {
     await _service.addData(collectionPath: FirestorePath.addPopClick(pop.businessId, pop.id), data: data);
   }
 
-    Future<void> addLikeToPop(Pop pop, Position userLocation, int previousLikeCount) async {
+    Future<void> addLikeToPop(String userId, Pop pop, Position userLocation, int previousLikeCount) async {
       Map<String, dynamic> likeData = {
         'date': DateTime.now(),
         'userLocation': GeoPoint(userLocation.latitude, userLocation.longitude)
@@ -50,11 +61,44 @@ class FirestoreDatabase {
         'counter': previousLikeCount + 1,
       };
 
+
+try {
+
+    await _service.addData(collectionPath: FirestorePath.addPopLike(pop.id), data: likeData, userId: userId);
+    await _service.addData(collectionPath: FirestorePath.addPopLikeToBusinessAnalytics(pop.businessId, pop.id), data: likeData, userId: userId);
+
     await _service.setData(path: FirestorePath.popLikeCount(pop.id), data: counterData, documentId: 'likeCount');
     await _service.setData(path: FirestorePath.businessPopLikeCount(pop.businessId, pop.id), data: counterData, documentId: 'likeCount');
+} catch (e) {
+  throw("Pop already liked!");
+}
 
-    await _service.addData(collectionPath: FirestorePath.addPopLike(pop.id), data: likeData);
-    await _service.addData(collectionPath: FirestorePath.addPopLikeToBusinessAnalytics(pop.businessId, pop.id), data: likeData);
+
+  }
+
+      Future<void> redeemCoupon(String userId, Pop pop, Position userLocation, int previousRedeemCount) async {
+      Map<String, dynamic> couponRedeemData = {
+        'date': DateTime.now(),
+        'userLocation': userLocation != null ? GeoPoint(userLocation.latitude, userLocation.longitude) : null,
+      };
+
+      Map<String, dynamic> counterData = {
+        'counter': previousRedeemCount + 1,
+      };
+
+
+try {
+
+    await _service.addData(collectionPath: FirestorePath.addCouponRedeemed(pop.id), data: couponRedeemData, userId: userId);
+    await _service.addData(collectionPath: FirestorePath.addCouponRedeemedToBusinessAnalytics(pop.businessId, pop.id), data: couponRedeemData, userId: userId);
+
+    await _service.setData(path: FirestorePath.popCouponsRedeemedCount(pop.id), data: counterData, documentId: 'couponsRedeemedCount');
+    await _service.setData(path: FirestorePath.businessPopCouponsRedeemedCount(pop.businessId, pop.id), data: counterData, documentId: 'couponsRedeemedCount');
+} catch (e) {
+  throw("Coupon already redeemed");
+}
+
+
   }
 
   Stream<UserData> userInfoStream(String uid) => _service.documentStream(
@@ -64,6 +108,11 @@ class FirestoreDatabase {
 
   Stream<PopClickCounter> popLikeCounterStream(String popId) => _service.documentStream(
     path: FirestorePath.popLikeCount(popId) ,
+    builder: (data, documentId) => PopClickCounter.fromMap(data),
+  );
+
+  Stream<PopClickCounter> popCouponRedeemCounterStream(String popId) => _service.documentStream(
+    path: FirestorePath.popCouponsRedeemedCount(popId) ,
     builder: (data, documentId) => PopClickCounter.fromMap(data),
   );
 
@@ -85,6 +134,11 @@ class FirestoreDatabase {
 
   Stream<List<PopClick>> getPopClickList(String businessId, String popId) => _service.collectionStream(
     path: FirestorePath.popClicks(businessId, popId) ,
+    builder: (data, documentId) => PopClick.fromMap(data),
+  );
+
+    Stream<List<PopClick>> getPopCouponsRedeemedList(String businessId, String popId) => _service.collectionStream(
+    path: FirestorePath.addCouponRedeemedToBusinessAnalytics(businessId, popId) ,
     builder: (data, documentId) => PopClick.fromMap(data),
   );
 

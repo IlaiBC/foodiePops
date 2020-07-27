@@ -50,6 +50,8 @@ class Texts {
   static const String popUrlHint = 'http://www.best-offer-ever.com';
   static const String popDescriptionLabel = 'Pop Description';
   static const String popDescriptionHint = 'Is there anything better than a good burger?';
+  static const String popCouponLabel = 'Pop coupon';
+  static const String popCouponHint = 'BestBurger10';
   static const String submit = 'Submit';
   static const String popSubmitSuccessTitle = 'Offer Submitted successfuly!';
   static const String popSubmitSuccessMessage = 'Just wait and watch the magic happen';

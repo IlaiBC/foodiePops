@@ -11,6 +11,8 @@
         android:label="foodiepops"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="@string/api_key"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

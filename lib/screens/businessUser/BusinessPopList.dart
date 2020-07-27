@@ -38,7 +38,9 @@ class _BusinessPopListState extends State<BusinessPopList> {
         builder: (context, snapshot) {
           if (snapshot.data != null) {
             final List<Pop> pops = snapshot.data;
-
+            if (pops.length == 0) {
+              return Center(child: Text("You've got no pops, add a new one!", style: TextStyle(fontSize: 20),));
+            }
             return Scaffold(
               appBar: AppBar(
                 title: const Text(Texts.myPops),

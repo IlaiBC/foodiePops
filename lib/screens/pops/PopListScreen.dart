@@ -2,10 +2,14 @@ import 'dart:collection';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:foodiepops/models/pop.dart';
+import 'package:foodiepops/models/UserData.dart';
+import 'package:foodiepops/screens/pops/popMapScreen.dart';
 import 'package:foodiepops/services/fireStoreDatabase.dart';
+import 'package:foodiepops/services/firebaseAuthService.dart';
 import 'package:foodiepops/util/imageUtil.dart';
 import 'package:flutter_countdown_timer/countdown_timer.dart';
 import 'package:animations/animations.dart';
+import 'package:foodiepops/widgets/RedeemCouponButton.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:map_launcher/map_launcher.dart';
@@ -17,6 +21,10 @@ import 'package:foodiepops/models/popClickCounter.dart';
 import 'package:foodiepops/components/SliderShape.dart';
 
 class PopListScreen extends StatefulWidget {
+  PopListScreen({Key key, @required this.userSnapshot, @required this.userData}) : super(key: key);
+  final AsyncSnapshot<User> userSnapshot;
+  final UserData userData;
+
   @override
   _PopListScreenState createState() => _PopListScreenState();
 }
@@ -24,7 +32,9 @@ class PopListScreen extends StatefulWidget {
 class _PopListScreenState extends State<PopListScreen> {
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
   List<Pop> pops = [];
-  HashSet<String> likedPopsSet = new HashSet<String>();
+  Set<String> likedPopsSet = {};
+  Set<String> redeemedPopCouponsSet = {};
+
   HashMap<String, double> popDistanceMap = new HashMap<String, double>();
 
   Geolocator geolocator = Geolocator();
@@ -54,9 +64,7 @@ class _PopListScreenState extends State<PopListScreen> {
   @override
   void initState() {
     super.initState();
-
     _getLocation().then((position) {
-      print('getting location $position');
       setState(() {
         this.userLocation = position;
       });
@@ -67,25 +75,21 @@ class _PopListScreenState extends State<PopListScreen> {
     List<Pop> filteredPopsList = [];
 
     for (var i = 0; i < pops.length; i++) {
-      print('user location is: $userLocation');
-      print('pops.length is: : ${pops.length}}');
+
 
       if (userLocation != null) {
         double distance = await _getUserDistanceFromPop(pops[i]);
         popDistanceMap.update(pops[i].id, (value) => distance,
             ifAbsent: () => distance);
-        debugPrint("Distance: $distance");
-        print('distance is: $distance');
-        print('distance is: $distance');
+
 
         if (distance <= this._filterDistance) {
-          debugPrint("should filter");
           filteredPopsList.add(pops[i]);
         }
       }
     }
 
-    debugPrint('current pop length ${pops.length}');
+    print('current pop length ${pops.length}');
 
     debugPrint("finished filter");
     return filteredPopsList;
@@ -101,7 +105,6 @@ class _PopListScreenState extends State<PopListScreen> {
     try {
       GeolocationStatus geolocationStatus =
           await geolocator.checkGeolocationPermissionStatus();
-      debugPrint(geolocationStatus.toString());
       if (geolocationStatus != GeolocationStatus.denied ||
           geolocationStatus != GeolocationStatus.disabled) {
         currentLocation = await geolocator.getCurrentPosition(
@@ -282,6 +285,12 @@ class _PopListScreenState extends State<PopListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('*************** calling build *************');
+    if (widget.userData != null) {
+    likedPopsSet = widget.userData.likedPops;
+    redeemedPopCouponsSet = widget.userData.redeemedPopCoupons;
+    debugPrint('redeemedPopCouponsSet is: $redeemedPopCouponsSet');
+    }
     final FirestoreDatabase database =
         Provider.of<FirestoreDatabase>(context, listen: false);
 
@@ -290,8 +299,10 @@ class _PopListScreenState extends State<PopListScreen> {
         builder: (context, snapshot) {
           if (snapshot.data != null) {
             final List<Pop> popsFromDB = snapshot.data;
-
+            this.pops = popsFromDB;
             return Scaffold(
+                floatingActionButtonLocation:
+                    FloatingActionButtonLocation.startFloat,
                 appBar: AppBar(
                   title: const Text('Foodie Pops you will love'),
                   automaticallyImplyLeading: false,
@@ -306,6 +317,18 @@ class _PopListScreenState extends State<PopListScreen> {
                     )
                   ],
                 ),
+                floatingActionButton: Container(height: 70, width: 70, child: Padding(
+                    padding: const EdgeInsets.only(bottom: 5.0),
+                    child: FloatingActionButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    PopMapScreen(pops: this.pops)));
+                      },
+                      child: Icon(Icons.map, size: 36.0),
+                    ))),
                 body: FutureBuilder<List<Pop>>(
                     future: _filterPopsLocation(popsFromDB),
                     builder: (BuildContext context,
@@ -314,7 +337,8 @@ class _PopListScreenState extends State<PopListScreen> {
                         List<Pop> locationFilteredPops = snapshot.data;
                         List<Pop> filteredPops =
                             _applyAllFilters(locationFilteredPops);
-                        print('filtered pops length: ${filteredPops.length}');
+                        this.pops = filteredPops;
+
                         return new Column(children: <Widget>[
                           this._showFilter
                               ? _buildFilter()
@@ -329,8 +353,9 @@ class _PopListScreenState extends State<PopListScreen> {
                                   transitionType: _transitionType,
                                   openBuilder: (BuildContext _,
                                       VoidCallback openContainer) {
-                                    return DetailsPage(
-                                        pop: filteredPops[index]);
+                                        Pop currentPop = filteredPops[index];
+                                    return DetailsPage(database: database, userData: widget.userData,
+                                        pop: currentPop, redeemedCouponSet: redeemedPopCouponsSet);
                                   },
                                   tappable: false,
                                   closedShape: const RoundedRectangleBorder(),
@@ -363,7 +388,6 @@ class _PopListScreenState extends State<PopListScreen> {
   }
 
   String _getPopDistanceText(String popId) {
-    debugPrint('popDistanceMap: $popDistanceMap');
     double popDistance = popDistanceMap[popId];
 
     return popDistance != null
@@ -421,15 +445,24 @@ class _PopListScreenState extends State<PopListScreen> {
                                               ? Colors.red
                                               : Colors.grey),
                                       onPressed: () {
-                                        if (!likedPopsSet.contains(pop.id)) {
+
+                                        if (widget.userData != null) {
+
                                           database.addLikeToPop(
+                                              widget.userSnapshot.hasData ? widget.userSnapshot.data.uid : null,
                                               pop,
                                               userLocation,
                                               snapshot.data != null
                                                   ? snapshot.data.counter
-                                                  : 0);
+                                                  : 0).catchError((e) => Scaffold.of(context).showSnackBar(SnackBar(content: Text(e))));
+
                                           likedPopsSet.add(pop.id);
+                                          database.setLikedPops(widget.userData, likedPopsSet);
+                                        } else {
+                                           Scaffold.of(context).showSnackBar(SnackBar(content: Text("Login to show your love")));
                                         }
+
+
                                       }),
                                   new Text(
                                       snapshot.data != null
@@ -510,7 +543,6 @@ class _PopListScreenState extends State<PopListScreen> {
                     ]),
                   ),
                   onTap: () {
-                    print('pop is: ${pop.businessId}');
                     database.addPopClick(pop, userLocation);
                     openContainer();
                   }));
@@ -518,8 +550,20 @@ class _PopListScreenState extends State<PopListScreen> {
   }
 }
 
-class DetailsPage extends StatelessWidget {
+class DetailsPage extends StatefulWidget {
+  DetailsPage({Key key, this.pop, this.redeemedCouponSet, this.database, this.userData, this.userLocation}) : super(key: key);
   final Pop pop;
+  final Set<String> redeemedCouponSet;
+  final FirestoreDatabase database;
+  final UserData userData;
+  final Position userLocation;
+
+    @override
+  _DetailsPageState createState() => _DetailsPageState();
+}
+
+class _DetailsPageState extends State<DetailsPage> {
+  bool isRedeemingCoupon = false;
 
   DetailsPage({Key key, this.pop}) : super(key: key);
 
@@ -591,15 +635,28 @@ class DetailsPage extends StatelessWidget {
     }
   }
 
+  void _redeemCoupon(previousRedeemCount) async {
+         setState(() {
+        this.isRedeemingCoupon = true;
+      });
+    await widget.database.redeemCoupon(widget.userData.id, widget.pop, widget.userLocation, previousRedeemCount);
+    widget.redeemedCouponSet.add(widget.pop.id);
+    await widget.database.setRedeemedCoupons(widget.userData, widget.redeemedCouponSet);
+             setState(() {
+        this.isRedeemingCoupon = false;
+      });
+  }
+
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(title: const Text('Pop Details')),
       body: ListView(
         children: <Widget>[
           Container(
             height: 250,
-            child: ImageUtil.getPopImageWidget(pop, 200.0, 200.0, true),
+            child: ImageUtil.getPopImageWidget(widget.pop, 200.0, 200.0, true),
           ),
           Padding(
             padding: const EdgeInsets.all(20.0),
@@ -608,7 +665,7 @@ class DetailsPage extends StatelessWidget {
               children: <Widget>[
                 Center(
                     child: Text(
-                  pop.name,
+                  widget.pop.name,
                   style: TextStyle(
                       fontSize: 30.0,
                       fontWeight: FontWeight.bold,
@@ -617,7 +674,7 @@ class DetailsPage extends StatelessWidget {
                 )),
                 const SizedBox(height: 10),
                 Text(
-                  pop.description,
+                  widget.pop.description,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16.0, color: Colors.grey),
                 ),
@@ -626,7 +683,7 @@ class DetailsPage extends StatelessWidget {
                   FlatButton.icon(
                     icon: Icon(Icons.location_on, color: Color(0xffe51923)),
                     label: Text(""),
-                    onPressed: () => openMapsSheet(context, pop),
+                    onPressed: () => openMapsSheet(context, widget.pop),
                   ),
                   FlatButton.icon(
                     textColor: Colors.blue,
@@ -634,10 +691,30 @@ class DetailsPage extends StatelessWidget {
                     label: Text('Visit Pops website'),
                     onPressed: () {
                       FocusScope.of(context).requestFocus(FocusNode());
-                      this._openInWebview(context, getPopUrl(pop.url));
+                      this._openInWebview(context, getPopUrl(widget.pop.url));
                     },
                   )
                 ])),
+                         StreamBuilder<PopClickCounter>(
+      stream: widget.database.popCouponRedeemCounterStream(widget.pop.id),
+      builder: (BuildContext context, AsyncSnapshot<PopClickCounter> snapshot) {
+        final PopClickCounter redeemCount = snapshot.data;
+        final int countToDisplay = redeemCount != null ? redeemCount.counter : 0;
+                          return Center(child: Column(children: [
+                            Text('$countToDisplay Coupons already redeemed!'),
+                          widget.redeemedCouponSet.contains(widget.pop.id)? Text('Coupon: ${widget.pop.coupon}') : RedeemCouponButton(loading: isRedeemingCoupon, text: "Redeem coupon", onPressed: () {
+                             if (widget.userData != null) {
+                             _redeemCoupon(countToDisplay);
+
+                             } else {
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text("Login to redeem this coupon")));
+                             }
+                              }  )]));
+
+
+      }
+    ),
+
                 Container(
                     margin: EdgeInsets.all(50.0),
                     padding: const EdgeInsets.all(10.0),
@@ -650,7 +727,7 @@ class DetailsPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           CountdownTimer(
-                            endTime: pop.expirationTime.millisecondsSinceEpoch,
+                            endTime: widget.pop.expirationTime.millisecondsSinceEpoch,
                             defaultDays: "==",
                             defaultHours: "--",
                             defaultMin: "**",
@@ -673,7 +750,7 @@ class DetailsPage extends StatelessWidget {
                                 TextStyle(fontSize: 30, color: Colors.white),
                             minSymbolTextStyle:
                                 TextStyle(fontSize: 30, color: Colors.white),
-                          )
+                          ),
                         ]))
               ],
             ),
