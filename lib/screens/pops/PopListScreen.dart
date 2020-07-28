@@ -302,7 +302,7 @@ class _PopListScreenState extends State<PopListScreen> {
             this.pops = popsFromDB;
             return Scaffold(
                 floatingActionButtonLocation:
-                    FloatingActionButtonLocation.startFloat,
+                    FloatingActionButtonLocation.endFloat,
                 appBar: AppBar(
                   title: const Text('Foodie Pops you will love'),
                   automaticallyImplyLeading: false,
@@ -564,8 +564,6 @@ class DetailsPage extends StatefulWidget {
 
 class _DetailsPageState extends State<DetailsPage> {
   bool isRedeemingCoupon = false;
-
-  DetailsPage({Key key, this.pop}) : super(key: key);
 
   getPopUrl(String url) {
     String popUrlToParse = (url.contains("http://") || url.contains("https://"))
