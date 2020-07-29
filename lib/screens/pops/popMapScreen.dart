@@ -32,7 +32,7 @@ class PopMapScreenState extends State<PopMapScreen> {
 
   void getMarkerIcons() async {
     BitmapDescriptor markerIcon = await BitmapDescriptor.fromAssetImage(
-ImageConfiguration(size: Size(24, 24)), 'assets/business_login.png');
+ImageConfiguration(size: Size(12, 12)), 'assets/markpic.png');
     setState(() {
       this.markerIcon = markerIcon;
     });
@@ -63,7 +63,7 @@ ImageConfiguration(size: Size(24, 24)), 'assets/business_login.png');
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: GoogleMap(
         mapType: MapType.normal,
         initialCameraPosition: CameraPosition(

@@ -18,12 +18,13 @@ import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:filter_list/filter_list.dart';
 import 'package:foodiepops/constants/generalConsts.dart';
 import 'package:foodiepops/models/popClickCounter.dart';
+import 'package:foodiepops/components/SliderShape.dart';
 
 class PopListScreen extends StatefulWidget {
   PopListScreen({Key key, @required this.userSnapshot, @required this.userData}) : super(key: key);
   final AsyncSnapshot<User> userSnapshot;
   final UserData userData;
-  
+
   @override
   _PopListScreenState createState() => _PopListScreenState();
 }
@@ -88,6 +89,9 @@ class _PopListScreenState extends State<PopListScreen> {
       }
     }
 
+    print('current pop length ${pops.length}');
+
+    debugPrint("finished filter");
     return filteredPopsList;
   }
 
@@ -149,23 +153,31 @@ class _PopListScreenState extends State<PopListScreen> {
       alignment: Alignment.centerLeft,
       child: Column(children: <Widget>[
         Text(
-          "Distance Of Pops From You",
+          "Distance Of Pops From You:",
           textAlign: TextAlign.center,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
         ),
-        Slider(
-          value: _filterDistance / 1000,
-          max: 40.0,
-          min: 2.0,
-          divisions: 19,
-          label: '${_filterDistance.round() / 1000}KM',
-          onChanged: (double value) {
-            _filterDistance = value * 1000;
-            setState(() {});
-          },
+        new Padding(
+          padding: new EdgeInsets.all(30.0),
         ),
+        SliderTheme(
+            data: SliderThemeData(
+              showValueIndicator: ShowValueIndicator.never,
+              thumbShape: const ThumbShape(),
+            ),
+            child: Slider(
+              value: _filterDistance / 1000,
+              max: 40.0,
+              min: 2.0,
+              divisions: 19,
+              label: '${_filterDistance.round() / 1000}KM',
+              onChanged: (double value) {
+                _filterDistance = value * 1000;
+                setState(() {});
+              },
+            )),
         new Divider(height: 5.0, color: Color(0xffe51923)),
         new Padding(
           padding: new EdgeInsets.all(8.0),
@@ -240,15 +252,18 @@ class _PopListScreenState extends State<PopListScreen> {
     for (int i = 0; i < locationFilteredPops.length; i++) {
       Pop currentPop = locationFilteredPops[i];
 
-      if (currentPop.priceRank == _priceRank || _priceRank == 0) {
-        if (selectedKitchenTypes.length == 0) {
-          filteredPops.add(currentPop);
-          continue;
-        } else {
-          if (_popKitchenTypesContainedInSelectedKitchenTypes(
-              currentPop.kitchenTypes)) {
+      if (currentPop.expirationTime.millisecondsSinceEpoch >
+          DateTime.now().millisecondsSinceEpoch) {
+        if (currentPop.priceRank == _priceRank || _priceRank == 0) {
+          if (selectedKitchenTypes.length == 0) {
             filteredPops.add(currentPop);
             continue;
+          } else {
+            if (_popKitchenTypesContainedInSelectedKitchenTypes(
+                currentPop.kitchenTypes)) {
+              filteredPops.add(currentPop);
+              continue;
+            }
           }
         }
       }
@@ -287,7 +302,7 @@ class _PopListScreenState extends State<PopListScreen> {
             this.pops = popsFromDB;
             return Scaffold(
                 floatingActionButtonLocation:
-                    FloatingActionButtonLocation.startFloat,
+                    FloatingActionButtonLocation.endFloat,
                 appBar: AppBar(
                   title: const Text('Foodie Pops you will love'),
                   automaticallyImplyLeading: false,
@@ -448,7 +463,7 @@ class _PopListScreenState extends State<PopListScreen> {
                                            Scaffold.of(context).showSnackBar(SnackBar(content: Text("Login to show your love")));
                                         }
 
-                                        
+
                                       }),
                                   new Text(
                                       snapshot.data != null
@@ -540,7 +555,7 @@ class DetailsPage extends StatefulWidget {
   DetailsPage({Key key, this.pop, this.redeemedCouponSet, this.database, this.userData, this.userLocation}) : super(key: key);
   final Pop pop;
   final Set<String> redeemedCouponSet;
-  final FirestoreDatabase database; 
+  final FirestoreDatabase database;
   final UserData userData;
   final Position userLocation;
 
@@ -598,7 +613,6 @@ class _DetailsPageState extends State<DetailsPage> {
       print(e);
     }
   }
-
 
   Future<Null> _openInWebview(context, String url) async {
     if (await url_launcher.canLaunch(url)) {

@@ -95,7 +95,7 @@ class Splash extends StatelessWidget {
                             title: 'Fancy OnBoarding HomePage');
                 }
 
-                return Text('Loading...');
+                return CircularProgressIndicator();
               })),
     );
   }

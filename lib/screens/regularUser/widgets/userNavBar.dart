@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:foodiepops/data/mockData.dart';
 import 'package:foodiepops/models/UserData.dart';
 import 'package:foodiepops/screens/login/loginScreen.dart';
-import 'package:foodiepops/screens/news/newsScreen.dart';
+import 'package:foodiepops/screens/news/rssNews.dart';
 import 'package:foodiepops/screens/pops/PopListScreen.dart';
 import 'package:foodiepops/screens/profile/profileScreen.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
@@ -16,7 +16,7 @@ class UserNavBar extends StatelessWidget  {
   Widget build(BuildContext context) {
       final navPages = <Widget>[
         PopListScreen(userSnapshot: userSnapshot, userData: userData,),
-        NewsScreen(news: mockNews),
+        RSSNews(),
         userSnapshot.hasData ? ProfileScreen() : LoginScreen(),
       ];
       final navItems = <BottomNavigationBarItem>[

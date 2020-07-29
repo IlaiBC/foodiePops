@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foodiepops/models/news.dart';
 import 'package:foodiepops/screens/news/newsFull.dart';
-import 'package:foodiepops/util/imageUtil.dart';
 import 'package:animations/animations.dart';
 
 class NewsScreen extends StatelessWidget {
