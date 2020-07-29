@@ -2,12 +2,19 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:foodiepops/models/pop.dart';
+import 'package:foodiepops/models/UserData.dart';
 import 'package:foodiepops/screens/pops/PopListScreen.dart';
+import 'package:foodiepops/services/fireStoreDatabase.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class PopMapScreen extends StatefulWidget {
-  const PopMapScreen({Key key, @required this.pops}) : super(key: key);
+  const PopMapScreen({Key key, @required this.pops, this.redeemedCouponSet, this.database, this.userData, this.userLocation}) : super(key: key);
   final List<Pop> pops;
+  final Set<String> redeemedCouponSet;
+  final FirestoreDatabase database; 
+  final UserData userData;
+  final Position userLocation;
 
   @override
   State<PopMapScreen> createState() => PopMapScreenState();
@@ -41,7 +48,7 @@ ImageConfiguration(size: Size(24, 24)), 'assets/business_login.png');
           icon: markerIcon,
           position: LatLng(pop.location.latitude, pop.location.longitude),
           onTap: () {Navigator.push(
-        context, MaterialPageRoute(builder: (context) => DetailsPage(pop: pop,))); },
+        context, MaterialPageRoute(builder: (context) => DetailsPage(pop: pop, userData: widget.userData, userLocation: widget.userLocation, database: widget.database, redeemedCouponSet: widget.redeemedCouponSet))); },
           infoWindow: InfoWindow(
             title: pop.name,
             snippet: pop.address,

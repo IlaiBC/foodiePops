@@ -310,7 +310,8 @@ class _PopListScreenState extends State<PopListScreen> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    PopMapScreen(pops: this.pops)));
+                                    PopMapScreen(pops: this.pops, database: database, userData: widget.userData,
+                                        redeemedCouponSet: redeemedPopCouponsSet)));
                       },
                       child: Icon(Icons.map, size: 36.0),
                     ))),
@@ -631,6 +632,32 @@ class _DetailsPageState extends State<DetailsPage> {
       });
   }
 
+  Widget _popCouponDetailsWidget (context) {
+    if (widget.database != null) {
+      return StreamBuilder<PopClickCounter>(
+      stream: widget.database.popCouponRedeemCounterStream(widget.pop.id),
+      builder: (BuildContext context, AsyncSnapshot<PopClickCounter> snapshot) {
+        final PopClickCounter redeemCount = snapshot.data;
+        final int countToDisplay = redeemCount != null ? redeemCount.counter : 0;
+                          return Center(child: Column(children: [
+                            Text('$countToDisplay Coupons already redeemed!'),
+                          widget.redeemedCouponSet.contains(widget.pop.id)? Text('Coupon: ${widget.pop.coupon}') : RedeemCouponButton(loading: isRedeemingCoupon, text: "Redeem coupon", onPressed: () {
+                             if (widget.userData != null) {
+                             _redeemCoupon(countToDisplay);
+
+                             } else {
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text("Login to redeem this coupon")));
+                             }
+                              }  )]));
+
+                          
+      }
+    );
+    }
+
+    return Center(child: Text('Coupon: ${widget.pop.coupon}'),);
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -679,25 +706,8 @@ class _DetailsPageState extends State<DetailsPage> {
                     },
                   )
                 ])),
-                         StreamBuilder<PopClickCounter>(
-      stream: widget.database.popCouponRedeemCounterStream(widget.pop.id),
-      builder: (BuildContext context, AsyncSnapshot<PopClickCounter> snapshot) {
-        final PopClickCounter redeemCount = snapshot.data;
-        final int countToDisplay = redeemCount != null ? redeemCount.counter : 0;
-                          return Center(child: Column(children: [
-                            Text('$countToDisplay Coupons already redeemed!'),
-                          widget.redeemedCouponSet.contains(widget.pop.id)? Text('Coupon: ${widget.pop.coupon}') : RedeemCouponButton(loading: isRedeemingCoupon, text: "Redeem coupon", onPressed: () {
-                             if (widget.userData != null) {
-                             _redeemCoupon(countToDisplay);
-
-                             } else {
-      Scaffold.of(context).showSnackBar(SnackBar(content: Text("Login to redeem this coupon")));
-                             }
-                              }  )]));
-
-                          
-      }
-    ),
+                _popCouponDetailsWidget(context),
+                         
 
                 Container(
                     margin: EdgeInsets.all(50.0),
