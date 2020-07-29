@@ -17,7 +17,7 @@ class UserNavBar extends StatelessWidget  {
       final navPages = <Widget>[
         PopListScreen(userSnapshot: userSnapshot, userData: userData,),
         RSSNews(),
-        userSnapshot.hasData ? ProfileScreen() : LoginScreen(),
+        userSnapshot.hasData ? ProfileScreen(userSnapshot: userSnapshot, userData: userData) : LoginScreen(),
       ];
       final navItems = <BottomNavigationBarItem>[
         BottomNavigationBarItem(
