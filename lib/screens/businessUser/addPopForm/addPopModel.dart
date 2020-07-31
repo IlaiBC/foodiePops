@@ -189,6 +189,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     try {
       updateWith(submitted: true);
       if (!canSubmit) {
+        debugPrint('cant submit');
         return false;
       }
 
@@ -306,6 +307,21 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
         canSubmitPopDescription &&
         canSubmitPopExpirationTime;
     return canSubmitFields && !isLoading;
+  }
+
+  String getValidationErrorText() {
+    if (!canSubmitPopName) {
+      return "Submit failed - Name is empty";
+    }
+
+    if (!canSubmitPopDescription) {
+      return "Submit failed - Description is empty";
+    }
+
+    if (!canSubmitPopExpirationTime) {
+      return "Submit failed - Expiration time in the past";
+    }
+
   }
 
   String get popNameErrorText {

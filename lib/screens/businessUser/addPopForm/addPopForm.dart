@@ -153,7 +153,7 @@ class _AddPopFormState extends State<AddPopForm> {
                     });
   }
 
-  Future<void> _submit() async {
+  Future<void> _submit(BuildContext context) async {
     model.updatePopExpirationTime(_getPopExpirationTimeFromState());
 
     try {
@@ -166,10 +166,21 @@ class _AddPopFormState extends State<AddPopForm> {
         ).show(context);
 
         _clearForm();
+      } else {
+        _showValidationSnackBar(context);
       }
     } on PlatformException catch (e) {
       _showSubmitError(model, e);
     }
+  }
+
+  _showValidationSnackBar (BuildContext context) {
+    String validationErrorText = model.getValidationErrorText();
+          Scaffold.of(context).showSnackBar(
+        SnackBar(
+          content: Text(validationErrorText),
+        ),
+      );
   }
 
   Future<void> _uploadPopPhoto(BuildContext context) async {
@@ -533,7 +544,7 @@ class _AddPopFormState extends State<AddPopForm> {
             key: Key(Keys.businessFormSubmit),
             text: Texts.submit,
             loading: model.isLoading,
-            onPressed: model.isLoading ? null : _submit,
+            onPressed: model.isLoading ? null : () => _submit(context),
           ),
         ],
       ),
