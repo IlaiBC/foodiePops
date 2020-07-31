@@ -340,7 +340,8 @@ class _PopListScreenState extends State<PopListScreen> {
                             _applyAllFilters(locationFilteredPops);
                         this.pops = filteredPops;
 
-                        return new Column(children: <Widget>[
+                        if (filteredPops.length > 0) {
+return new Column(children: <Widget>[
                           this._showFilter
                               ? _buildFilter()
                               : new Container(width: 0, height: 0),
@@ -374,7 +375,13 @@ class _PopListScreenState extends State<PopListScreen> {
                               }),
                             ],
                           ))
+                         
                         ]);
+                        }
+                        return  Center(child: Text('No Pops available/meet your criteria', style: TextStyle(
+                                  fontSize: 18.0, fontWeight: FontWeight.bold),),);
+
+                        
                       }
 
                       return new Center(child: new CircularProgressIndicator());
