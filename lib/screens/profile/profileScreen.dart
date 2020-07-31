@@ -63,9 +63,18 @@ class ProfileScreen extends StatelessWidget {
             )
           ],
         ),
-        body: new Center(
+        body: 
+        StreamBuilder<List<Pop>>(
+              stream: database.getPopList(),
+              builder: (context, snapshot) {
+                if (snapshot.data != null) {
+                  final List<Pop> popList = snapshot.data;
+
+                  List<Pop> redeemedCouponPops =
+                      _getRedeemedCouponPops(popList);
+                      return new Center(
             child: Column(children: <Widget>[
-          SizedBox(height: 50.0),
+          SizedBox(height: 20.0),
           Container(
               width: 150.0,
               height: 150.0,
@@ -77,7 +86,7 @@ class ProfileScreen extends StatelessWidget {
                   boxShadow: [
                     BoxShadow(blurRadius: 7.0, color: Colors.black)
                   ])),
-          SizedBox(height: 40.0),
+          SizedBox(height: 15.0),
             Text(
               user.displayName != null ? user.displayName : user.email,
               style: TextStyle(
@@ -114,15 +123,8 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
           SizedBox(height: 15.0),
-          StreamBuilder<List<Pop>>(
-              stream: database.getPopList(),
-              builder: (context, snapshot) {
-                if (snapshot.data != null) {
-                  final List<Pop> popList = snapshot.data;
-
-                  List<Pop> redeemedCouponPops =
-                      _getRedeemedCouponPops(popList);
-                  return Expanded(
+      redeemedCouponPops.length != 0 ?
+                   Expanded(
                       child: ListView.builder(
                           itemCount: redeemedCouponPops
                               .length, //need to get coupon number
@@ -142,13 +144,49 @@ class ProfileScreen extends StatelessWidget {
                               contentPadding: EdgeInsets.all(10.0),
                               onTap: () => {},
                             ));
-                          }));
+                          }))
+                          : Expanded(
+                        child: Column(
+                          children: <Widget>[
+                            Text(
+                              "You've got no coupons, get some!",
+                              style: TextStyle(
+                                  fontSize: 18.0, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(height: 40.0),
+                          ],
+                        ),
+                      ),
+                SizedBox(height: 15.0),
+                Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Text(
+                      'Email The Foodie Team',
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )),
+                SizedBox(height: 5.0),
+                Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Text(
+                      'foodiepopsIL@gmail.com',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )),
+                SizedBox(height: 15.0),
+              ]));
                 } else {
                   return Center(
                     child: CircularProgressIndicator(),
                   );
                 }
+              
               }),
-        ])));
-  }
+    );
+}
 }
