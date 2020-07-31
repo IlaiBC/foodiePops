@@ -69,7 +69,8 @@
 # Api Keys
 lib/constants/api_key.dart
 **/android/app/src/main/res/values/keys.xml
-
+**/android/key.properties
+**/android/app/key.jks
 
 
 # Exceptions to above rules.
