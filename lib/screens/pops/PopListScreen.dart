@@ -698,9 +698,18 @@ class _DetailsPageState extends State<DetailsPage> {
                 redeemCount != null ? redeemCount.counter : 0;
             return Center(
                 child: Column(children: [
-              Text('$countToDisplay Coupons already redeemed!'),
+              Text('$countToDisplay Coupons already redeemed!',
+                                style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black),),
+                      SizedBox(height: 15),
               widget.redeemedCouponSet.contains(widget.pop.id)
-                  ? Text('Coupon: ${widget.pop.coupon}')
+                  ? Text('Coupon: ${widget.pop.coupon}',
+                  style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black),)
                   : RedeemCouponButton(
                       loading: isRedeemingCoupon,
                       text: "Redeem coupon",
@@ -749,7 +758,7 @@ class _DetailsPageState extends State<DetailsPage> {
                 Text(
                   widget.pop.description,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16.0, color: Colors.grey),
+                  style: TextStyle(fontSize: 18.0, color: Colors.black87),
                 ),
                 Container(
                     child: ButtonBar(children: <Widget>[
