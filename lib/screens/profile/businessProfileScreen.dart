@@ -8,26 +8,12 @@ import 'package:foodiepops/services/fireStoreDatabase.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
 import 'package:provider/provider.dart';
 
-class ProfileScreen extends StatelessWidget {
-  ProfileScreen({Key key, @required this.userSnapshot, @required this.userData})
+class BusinessProfileScreen extends StatelessWidget {
+  BusinessProfileScreen(
+      {Key key, @required this.userSnapshot, @required this.userData})
       : super(key: key);
   final AsyncSnapshot<User> userSnapshot;
   final UserData userData;
-
-  List<Pop> _getRedeemedCouponPops(List<Pop> allPops) {
-    List<Pop> redeemedCouponPops = [];
-    Set<String> redeemedPopCoupons = userData.redeemedPopCoupons;
-
-    for (var i = 0; i < allPops.length; i++) {
-      Pop currentPop = allPops[i];
-
-      if (redeemedPopCoupons.contains(currentPop.id)) {
-        redeemedCouponPops.add(currentPop);
-      }
-    }
-
-    return redeemedCouponPops;
-  }
 
   Widget rowCell(int count, String type) => new Expanded(
           child: new Column(
@@ -72,7 +58,8 @@ class ProfileScreen extends StatelessWidget {
               decoration: BoxDecoration(
                   color: Colors.red,
                   image: DecorationImage(
-                      image: NetworkImage(user.photoUrl), fit: BoxFit.cover),
+                      image: AssetImage('assets/business_login.png'),
+                      fit: BoxFit.cover),
                   borderRadius: BorderRadius.all(Radius.circular(75.0)),
                   boxShadow: [
                     BoxShadow(blurRadius: 7.0, color: Colors.black)
@@ -101,55 +88,43 @@ class ProfileScreen extends StatelessWidget {
           Divider(thickness: 4.0, color: Color(0xffe51923)),
           Row(
             children: <Widget>[
-              rowCell(userData.likedPops.length, 'LIKED POPS'),
-              rowCell(userData.redeemedPopCoupons.length, 'COUPONS REDEEMED'),
+              rowCell(7, 'ACTIVE POPS'),
+              rowCell(78, 'COUPONS REDEEMED'),
             ],
           ),
           new Divider(thickness: 4.0, color: Color(0xffe51923)),
           SizedBox(height: 25.0),
-          Text(
-            'My Coupons:',
-            style: TextStyle(
-              fontSize: 24.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              child: Text(
+                'NEED HELP OR GOT SUGGESTIONS?',
+                style: TextStyle(
+                  fontSize: 22.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              )),
           SizedBox(height: 15.0),
-          StreamBuilder<List<Pop>>(
-              stream: database.getPopList(),
-              builder: (context, snapshot) {
-                if (snapshot.data != null) {
-                  final List<Pop> popList = snapshot.data;
-
-                  List<Pop> redeemedCouponPops =
-                      _getRedeemedCouponPops(popList);
-                  return Expanded(
-                      child: ListView.builder(
-                          itemCount: redeemedCouponPops
-                              .length, //need to get coupon number
-                          itemBuilder: (BuildContext context, int index) {
-                            return Card(
-                                child: ListTile(
-                              title: Text(redeemedCouponPops[index].name,
-                                  style: new TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.bold)),
-                              // name of pop up
-                              trailing: Text(redeemedCouponPops[index].coupon,
-                                  style: new TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.bold)),
-                              // code redeemed
-                              contentPadding: EdgeInsets.all(10.0),
-                              onTap: () => {},
-                            ));
-                          }));
-                } else {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              }),
+          Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              child: Text(
+                'Email The Foodie Team',
+                style: TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              )),
+          SizedBox(height: 5.0),
+          Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              child: Text(
+                'foodiepopsIL@gmail.com',
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              )),
+          SizedBox(height: 15.0),
         ])));
   }
 }
