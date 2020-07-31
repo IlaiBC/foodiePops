@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'authentication/authWidgetBuilder.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
 
 void main() => runApp(MyApp(
       authServiceBuilder: (_) => FirebaseAuthService(),
@@ -26,6 +27,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+          SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
     return MultiProvider(
       providers: [
         Provider<FirebaseAuthService>(
