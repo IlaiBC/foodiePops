@@ -59,6 +59,18 @@ ImageConfiguration(size: Size(12, 12)), 'assets/markpic.png');
     });
   }
 
+  LatLng _getMapInitialCameraPosition () {
+    if (widget.userLocation != null) {
+      return LatLng(widget.userLocation.latitude, widget.userLocation.longitude);
+    }
+
+    if (widget.pops.length > 0) {
+      return LatLng(widget.pops[0].location.latitude, widget.pops[0].location.longitude);
+    }
+
+    return LatLng(32.109333, 34.855499);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +79,7 @@ ImageConfiguration(size: Size(12, 12)), 'assets/markpic.png');
       body: GoogleMap(
         mapType: MapType.normal,
         initialCameraPosition: CameraPosition(
-            target: LatLng(widget.pops[0].location.latitude, widget.pops[0].location.longitude),
+            target: _getMapInitialCameraPosition(),
             zoom: 12,
           ),
         onMapCreated: _onMapCreated,

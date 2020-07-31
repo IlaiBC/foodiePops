@@ -326,7 +326,7 @@ class _PopListScreenState extends State<PopListScreen> {
                             MaterialPageRoute(
                                 builder: (context) =>
                                     PopMapScreen(pops: this.pops, database: database, userData: widget.userData,
-                                        redeemedCouponSet: redeemedPopCouponsSet)));
+                                        redeemedCouponSet: redeemedPopCouponsSet, userLocation: userLocation)));
                       },
                       child: Icon(Icons.map, size: 36.0),
                     ))),
