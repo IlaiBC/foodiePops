@@ -21,7 +21,8 @@ import 'package:foodiepops/models/popClickCounter.dart';
 import 'package:foodiepops/components/SliderShape.dart';
 
 class PopListScreen extends StatefulWidget {
-  PopListScreen({Key key, @required this.userSnapshot, @required this.userData}) : super(key: key);
+  PopListScreen({Key key, @required this.userSnapshot, @required this.userData})
+      : super(key: key);
   final AsyncSnapshot<User> userSnapshot;
   final UserData userData;
 
@@ -34,6 +35,7 @@ class _PopListScreenState extends State<PopListScreen> {
   List<Pop> pops = [];
   Set<String> likedPopsSet = {};
   Set<String> redeemedPopCouponsSet = {};
+  bool finishedLoading = false;
 
   HashMap<String, double> popDistanceMap = new HashMap<String, double>();
 
@@ -67,6 +69,7 @@ class _PopListScreenState extends State<PopListScreen> {
     _getLocation().then((position) {
       setState(() {
         this.userLocation = position;
+        this.finishedLoading = true;
       });
     });
   }
@@ -75,13 +78,10 @@ class _PopListScreenState extends State<PopListScreen> {
     List<Pop> filteredPopsList = [];
 
     for (var i = 0; i < pops.length; i++) {
-
-
       if (userLocation != null) {
         double distance = await _getUserDistanceFromPop(pops[i]);
         popDistanceMap.update(pops[i].id, (value) => distance,
             ifAbsent: () => distance);
-
 
         if (distance <= this._filterDistance) {
           filteredPopsList.add(pops[i]);
@@ -92,7 +92,7 @@ class _PopListScreenState extends State<PopListScreen> {
     print('current pop length ${pops.length}');
 
     debugPrint("finished filter");
-    return filteredPopsList;
+    return userLocation != null ? filteredPopsList : pops;
   }
 
   Future<double> _getUserDistanceFromPop(Pop pop) async {
@@ -287,9 +287,9 @@ class _PopListScreenState extends State<PopListScreen> {
   Widget build(BuildContext context) {
     print('*************** calling build *************');
     if (widget.userData != null) {
-    likedPopsSet = widget.userData.likedPops;
-    redeemedPopCouponsSet = widget.userData.redeemedPopCoupons;
-    debugPrint('redeemedPopCouponsSet is: $redeemedPopCouponsSet');
+      likedPopsSet = widget.userData.likedPops;
+      redeemedPopCouponsSet = widget.userData.redeemedPopCoupons;
+      debugPrint('redeemedPopCouponsSet is: $redeemedPopCouponsSet');
     }
     final FirestoreDatabase database =
         Provider.of<FirestoreDatabase>(context, listen: false);
@@ -297,7 +297,7 @@ class _PopListScreenState extends State<PopListScreen> {
     return StreamBuilder<List<Pop>>(
         stream: database.getPopList(),
         builder: (context, snapshot) {
-          if (snapshot.data != null) {
+          if (snapshot.data != null && this.finishedLoading == true) {
             final List<Pop> popsFromDB = snapshot.data;
             this.pops = popsFromDB;
             return Scaffold(
@@ -317,71 +317,88 @@ class _PopListScreenState extends State<PopListScreen> {
                     )
                   ],
                 ),
-                floatingActionButton: Container(height: 70, width: 70, child: Padding(
-                    padding: const EdgeInsets.only(bottom: 5.0),
-                    child: FloatingActionButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    PopMapScreen(pops: this.pops, database: database, userData: widget.userData,
-                                        redeemedCouponSet: redeemedPopCouponsSet, userLocation: userLocation)));
-                      },
-                      child: Icon(Icons.map, size: 36.0),
-                    ))),
+                floatingActionButton: Container(
+                    height: 70,
+                    width: 70,
+                    child: Padding(
+                        padding: const EdgeInsets.only(bottom: 5.0),
+                        child: FloatingActionButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => PopMapScreen(
+                                        pops: this.pops,
+                                        database: database,
+                                        userData: widget.userData,
+                                        redeemedCouponSet:
+                                            redeemedPopCouponsSet,
+                                        userLocation: userLocation)));
+                          },
+                          child: Icon(Icons.map, size: 36.0),
+                        ))),
                 body: FutureBuilder<List<Pop>>(
                     future: _filterPopsLocation(popsFromDB),
                     builder: (BuildContext context,
                         AsyncSnapshot<List<Pop>> snapshot) {
-                      if (snapshot.hasData) {
+                      if (snapshot.hasData && this.finishedLoading == true) {
                         List<Pop> locationFilteredPops = snapshot.data;
                         List<Pop> filteredPops =
                             _applyAllFilters(locationFilteredPops);
                         this.pops = filteredPops;
 
-                        if (filteredPops.length > 0) {
-return new Column(children: <Widget>[
+                        return new Column(children: <Widget>[
                           this._showFilter
                               ? _buildFilter()
                               : new Container(width: 0, height: 0),
-                          new Expanded(
-                              child: ListView(
-                            padding: const EdgeInsets.all(8.0),
-                            children: <Widget>[
-                              ...List<Widget>.generate(filteredPops.length,
-                                  (int index) {
-                                return OpenContainer(
-                                  transitionType: _transitionType,
-                                  openBuilder: (BuildContext _,
-                                      VoidCallback openContainer) {
-                                        Pop currentPop = filteredPops[index];
-                                    return DetailsPage(database: database, userData: widget.userData,
-                                        pop: currentPop, redeemedCouponSet: redeemedPopCouponsSet);
-                                  },
-                                  tappable: false,
-                                  closedShape: const RoundedRectangleBorder(),
-                                  closedElevation: 0.0,
-                                  closedBuilder: (BuildContext _,
-                                      VoidCallback openContainer) {
-                                    return _buildRow(
-                                        filteredPops[index],
-                                        openContainer,
-                                        database,
-                                        userLocation,
-                                        context);
-                                  },
-                                );
-                              }),
-                            ],
-                          ))
-                         
+                          filteredPops.length != 0
+                              ? new Expanded(
+                                  child: ListView(
+                                  padding: const EdgeInsets.all(8.0),
+                                  children: <Widget>[
+                                    ...List<Widget>.generate(
+                                        filteredPops.length, (int index) {
+                                      return OpenContainer(
+                                        transitionType: _transitionType,
+                                        openBuilder: (BuildContext _,
+                                            VoidCallback openContainer) {
+                                          Pop currentPop = filteredPops[index];
+                                          return DetailsPage(
+                                              database: database,
+                                              userData: widget.userData,
+                                              pop: currentPop,
+                                              redeemedCouponSet:
+                                                  redeemedPopCouponsSet);
+                                        },
+                                        tappable: false,
+                                        closedShape:
+                                            const RoundedRectangleBorder(),
+                                        closedElevation: 0.0,
+                                        closedBuilder: (BuildContext _,
+                                            VoidCallback openContainer) {
+                                          return _buildRow(
+                                              filteredPops[index],
+                                              openContainer,
+                                              database,
+                                              userLocation,
+                                              context);
+                                        },
+                                      );
+                                    }),
+                                  ],
+                                ))
+                              : Column(children: [
+                                  this._showFilter
+                                      ? SizedBox(height: 50)
+                                      : SizedBox(height: 200),
+                                  Center(
+                                      child: Text(
+                                          'No Pops available/meet your criteria',
+                                          style: TextStyle(
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.bold))),
+                                ])
                         ]);
-                        }
-                        return  Center(child: Text('No Pops available/meet your criteria', style: TextStyle(
-                                  fontSize: 18.0, fontWeight: FontWeight.bold),),);
-
-                        
                       }
 
                       return new Center(child: new CircularProgressIndicator());
@@ -453,24 +470,32 @@ return new Column(children: <Widget>[
                                               ? Colors.red
                                               : Colors.grey),
                                       onPressed: () {
-
                                         if (widget.userData != null) {
-
-                                          database.addLikeToPop(
-                                              widget.userSnapshot.hasData ? widget.userSnapshot.data.uid : null,
-                                              pop,
-                                              userLocation,
-                                              snapshot.data != null
-                                                  ? snapshot.data.counter
-                                                  : 0).catchError((e) => Scaffold.of(context).showSnackBar(SnackBar(content: Text(e))));
+                                          database
+                                              .addLikeToPop(
+                                                  widget.userSnapshot.hasData
+                                                      ? widget
+                                                          .userSnapshot.data.uid
+                                                      : null,
+                                                  pop,
+                                                  userLocation,
+                                                  snapshot.data != null
+                                                      ? snapshot.data.counter
+                                                      : 0)
+                                              .catchError((e) =>
+                                                  Scaffold.of(context)
+                                                      .showSnackBar(SnackBar(
+                                                          content: Text(e))));
 
                                           likedPopsSet.add(pop.id);
-                                          database.setLikedPops(widget.userData, likedPopsSet);
+                                          database.setLikedPops(
+                                              widget.userData, likedPopsSet);
                                         } else {
-                                           Scaffold.of(context).showSnackBar(SnackBar(content: Text("Login to show your love")));
+                                          Scaffold.of(context).showSnackBar(
+                                              SnackBar(
+                                                  content: Text(
+                                                      "Login to show your love")));
                                         }
-
-
                                       }),
                                   new Text(
                                       snapshot.data != null
@@ -559,14 +584,21 @@ return new Column(children: <Widget>[
 }
 
 class DetailsPage extends StatefulWidget {
-  DetailsPage({Key key, this.pop, this.redeemedCouponSet, this.database, this.userData, this.userLocation}) : super(key: key);
+  DetailsPage(
+      {Key key,
+      this.pop,
+      this.redeemedCouponSet,
+      this.database,
+      this.userData,
+      this.userLocation})
+      : super(key: key);
   final Pop pop;
   final Set<String> redeemedCouponSet;
   final FirestoreDatabase database;
   final UserData userData;
   final Position userLocation;
 
-    @override
+  @override
   _DetailsPageState createState() => _DetailsPageState();
 }
 
@@ -642,46 +674,55 @@ class _DetailsPageState extends State<DetailsPage> {
   }
 
   void _redeemCoupon(previousRedeemCount) async {
-         setState(() {
-        this.isRedeemingCoupon = true;
-      });
-    await widget.database.redeemCoupon(widget.userData.id, widget.pop, widget.userLocation, previousRedeemCount);
+    setState(() {
+      this.isRedeemingCoupon = true;
+    });
+    await widget.database.redeemCoupon(widget.userData.id, widget.pop,
+        widget.userLocation, previousRedeemCount);
     widget.redeemedCouponSet.add(widget.pop.id);
-    await widget.database.setRedeemedCoupons(widget.userData, widget.redeemedCouponSet);
-             setState(() {
-        this.isRedeemingCoupon = false;
-      });
+    await widget.database
+        .setRedeemedCoupons(widget.userData, widget.redeemedCouponSet);
+    setState(() {
+      this.isRedeemingCoupon = false;
+    });
   }
 
-  Widget _popCouponDetailsWidget (context) {
+  Widget _popCouponDetailsWidget(context) {
     if (widget.database != null) {
       return StreamBuilder<PopClickCounter>(
-      stream: widget.database.popCouponRedeemCounterStream(widget.pop.id),
-      builder: (BuildContext context, AsyncSnapshot<PopClickCounter> snapshot) {
-        final PopClickCounter redeemCount = snapshot.data;
-        final int countToDisplay = redeemCount != null ? redeemCount.counter : 0;
-                          return Center(child: Column(children: [
-                            Text('$countToDisplay Coupons already redeemed!'),
-                          widget.redeemedCouponSet.contains(widget.pop.id)? Text('Coupon: ${widget.pop.coupon}') : RedeemCouponButton(loading: isRedeemingCoupon, text: "Redeem coupon", onPressed: () {
-                             if (widget.userData != null) {
-                             _redeemCoupon(countToDisplay);
-
-                             } else {
-      Scaffold.of(context).showSnackBar(SnackBar(content: Text("Login to redeem this coupon")));
-                             }
-                              }  )]));
-
-                          
-      }
-    );
+          stream: widget.database.popCouponRedeemCounterStream(widget.pop.id),
+          builder:
+              (BuildContext context, AsyncSnapshot<PopClickCounter> snapshot) {
+            final PopClickCounter redeemCount = snapshot.data;
+            final int countToDisplay =
+                redeemCount != null ? redeemCount.counter : 0;
+            return Center(
+                child: Column(children: [
+              Text('$countToDisplay Coupons already redeemed!'),
+              widget.redeemedCouponSet.contains(widget.pop.id)
+                  ? Text('Coupon: ${widget.pop.coupon}')
+                  : RedeemCouponButton(
+                      loading: isRedeemingCoupon,
+                      text: "Redeem coupon",
+                      onPressed: () {
+                        if (widget.userData != null) {
+                          _redeemCoupon(countToDisplay);
+                        } else {
+                          Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text("Login to redeem this coupon")));
+                        }
+                      })
+            ]));
+          });
     }
 
-    return Center(child: Text('Coupon: ${widget.pop.coupon}'),);
+    return Center(
+      child: Text('Coupon: ${widget.pop.coupon}'),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(title: const Text('Pop Details')),
       body: ListView(
@@ -728,8 +769,6 @@ class _DetailsPageState extends State<DetailsPage> {
                   )
                 ])),
                 _popCouponDetailsWidget(context),
-                         
-
                 Container(
                     margin: EdgeInsets.all(50.0),
                     padding: const EdgeInsets.all(10.0),
@@ -742,7 +781,8 @@ class _DetailsPageState extends State<DetailsPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           CountdownTimer(
-                            endTime: widget.pop.expirationTime.millisecondsSinceEpoch,
+                            endTime: widget
+                                .pop.expirationTime.millisecondsSinceEpoch,
                             defaultDays: "==",
                             defaultHours: "--",
                             defaultMin: "**",
