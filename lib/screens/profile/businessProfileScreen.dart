@@ -7,6 +7,7 @@ import 'package:foodiepops/models/pop.dart';
 import 'package:foodiepops/services/fireStoreDatabase.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
 import 'package:provider/provider.dart';
+import 'package:foodiepops/models/popClickCounter.dart';
 
 class BusinessProfileScreen extends StatelessWidget {
   BusinessProfileScreen(
@@ -14,6 +15,22 @@ class BusinessProfileScreen extends StatelessWidget {
       : super(key: key);
   final AsyncSnapshot<User> userSnapshot;
   final UserData userData;
+  List<Pop> businessPopList = [];
+
+  int _getActivePopsLength () {
+    int activePopsLength = 0;
+    if (businessPopList.length > 0) {
+          for (var i = 0; i < businessPopList.length; i++) {
+      Pop currentPop = businessPopList[i];
+
+      if (!currentPop.expirationTime.isBefore(DateTime.now())) {
+        activePopsLength = activePopsLength + 1;
+      }
+    }
+    }
+
+    return activePopsLength;
+  }
 
   Widget rowCell(int count, String type) => new Expanded(
           child: new Column(
@@ -49,9 +66,15 @@ class BusinessProfileScreen extends StatelessWidget {
             )
           ],
         ),
-        body: new Center(
+        body:                              StreamBuilder<List<Pop>>(
+              stream: database.getBusinessPopList(user.uid),
+              builder: (context, snapshot) {
+                if (snapshot.data != null) {
+                  final List<Pop> popList = snapshot.data;
+                  businessPopList = popList;
+                  return new Center(
             child: Column(children: <Widget>[
-          SizedBox(height: 50.0),
+          SizedBox(height: 20.0),
           Container(
               width: 150.0,
               height: 150.0,
@@ -64,7 +87,7 @@ class BusinessProfileScreen extends StatelessWidget {
                   boxShadow: [
                     BoxShadow(blurRadius: 7.0, color: Colors.black)
                   ])),
-          SizedBox(height: 40.0),
+          SizedBox(height: 15.0),
           if (user.displayName != null)
             Text(
               user.displayName,
@@ -84,32 +107,59 @@ class BusinessProfileScreen extends StatelessWidget {
                   fontStyle: FontStyle.italic,
                 ),
               )),
-          SizedBox(height: 25.0),
+          SizedBox(height: 15.0),
+
           Divider(thickness: 4.0, color: Color(0xffe51923)),
           Row(
             children: <Widget>[
-              rowCell(7, 'ACTIVE POPS'),
-              rowCell(78, 'COUPONS REDEEMED'),
+              rowCell(_getActivePopsLength(), 'ACTIVE POPS'),
+              rowCell(businessPopList.length, 'TOTAL POPS'),
             ],
           ),
           new Divider(thickness: 4.0, color: Color(0xffe51923)),
-          SizedBox(height: 25.0),
-          Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              child: Text(
-                'NEED HELP OR GOT SUGGESTIONS?',
-                style: TextStyle(
-                  fontSize: 22.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              )),
+          SizedBox(height: 15.0),
+          Text(
+            'Pops Overview:',
+            style: TextStyle(
+              fontSize: 24.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+                    SizedBox(height: 15.0),
+                   Expanded(
+                      child: ListView.builder(
+                          itemCount: businessPopList
+                              .length,
+                          itemBuilder: (BuildContext context, int index) {
+                                               return StreamBuilder<PopClickCounter>(
+              stream: database.popCouponRedeemCounterStream(businessPopList[index].id),
+              builder: (context, snapshot) {
+                  final PopClickCounter couponsRedeemed = snapshot.data;
+                  int numOfCouponsRedeemed = couponsRedeemed != null ? couponsRedeemed.counter : 0;
+                            return Card(
+                                child: ListTile(
+                              title: Text(businessPopList[index].name,
+                                  style: new TextStyle(
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.bold)),
+                              // name of pop up
+                              trailing: Text('Coupons Redeemed: $numOfCouponsRedeemed',
+                                  style: new TextStyle(
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.bold)),
+                              // code redeemed
+                              contentPadding: EdgeInsets.all(10.0),
+                              onTap: () => {},
+                            ));});
+                            
+                          })),
           SizedBox(height: 15.0),
           Padding(
               padding: EdgeInsets.symmetric(horizontal: 10.0),
               child: Text(
                 'Email The Foodie Team',
                 style: TextStyle(
-                  fontSize: 18.0,
+                  fontSize: 14.0,
                   fontWeight: FontWeight.bold,
                 ),
               )),
@@ -120,11 +170,17 @@ class BusinessProfileScreen extends StatelessWidget {
                 'foodiepopsIL@gmail.com',
                 style: TextStyle(
                   color: Colors.blue,
-                  fontSize: 18.0,
+                  fontSize: 14.0,
                   fontWeight: FontWeight.bold,
                 ),
               )),
           SizedBox(height: 15.0),
-        ])));
+        ]));
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              }),);
   }
 }
