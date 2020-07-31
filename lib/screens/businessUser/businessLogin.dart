@@ -1,38 +1,97 @@
 import 'package:flutter/material.dart';
-import 'package:foodiepops/constants/Texts.dart';
-import 'package:foodiepops/screens/login/credentialsLogin/credentialsLoginForm.dart';
+import 'package:flutter/rendering.dart';
+import 'package:foodiepops/screens/businessUser/CredentialsLoginScreen.dart';
+import 'package:foodiepops/widgets/signInButton.dart';
+import 'package:foodiepops/services/firebaseAuthService.dart';
+import 'package:provider/provider.dart';
 
-class BusinessLogin extends StatelessWidget {
+class BusinessLoginScreen extends StatefulWidget {
+  @override
+  _BusinessLoginScreenState createState() => _BusinessLoginScreenState();
+}
 
-  BusinessLogin({Key key}) : super(key: key);
+class _BusinessLoginScreenState extends State<BusinessLoginScreen> {
+  bool _isLoadingIndicatorShowing = false;
+
+  void toggleLoadingIndicator() {
+    if (mounted) {
+      setState(() {
+        _isLoadingIndicatorShowing = !_isLoadingIndicatorShowing;
+      });
+    }
+  }
+
+  void onGoogleSignInPressed(
+      BuildContext context, FirebaseAuthService authService) async {
+    toggleLoadingIndicator();
+    await authService.signInWithGoogle(true).catchError((onError) =>
+        print("login error occurred, user possibly canceled login"));
+    toggleLoadingIndicator();
+  }
+
+  void onFacebookSignInPressed(
+      BuildContext context, FirebaseAuthService authService) async {
+    toggleLoadingIndicator();
+    await authService.signInWithFacebook(true).catchError((onError) =>
+        print("login error occurred, user possibly canceled login"));
+    toggleLoadingIndicator();
+  }
+
+  void onCredentialsSignInPressed(context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => CredentialsLoginScreen(isBusinessUser: true,)));
+  }
 
   @override
   Widget build(BuildContext context) {
-      return Scaffold(
+    final authService =
+        Provider.of<FirebaseAuthService>(context, listen: false);
+    return Scaffold(
       appBar: AppBar(
-        elevation: 2.0,
-        title: Text(Texts.businessLogin),
-      ),
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-        Padding(
-        padding: const EdgeInsets.only(top: 50.0),
-        child: Image(
-          image: AssetImage("assets/foodiepopslogo_no_bg.png"),
-          height: 250)),
-                SizedBox(height: 10),
-
-          Card(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: CredentialsSignInFormBuilder(isBusinessUser: true)
-            ),
-          ),
-          ],
+          title: const Text('Business Login'),
+        ),
+        body: Container(
+      color: Colors.white,
+      child: Center(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(20.0),
+          child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Image(
+                    image: AssetImage("assets/foodiepopslogo_no_bg.png"),
+                    height: 250),
+                Stack(children: <Widget>[
+                  Visibility(
+                    visible: _isLoadingIndicatorShowing,
+                    child: CircularProgressIndicator(),
+                  ),
+                ]),
+                SizedBox(height: 50),
+                SignInButton(
+                    buttonText: 'Sign in with Google',
+                    buttonColor: Colors.red,
+                    buttonIconPath: "assets/google_logo.png",
+                    buttonOnPressedAction: () =>
+                        onGoogleSignInPressed(context, authService)),
+                SizedBox(height: 20),
+                SignInButton(
+                    buttonText: 'Sign in with Facebook',
+                    buttonColor: Colors.blue,
+                    buttonIconPath: "assets/facebook_logo.png",
+                    buttonOnPressedAction: () =>
+                        onFacebookSignInPressed(context, authService)),
+                SizedBox(height: 20),
+                SignInButton(
+                  buttonText: 'Sign in with Email',
+                  buttonColor: Colors.orange,
+                  buttonIconPath: "assets/email_login.png",
+                  buttonOnPressedAction: () => onCredentialsSignInPressed(context),
+                ),
+              ]),
         ),
       ),
-    );
+    ));
   }
 }

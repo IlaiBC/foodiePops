@@ -47,12 +47,7 @@ class FirebaseAuthService {
 
   // Handle various sign in methods - Google, Facebook, Email and Password and anonymously (mainly for testing)
 
-  Future<User> signInAnonymously() async {
-    final AuthResult authResult = await _firebaseAuth.signInAnonymously();
-    return _toUserFromFirebaseUser(authResult.user);
-  }
-
-  Future<User> signInWithGoogle() async {
+  Future<User> signInWithGoogle(bool isBusinessUser) async {
     final GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
     final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
 
@@ -63,19 +58,19 @@ class FirebaseAuthService {
 
     final AuthResult authResult = await _firebaseAuth.signInWithCredential(credential);
 
-    await _saveUserDataIfNeeded(authResult, false);
+    await _saveUserDataIfNeeded(authResult, isBusinessUser);
 
     return _toUserFromFirebaseUser(authResult.user);
 }
 
-Future<dynamic> signInWithFacebook() async {
+Future<dynamic> signInWithFacebook(bool isBusinessUser) async {
   final FacebookLoginResult result = await _facebookSignIn.logIn(['email']);
 
   final facebookAuthCred = FacebookAuthProvider.getCredential(accessToken: result.accessToken.token);
 
   final authResult = await _firebaseAuth.signInWithCredential(facebookAuthCred);
 
-  await _saveUserDataIfNeeded(authResult, false);
+  await _saveUserDataIfNeeded(authResult, isBusinessUser);
 
   return _toUserFromFirebaseUser(authResult.user);
 }

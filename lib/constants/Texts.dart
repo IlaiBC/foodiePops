@@ -24,6 +24,8 @@ class Texts {
 
   // Business pages
   static const String businessLogin = "Business Login";
+  static const String businessCredentialsLogin = "Business Credentials Login";
+  static const String userCredentialsLogin = "User Credentials Login";
   static const String popFormScreen = "Pop Form";
   static const String analyticsScreen = "Analytics";
   static const String addPop = "Add Pop";

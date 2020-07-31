@@ -78,11 +78,10 @@ class ProfileScreen extends StatelessWidget {
                     BoxShadow(blurRadius: 7.0, color: Colors.black)
                   ])),
           SizedBox(height: 40.0),
-          if (user.displayName != null)
             Text(
-              user.displayName,
+              user.displayName != null ? user.displayName : user.email,
               style: TextStyle(
-                fontSize: 30.0,
+                fontSize: 24.0,
                 fontWeight: FontWeight.bold,
               ),
             ),

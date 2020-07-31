@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:foodiepops/screens/businessUser/CredentialsLoginScreen.dart';
 import 'package:foodiepops/screens/businessUser/businessLogin.dart';
+
 import 'package:foodiepops/widgets/signInButton.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
 import 'package:provider/provider.dart';
@@ -24,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void onGoogleSignInPressed(
       BuildContext context, FirebaseAuthService authService) async {
     toggleLoadingIndicator();
-    await authService.signInWithGoogle().catchError((onError) =>
+    await authService.signInWithGoogle(false).catchError((onError) =>
         print("login error occurred, user possibly canceled login"));
     toggleLoadingIndicator();
   }
@@ -32,14 +34,19 @@ class _LoginScreenState extends State<LoginScreen> {
   void onFacebookSignInPressed(
       BuildContext context, FirebaseAuthService authService) async {
     toggleLoadingIndicator();
-    await authService.signInWithFacebook().catchError((onError) =>
+    await authService.signInWithFacebook(false).catchError((onError) =>
         print("login error occurred, user possibly canceled login"));
     toggleLoadingIndicator();
   }
 
+    void onCredentialsSignInPressed(context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => CredentialsLoginScreen(isBusinessUser: false,)));
+  }
+
   void onBusinessSignInPressed(context) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => BusinessLogin()));
+        context, MaterialPageRoute(builder: (context) => BusinessLoginScreen()));
   }
 
   @override
@@ -81,11 +88,18 @@ class _LoginScreenState extends State<LoginScreen> {
                         onFacebookSignInPressed(context, authService)),
                 SizedBox(height: 20),
                 SignInButton(
+                  buttonText: 'Sign in with Email',
+                  buttonColor: Colors.orange,
+                  buttonIconPath: "assets/email_login.png",
+                  buttonOnPressedAction: () => onCredentialsSignInPressed(context),
+                ),
+                                SizedBox(height: 20),
+                SignInButton(
                   buttonText: 'Business Login',
                   buttonColor: Colors.green,
                   buttonIconPath: "assets/business_login.png",
                   buttonOnPressedAction: () => onBusinessSignInPressed(context),
-                )
+                ),
               ]),
         ),
       ),
