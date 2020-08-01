@@ -168,8 +168,12 @@ class _AddPopFormState extends State<AddPopForm> {
       } else {
         _showValidationSnackBar(context);
       }
-    } on PlatformException catch (e) {
-      _showSubmitError(model, e);
+    } on Exception catch (e) {
+              await PlatformAlertDialog(
+          title: Texts.errorSubmittingPopTitle,
+          content: Texts.errorSubmittingPopMessage,
+          defaultActionText: Texts.ok,
+        ).show(context);
     }
   }
 
@@ -526,12 +530,6 @@ class _AddPopFormState extends State<AddPopForm> {
     );
   }
 
-  void _showSubmitError(AddPopModel model, PlatformException exception) {
-    PlatformExceptionAlertDialog(
-      title: Texts.unknownError,
-      exception: exception,
-    ).show(context);
-  }
 
   void _showPopPhotoUploadError(
       AddPopModel model, PlatformException exception) {

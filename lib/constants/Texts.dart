@@ -55,8 +55,10 @@ class Texts {
   static const String popCouponLabel = 'Pop coupon';
   static const String popCouponHint = 'BestBurger10';
   static const String submit = 'Submit';
-  static const String popSubmitSuccessTitle = 'Offer Submitted successfuly!';
+  static const String popSubmitSuccessTitle = 'Offer submitted successfuly!';
   static const String popSubmitSuccessMessage = 'Just wait and watch the magic happen';
+  static const String errorSubmittingPopTitle = 'Failed to submit pop';
+  static const String errorSubmittingPopMessage = 'Check your internet connection or contact us at foodiePopsIL@gmail.com';
   static const String uploadPopPhoto = 'Upload pop photo';
   static const String uploadPopInnerPhoto = 'Upload pop inner photo';
   static const String emptyPath = '';

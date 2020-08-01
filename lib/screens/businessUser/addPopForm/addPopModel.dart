@@ -188,10 +188,10 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
       updateWith(isLoading: true);
 
       if (editedPop != null && !isDuplicateMode) {
-        await database.updatePop(_updatePopFromFormData(editedPop));
+        await database.updatePop(_updatePopFromFormData(editedPop)).timeout(Duration(seconds: 5), onTimeout: () => throw Exception());
         updateWith(isLoading: false);
       } else {
-        await database.addPop(_createPopFromFormData());
+        await database.addPop(_createPopFromFormData()).timeout(Duration(seconds: 5), onTimeout: () => throw Exception());
       }
 
       updateWith(isLoading: false);
