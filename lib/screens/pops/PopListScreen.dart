@@ -619,7 +619,7 @@ class _DetailsPageState extends State<DetailsPage> {
   openMapsSheet(context, Pop pop) async {
     try {
       final title = pop.name;
-      final description = pop.subtitle;
+      final description = pop.description;
       final coords = Coords(pop.location.latitude, pop.location.longitude);
       final availableMaps = await MapLauncher.installedMaps;
 

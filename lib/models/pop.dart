@@ -4,7 +4,6 @@ import 'package:meta/meta.dart';
 class Pop {
   static final String popId = "id";
   static final String popName = "name";
-  static final String popSubtitle = "subtitle";
   static final String popExpirationTime = "expirationTime";
   static final String popDescription = "description";
   static final String popPhotoPath = "photo";
@@ -28,7 +27,6 @@ class Pop {
     @required this.description,
     this.id,
     this.innerPhoto,
-    this.subtitle,
     this.photo,
     this.url,
     this.location,
@@ -42,7 +40,6 @@ class Pop {
   });
 
   final String name;
-  final String subtitle;
   final DateTime expirationTime;
   final String description;
   final String photo;
@@ -67,7 +64,6 @@ class Pop {
       popPhotoPath: photo,
       popLocation: location,
       popAddress: address,
-      popSubtitle: subtitle,
       innerPhotoPath: innerPhoto,
       popUrl: url,
       popBusinessId: businessId,
@@ -92,7 +88,6 @@ class Pop {
         description: map[popDescription],
         photo: map[popPhotoPath],
         url: map[popUrl],
-        subtitle: map[popSubtitle],
         innerPhoto: map[innerPhotoPath],
         location: map[popLocation],
         address: map[popAddress],

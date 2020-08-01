@@ -20,7 +20,6 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     @required this.database,
     @required this.businessUser,
     this.popName = '',
-    this.popSubTitle= '',
     this.popDescription = '',
     this.popExpirationTime,
     this.popPhotoPath = Texts.emptyPath,
@@ -36,7 +35,6 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
   final FirestoreDatabase database;
   final User businessUser;
   String popName;
-  String popSubTitle;
   String popDescription;
   DateTime popExpirationTime;
   String popPhotoPath;
@@ -52,8 +50,6 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
   int maxPrice = 100;
 
   void updatePopName(String popName) => updateWith(popName: popName);
-
-  void updatePopSubTitle(String popSubTitle) => updateWith(popSubTitle: popSubTitle);
 
   void updatePopDescription(String popDescription) =>
       updateWith(popDescription: popDescription);
@@ -87,7 +83,6 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
 
   void updateWith({
     String popName,
-    String popSubTitle,
     String popDescription,
     DateTime popExpirationTime,
     String popPhotoPath,
@@ -103,7 +98,6 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     String popCoupon,
   }) {
     this.popName = popName ?? this.popName;
-    this.popSubTitle = popSubTitle ?? this.popSubTitle;
     this.popDescription = popDescription ?? this.popDescription;
     this.popExpirationTime = popExpirationTime ?? this.popExpirationTime;
     this.popPhotoPath = popPhotoPath ?? this.popPhotoPath;
@@ -124,7 +118,6 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
   void setPopToEdit(Pop pop) {
     print('pop name is ${pop.name}');
     this.popName = pop.name;
-    this.popSubTitle = pop.subtitle;
     this.popDescription = pop.description;
     this.popExpirationTime = pop.expirationTime;
     this.popPhotoPath = pop.photo;
@@ -141,7 +134,6 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
   void clearData() {
     updateWith(
       popName: '',
-      popSubTitle: '',
       popDescription: '',
       popExpirationTime: null,
       popPhotoPath: Texts.emptyPath,
@@ -213,7 +205,6 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
   Pop _createPopFromFormData() {
     return Pop(
         name: popName,
-        subtitle: popSubTitle,
         description: popDescription,
         expirationTime: popExpirationTime,
         photo: popPhotoPath,
@@ -234,7 +225,6 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
       return Pop(
         id: editedPop.id,
         name: popName,
-        subtitle: popSubTitle,
         description: popDescription,
         expirationTime: popExpirationTime,
         photo: popPhotoPath,
@@ -270,10 +260,6 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
   // Getters
   bool get canSubmitPopName {
     return popNameValidator.isValid(popName);
-  }
-
-  bool get canSubmitPopSubTitle {
-    return popCouponValidator.isValid(popSubTitle);
   }
 
   bool get canSubmitPopUrl {
@@ -326,11 +312,6 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
 
   String get popNameErrorText {
     final bool showErrorText = submitted && !canSubmitPopName;
-    return showErrorText ? Texts.cannotBeEmptyError : null;
-  }
-
-  String get popSubTitleErrorText {
-    final bool showErrorText = submitted && !canSubmitPopSubTitle;
     return showErrorText ? Texts.cannotBeEmptyError : null;
   }
 

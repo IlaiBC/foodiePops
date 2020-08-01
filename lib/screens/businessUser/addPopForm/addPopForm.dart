@@ -62,7 +62,6 @@ class _AddPopFormState extends State<AddPopForm> {
   final TextEditingController _popNameController = TextEditingController();
   final TextEditingController _popDescriptionController =
       TextEditingController();
-  final TextEditingController _popSubTitleController = TextEditingController();
   final TextEditingController _popUrlController = TextEditingController();
   final TextEditingController _popCouponController = TextEditingController();
 
@@ -114,7 +113,6 @@ class _AddPopFormState extends State<AddPopForm> {
   void _setControllersWithPopData() {
     _popNameController.text = widget.popToEdit.name;
     _popDescriptionController.text = widget.popToEdit.description;
-    _popSubTitleController.text = widget.popToEdit.subtitle;
     _popUrlController.text = widget.popToEdit.url;
     _popCouponController.text = widget.popToEdit.coupon;
   }
@@ -134,7 +132,6 @@ class _AddPopFormState extends State<AddPopForm> {
     _node.dispose();
     _popNameController.dispose();
     _popDescriptionController.dispose();
-    _popSubTitleController.dispose();
     _popUrlController.dispose();
     _popCouponController.dispose();
     super.dispose();
@@ -234,7 +231,6 @@ class _AddPopFormState extends State<AddPopForm> {
     model.clearData();
     _popNameController.clear();
     _popDescriptionController.clear();
-    _popSubTitleController.clear();
     _popUrlController.clear();
     _popCouponController.clear();
     _popExpirationDate = DateTime.now();
@@ -282,27 +278,6 @@ class _AddPopFormState extends State<AddPopForm> {
     ));
   }
 
-  Widget _buildPopSubTitleField() {
-    return FormWidgets.formFieldContainer(TextField(
-      key: Key('popSubTitle'),
-      controller: _popSubTitleController,
-      decoration: InputDecoration(
-        labelText: Texts.popSubTitleLabel,
-        hintText: Texts.popSubTitleHint,
-        errorText: model.popSubTitleErrorText,
-        enabled: !model.isLoading,
-        contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-        border: InputBorder.none,
-      ),
-      autocorrect: false,
-      textInputAction: TextInputAction.next,
-      keyboardAppearance: Brightness.light,
-      onChanged: model.updatePopSubTitle,
-      onEditingComplete: () =>
-          _isFieldEditingComplete(model.canSubmitPopSubTitle),
-    ));
-  }
-
   Widget _buildPopCouponField() {
     return FormWidgets.formFieldContainer(TextField(
       key: Key('popCoupon'),
@@ -310,7 +285,7 @@ class _AddPopFormState extends State<AddPopForm> {
       decoration: InputDecoration(
         labelText: Texts.popCouponLabel,
         hintText: Texts.popCouponHint,
-        errorText: model.popSubTitleErrorText,
+        errorText: model.popCouponErrorText,
         enabled: !model.isLoading,
         contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
         border: InputBorder.none,
@@ -479,8 +454,6 @@ class _AddPopFormState extends State<AddPopForm> {
         children: <Widget>[
           SizedBox(height: 8.0),
           _buildPopNameField(),
-          SizedBox(height: 8.0),
-          _buildPopSubTitleField(),
           SizedBox(height: 8.0),
           _buildPopDescriptionField(),
           SizedBox(height: 8.0),
