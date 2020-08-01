@@ -109,6 +109,28 @@ class _LoginScreenState extends State<LoginScreen> {
                   buttonIconPath: "assets/business_login.png",
                   buttonOnPressedAction: () => onBusinessSignInPressed(context),
                 ),
+                SizedBox(height: 25.0),
+                Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Text(
+                      'Email The Foodie Team',
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )),
+                SizedBox(height: 5.0),
+                Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Text(
+                      'foodiepopsIL@gmail.com',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )),
+                SizedBox(height: 5.0),
               ]),
         ),
       ),
