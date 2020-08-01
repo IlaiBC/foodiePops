@@ -92,7 +92,7 @@ class RSSNewsState extends State<RSSNews> {
       title,
       textAlign: TextAlign.right,
       style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-      maxLines: 2,
+      maxLines: 3,
       overflow: TextOverflow.ellipsis,
     );
   }
@@ -109,7 +109,7 @@ class RSSNewsState extends State<RSSNews> {
 
   thumbnail(imageUrl) {
     return Padding(
-      padding: EdgeInsets.only(left: 10.0),
+      padding: EdgeInsets.symmetric(horizontal: 10.0),
       child: CachedNetworkImage(
         placeholder: (context, url) => Image.asset(placeholderImg),
         imageUrl: imageUrl,
@@ -153,16 +153,41 @@ class RSSNewsState extends State<RSSNews> {
       itemBuilder: (BuildContext context, int index) {
         final item = _feed.items[index];
         getImgUrlFromItem(item);
-        return Card(
-            child: new Container(
-                child: ListTile(
-                  title: title(item.title),
-                  subtitle: subtitle(item.pubDate),
-                  leading: thumbnail(getImgUrlFromItem(item)),
-                  trailing: rightIcon(),
-                  contentPadding: EdgeInsets.all(5.0),
-                  onTap: () => _openInWebview(context, item.link),
-                )));
+        return GestureDetector(
+            onTap: () => _openInWebview(context, item.link),
+            child: Card(
+                child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Expanded(
+                    flex: 2,
+                    child: thumbnail(getImgUrlFromItem(item)),
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: Padding(
+                        padding: EdgeInsets.fromLTRB(5.0,10.0,10.0,5.0),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget>[
+                              title(item.title),
+                              subtitle(item.pubDate)
+                            ])),
+                  ),
+                ],
+              ),
+            )));
+
+//            ListTile(
+//                  title: title(item.title),
+//                  subtitle: subtitle(item.pubDate),
+//                  leading: thumbnail(getImgUrlFromItem(item)),
+//                  trailing: rightIcon(),
+//                  contentPadding: EdgeInsets.all(5.0),
+//                  onTap: () => _openInWebview(context, item.link),
+//                ));
       },
     );
   }
