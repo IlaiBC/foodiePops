@@ -24,8 +24,9 @@ import 'package:foodiepops/constants/generalConsts.dart';
 import 'package:http/http.dart' as http;
 
 class AddPopFormBuilder extends StatelessWidget {
-  const AddPopFormBuilder({Key key, this.popToEdit}) : super(key: key);
+  const AddPopFormBuilder({Key key, this.popToEdit, this.isDuplicateMode}) : super(key: key);
   final Pop popToEdit;
+  final bool isDuplicateMode;
 
   @override
   Widget build(BuildContext context) {
@@ -38,17 +39,18 @@ class AddPopFormBuilder extends StatelessWidget {
           AddPopModel(database: database, businessUser: businessUser),
       child: Consumer<AddPopModel>(
         builder: (_, AddPopModel model, __) =>
-            AddPopForm(model: model, popToEdit: popToEdit),
+            AddPopForm(model: model, popToEdit: popToEdit, isDuplicateMode: isDuplicateMode),
       ),
     );
   }
 }
 
 class AddPopForm extends StatefulWidget {
-  AddPopForm({Key key, @required this.model, this.popToEdit})
+  AddPopForm({Key key, @required this.model, this.popToEdit, this.isDuplicateMode})
       : super(key: key);
   final AddPopModel model;
   final Pop popToEdit;
+  final bool isDuplicateMode;
 
   @override
   _AddPopFormState createState() => _AddPopFormState();
@@ -157,7 +159,7 @@ class _AddPopFormState extends State<AddPopForm> {
     model.updatePopExpirationTime(_getPopExpirationTimeFromState());
 
     try {
-      final bool success = await model.submit(widget.popToEdit);
+      final bool success = await model.submit(widget.popToEdit, widget.isDuplicateMode);
       if (success) {
         await PlatformAlertDialog(
           title: Texts.popSubmitSuccessTitle,

@@ -5,15 +5,28 @@ import 'package:foodiepops/models/pop.dart';
 
 class PopFormScreen extends StatelessWidget {
 
-  PopFormScreen({Key key, this.pop}) : super(key: key);
+  PopFormScreen({Key key, this.pop, this.isDuplicateMode}) : super(key: key);
   final Pop pop;
+  final bool isDuplicateMode;
+
+  String _getFormScreenTitle () {
+    if (pop != null && isDuplicateMode) {
+      return Texts.duplicatePopTitle;
+    }
+
+    if (pop != null) {
+      return Texts.editPopTitle;
+    }
+
+    return Texts.popFormScreen;
+  }
 
   @override
   Widget build(BuildContext context) {
       return Scaffold(
       appBar: AppBar(
         elevation: 2.0,
-        title: Text(Texts.popFormScreen),
+        title: Text(_getFormScreenTitle()),
       ),
       backgroundColor: Colors.grey[200],
       body: SingleChildScrollView(
@@ -22,7 +35,7 @@ class PopFormScreen extends StatelessWidget {
           Card(
             child: Padding(
               padding: EdgeInsets.all(16.0),
-              child: AddPopFormBuilder(popToEdit: pop,),
+              child: AddPopFormBuilder(popToEdit: pop, isDuplicateMode: isDuplicateMode),
             ),
           ),
           ],

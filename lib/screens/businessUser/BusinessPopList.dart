@@ -96,7 +96,11 @@ void _onDeletePop(
 }
 
 void _onEditPop(BuildContext context, Pop pop) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => PopFormScreen(pop: pop,)));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => PopFormScreen(pop: pop, isDuplicateMode: false,)));
+}
+
+void _onDuplicatePop(BuildContext context, Pop pop) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => PopFormScreen(pop: pop, isDuplicateMode: true,)));
 }
 
 Widget _buildRow(BuildContext context, Pop pop, VoidCallback openContainer,
@@ -128,12 +132,19 @@ Widget _buildRow(BuildContext context, Pop pop, VoidCallback openContainer,
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
               )
             ])),
+            const SizedBox(width: 5),
+                    InkWell(
+            onTap: () {
+              _onDuplicatePop(context, pop);
+            },
+            child: Icon(Icons.content_copy, color: Color(0xffe51923))),
+            const SizedBox(width: 10),
         InkWell(
             onTap: () {
               _onEditPop(context, pop);
             },
             child: Icon(Icons.edit, color: Color(0xffe51923))),
-        const SizedBox(width: 20),
+        const SizedBox(width: 10),
         InkWell(
             onTap: () => _onDeletePop(context, pop, database),
             child: Icon(Icons.delete, color: Color(0xffe51923))),

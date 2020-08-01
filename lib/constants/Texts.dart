@@ -26,7 +26,9 @@ class Texts {
   static const String businessLogin = "Business Login";
   static const String businessCredentialsLogin = "Business Credentials Login";
   static const String userCredentialsLogin = "User Credentials Login";
-  static const String popFormScreen = "Pop Form";
+  static const String popFormScreen = "Add Pop";
+  static const String editPopTitle = "Edit Pop";
+  static const String duplicatePopTitle = "Duplicate Pop";
   static const String analyticsScreen = "Analytics";
   static const String addPop = "Add Pop";
   static const String myPops = "My Pops";

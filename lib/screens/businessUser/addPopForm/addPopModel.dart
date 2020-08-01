@@ -185,7 +185,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     return null;
   }
 
-  Future<bool> submit(Pop editedPop) async {
+  Future<bool> submit(Pop editedPop, bool isDuplicateMode) async {
     try {
       updateWith(submitted: true);
       if (!canSubmit) {
@@ -195,7 +195,7 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
 
       updateWith(isLoading: true);
 
-      if (editedPop != null) {
+      if (editedPop != null && !isDuplicateMode) {
         await database.updatePop(_updatePopFromFormData(editedPop));
         updateWith(isLoading: false);
       } else {
