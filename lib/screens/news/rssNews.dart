@@ -168,7 +168,7 @@ class RSSNewsState extends State<RSSNews> {
                   Expanded(
                     flex: 3,
                     child: Padding(
-                        padding: EdgeInsets.fromLTRB(5.0,10.0,10.0,5.0),
+                        padding: EdgeInsets.fromLTRB(5.0, 10.0, 10.0, 5.0),
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: <Widget>[
@@ -199,8 +199,19 @@ class RSSNewsState extends State<RSSNews> {
   body() {
     return isFeedEmpty()
         ? Center(
-            child: Expanded(child: Column(children: [SizedBox(height: 200), Text('Is your internet connection on?', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold )), RaisedButton(onPressed: load, child: Text("Refresh", style: TextStyle(color: Colors.white)), color: Color(0xffe51923),)]))
-          )
+            child: Column(children: [
+            Expanded(
+                child: Column(children: [
+              SizedBox(height: 200),
+              Text('Is your internet connection on?',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              RaisedButton(
+                onPressed: load,
+                child: Text("Refresh", style: TextStyle(color: Colors.white)),
+                color: Color(0xffe51923),
+              )
+            ]))
+          ]))
         : RefreshIndicator(
             key: _refreshKey,
             child: list(),
