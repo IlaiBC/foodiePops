@@ -59,6 +59,7 @@ class BusinessProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = userSnapshot.data;
+    debugPrint('user details: displayName: ${user.displayName}, email: ${user.email}');
     var rng = new Random();
     final authService =
         Provider.of<FirebaseAuthService>(context, listen: false);
@@ -97,7 +98,7 @@ class BusinessProfileScreen extends StatelessWidget {
                         ])),
                 SizedBox(height: 15.0),
                   Text(
-                   user.displayName != null ? user.displayName : user.email,
+                   user.displayName != null && user.displayName.isNotEmpty ? user.displayName : user.email,
                     style: TextStyle(
                       fontSize: 24.0,
                       fontWeight: FontWeight.bold,

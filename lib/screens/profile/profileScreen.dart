@@ -88,7 +88,7 @@ class ProfileScreen extends StatelessWidget {
                   ])),
           SizedBox(height: 15.0),
             Text(
-              user.displayName != null ? user.displayName : user.email,
+              user.displayName != null && user.displayName.isNotEmpty ? user.displayName : user.email,
               style: TextStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.bold,
