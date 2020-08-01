@@ -102,7 +102,7 @@ class _PopListScreenState extends State<PopListScreen> {
 
   Future<Position> _getLocation() async {
     var currentLocation;
-    try {    
+    try {
       GeolocationStatus geolocationStatus =
           await geolocator.checkGeolocationPermissionStatus().catchError((error) {
             throw Exception(error);
@@ -708,24 +708,44 @@ class _DetailsPageState extends State<DetailsPage> {
                       fontWeight: FontWeight.bold,
                       color: Colors.black),),
                       SizedBox(height: 15),
-              widget.redeemedCouponSet.contains(widget.pop.id)
-                  ? Text('Coupon: ${widget.pop.coupon}',
+              Row(children: <Widget>[
+                widget.redeemedCouponSet.contains(widget.pop.id)
+                    ? Text('Coupon: ${widget.pop.coupon}',
                   style: TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold,
                       color: Colors.black),)
-                  : RedeemCouponButton(
-                      loading: isRedeemingCoupon,
-                      text: "Redeem coupon",
-                      onPressed: () {
-                        if (widget.userData != null) {
-                          _redeemCoupon(countToDisplay);
-                        } else {
-                          Scaffold.of(context).showSnackBar(SnackBar(
-                              content: Text("Login to redeem this coupon")));
-                        }
-                      })
-            ]));
+                    : RedeemCouponButton(
+                    loading: isRedeemingCoupon,
+                    text: "Redeem coupon",
+                    onPressed: () {
+                      if (widget.userData != null) {
+                        _redeemCoupon(countToDisplay);
+                      } else {
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                            content: Text("Login to redeem this coupon")));
+                      }
+                    }),
+                Container(
+                    child: ButtonBar(children: <Widget>[
+                      FlatButton.icon(
+                        icon: Icon(Icons.location_on, color: Color(0xffe51923)),
+                        label: Text(""),
+                        onPressed: () => openMapsSheet(context, widget.pop),
+                      ),
+                      widget.pop.url.isNotEmpty ? FlatButton.icon(
+                        textColor: Colors.blue,
+                        icon: Icon(Icons.open_in_new,  color: Colors.blue),
+                        label: Text('Visit Site'),
+                        onPressed: () {
+                          FocusScope.of(context).requestFocus(FocusNode());
+                          this._openInWebview(context, getPopUrl(widget.pop.url));
+                        },
+                      ) : SizedBox(width: 40,)
+                    ])),
+              ],),
+
+              ]));
           });
     }
 
@@ -759,28 +779,14 @@ class _DetailsPageState extends State<DetailsPage> {
                   textAlign: TextAlign.center,
                 )),
                 const SizedBox(height: 10),
-                Text(
+                SizedBox(
+                  height: 170.0,
+                    child: Text(
                   widget.pop.description,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 18.0, color: Colors.black87),
-                ),
-                Container(
-                    child: ButtonBar(children: <Widget>[
-                  FlatButton.icon(
-                    icon: Icon(Icons.location_on, color: Color(0xffe51923)),
-                    label: Text(""),
-                    onPressed: () => openMapsSheet(context, widget.pop),
-                  ),
-                  widget.pop.url.isNotEmpty ? FlatButton.icon(
-                    textColor: Colors.blue,
-                    icon: Icon(Icons.open_in_new, color: Colors.blue),
-                    label: Text('Visit Pops website'),
-                    onPressed: () {
-                      FocusScope.of(context).requestFocus(FocusNode());
-                      this._openInWebview(context, getPopUrl(widget.pop.url));
-                    },
-                  ) : SizedBox(width: 40,)
-                ])),
+                )),
+
                 _popCouponDetailsWidget(context),
                 Container(
                     margin: EdgeInsets.all(50.0),
