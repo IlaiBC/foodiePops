@@ -199,7 +199,7 @@ class RSSNewsState extends State<RSSNews> {
   body() {
     return isFeedEmpty()
         ? Center(
-            child: CircularProgressIndicator(),
+            child: Expanded(child: Column(children: [SizedBox(height: 200), Text('Is your internet connection on?', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold )), RaisedButton(onPressed: load, child: Text("Refresh", style: TextStyle(color: Colors.white)), color: Color(0xffe51923),)]))
           )
         : RefreshIndicator(
             key: _refreshKey,

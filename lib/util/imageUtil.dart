@@ -22,13 +22,13 @@ class ImageUtil {
       Pop pop, double width, double height, bool inner) {
     return (pop.photo != null && pop.photo.isNotEmpty)
         ? (inner
-            ? Image(
-                image: NetworkImage(pop.innerPhoto),
+            ? FadeInImage(
+                image: NetworkImage(pop.innerPhoto), placeholder: AssetImage(ImageUtil.getAppLogo()),
                 width: width,
                 height: height,
                 fit: BoxFit.fitWidth)
-            : Image(
-                image: NetworkImage(pop.photo),
+            : FadeInImage(
+                image: NetworkImage(pop.innerPhoto), placeholder: AssetImage(ImageUtil.getAppLogo()),
                 width: width,
                 height: height,
                 fit: BoxFit.fitWidth))

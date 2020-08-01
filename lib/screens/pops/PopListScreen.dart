@@ -102,16 +102,20 @@ class _PopListScreenState extends State<PopListScreen> {
 
   Future<Position> _getLocation() async {
     var currentLocation;
-    try {
+    try {    
       GeolocationStatus geolocationStatus =
-          await geolocator.checkGeolocationPermissionStatus();
+          await geolocator.checkGeolocationPermissionStatus().catchError((error) {
+            throw Exception(error);
+          });
+
       if (geolocationStatus != GeolocationStatus.denied ||
           geolocationStatus != GeolocationStatus.disabled) {
+
         currentLocation = await geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.best);
+            desiredAccuracy: LocationAccuracy.best).timeout(Duration(seconds: 5), onTimeout: () { throw Exception(); });
       }
     } catch (e) {
-      print('error getting user location $e');
+      debugPrint('error getting user location $e');
       currentLocation = null;
     }
     return currentLocation;
