@@ -11,7 +11,7 @@ class RedeemCouponButton extends CustomRaisedButton {
           key: key,
           child: Text(
             text,
-            style: TextStyle(color: Colors.white, fontSize: 20.0),
+            style: TextStyle(color: Colors.white),
           ),
           height: 50.0,
           color: Color(0xffe51923),

@@ -708,7 +708,9 @@ class _DetailsPageState extends State<DetailsPage> {
                       fontWeight: FontWeight.bold,
                       color: Colors.black),),
                       SizedBox(height: 15),
-              Row(children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
                 widget.redeemedCouponSet.contains(widget.pop.id)
                     ? Text('Coupon: ${widget.pop.coupon}',
                   style: TextStyle(
@@ -729,19 +731,19 @@ class _DetailsPageState extends State<DetailsPage> {
                 Container(
                     child: ButtonBar(children: <Widget>[
                       FlatButton.icon(
-                        icon: Icon(Icons.location_on, color: Color(0xffe51923)),
+                        icon: Icon(Icons.location_on, size: 25.0, color: Color(0xffe51923)),
                         label: Text(""),
                         onPressed: () => openMapsSheet(context, widget.pop),
                       ),
                       widget.pop.url.isNotEmpty ? FlatButton.icon(
                         textColor: Colors.blue,
-                        icon: Icon(Icons.open_in_new,  color: Colors.blue),
+                        icon: Icon(Icons.open_in_new, size: 25.0, color: Colors.blue),
                         label: Text('Visit Site'),
                         onPressed: () {
                           FocusScope.of(context).requestFocus(FocusNode());
                           this._openInWebview(context, getPopUrl(widget.pop.url));
                         },
-                      ) : SizedBox(width: 40,)
+                      ) : SizedBox(width: 5.0)
                     ])),
               ],),
 
@@ -786,7 +788,6 @@ class _DetailsPageState extends State<DetailsPage> {
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 18.0, color: Colors.black87),
                 )),
-
                 _popCouponDetailsWidget(context),
                 Container(
                     margin: EdgeInsets.all(50.0),
