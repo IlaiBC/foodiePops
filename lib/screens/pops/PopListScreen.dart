@@ -103,16 +103,19 @@ class _PopListScreenState extends State<PopListScreen> {
   Future<Position> _getLocation() async {
     var currentLocation;
     try {
-      GeolocationStatus geolocationStatus =
-          await geolocator.checkGeolocationPermissionStatus().catchError((error) {
-            throw Exception(error);
-          });
+      GeolocationStatus geolocationStatus = await geolocator
+          .checkGeolocationPermissionStatus()
+          .catchError((error) {
+        throw Exception(error);
+      });
 
       if (geolocationStatus != GeolocationStatus.denied ||
           geolocationStatus != GeolocationStatus.disabled) {
-
-        currentLocation = await geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.best).timeout(Duration(seconds: 5), onTimeout: () { throw Exception(); });
+        currentLocation = await geolocator
+            .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+            .timeout(Duration(seconds: 5), onTimeout: () {
+          throw Exception();
+        });
       }
     } catch (e) {
       debugPrint('error getting user location $e');
@@ -702,58 +705,80 @@ class _DetailsPageState extends State<DetailsPage> {
                 redeemCount != null ? redeemCount.counter : 0;
             return Center(
                 child: Column(children: [
-              Text('$countToDisplay Coupons already redeemed!',
-                                style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black),),
-                      SizedBox(height: 15),
+              Text(
+                '$countToDisplay Coupons already redeemed!',
+                style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
+              ),
+              SizedBox(height: 15),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                widget.redeemedCouponSet.contains(widget.pop.id)
-                    ? Text('Coupon: ${widget.pop.coupon}',
-                  style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black),)
-                    : RedeemCouponButton(
-                    loading: isRedeemingCoupon,
-                    text: "Redeem coupon",
-                    onPressed: () {
-                      if (widget.userData != null) {
-                        _redeemCoupon(countToDisplay);
-                      } else {
-                        Scaffold.of(context).showSnackBar(SnackBar(
-                            content: Text("Login to redeem this coupon")));
-                      }
-                    }),
-                Container(
-                    child: ButtonBar(children: <Widget>[
-                      FlatButton.icon(
-                        icon: Icon(Icons.location_on, size: 25.0, color: Color(0xffe51923)),
-                        label: Text(""),
-                        onPressed: () => openMapsSheet(context, widget.pop),
-                      ),
-                      widget.pop.url.isNotEmpty ? FlatButton.icon(
-                        textColor: Colors.blue,
-                        icon: Icon(Icons.open_in_new, size: 25.0, color: Colors.blue),
-                        label: Text('Visit Site'),
-                        onPressed: () {
-                          FocusScope.of(context).requestFocus(FocusNode());
-                          this._openInWebview(context, getPopUrl(widget.pop.url));
-                        },
-                      ) : SizedBox(width: 5.0)
-                    ])),
-              ],),
-
-              ]));
+                  widget.redeemedCouponSet.contains(widget.pop.id)
+                      ? Text(
+                          'Coupon: ${widget.pop.coupon}',
+                          style: TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
+                        )
+                      : RedeemCouponButton(
+                          loading: isRedeemingCoupon,
+                          text: "Redeem coupon",
+                          onPressed: () {
+                            if (widget.userData != null) {
+                              _redeemCoupon(countToDisplay);
+                            } else {
+                              Scaffold.of(context).showSnackBar(SnackBar(
+                                  content:
+                                      Text("Login to redeem this coupon")));
+                            }
+                          }),
+                  Container(
+                      child: ButtonBar(children: <Widget>[
+                    FlatButton.icon(
+                      icon: Icon(Icons.location_on,
+                          size: 25.0, color: Color(0xffe51923)),
+                      label: Text(""),
+                      onPressed: () => openMapsSheet(context, widget.pop),
+                    ),
+                    widget.pop.url.isNotEmpty
+                        ? FlatButton.icon(
+                            textColor: Colors.blue,
+                            icon: Icon(Icons.open_in_new,
+                                size: 25.0, color: Colors.blue),
+                            label: Text('Visit Site'),
+                            onPressed: () {
+                              FocusScope.of(context).requestFocus(FocusNode());
+                              this._openInWebview(
+                                  context, getPopUrl(widget.pop.url));
+                            },
+                          )
+                        : SizedBox(width: 5.0)
+                  ])),
+                ],
+              ),
+            ]));
           });
     }
 
     return Center(
       child: Text('Coupon: ${widget.pop.coupon}'),
     );
+  }
+
+  void _showFullImage(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (ctx) => Scaffold(
+            appBar: AppBar(),
+            body: Center(
+                child: Hero(
+              tag: 'pop-image',
+              child:
+                  ImageUtil.getPopImageWidget(widget.pop, 500.0, 500.0, true),
+            )))));
   }
 
   @override
@@ -764,7 +789,12 @@ class _DetailsPageState extends State<DetailsPage> {
         children: <Widget>[
           Container(
             height: 250,
-            child: ImageUtil.getPopImageWidget(widget.pop, 200.0, 200.0, true),
+            child: GestureDetector(
+                child: Hero(
+                    tag: 'pop-image',
+                    child: ImageUtil.getPopImageWidget(
+                        widget.pop, 200.0, 200.0, true)),
+                onTap: () => _showFullImage(context)),
           ),
           Padding(
             padding: const EdgeInsets.all(20.0),
@@ -782,12 +812,12 @@ class _DetailsPageState extends State<DetailsPage> {
                 )),
                 const SizedBox(height: 10),
                 SizedBox(
-                  height: 170.0,
+                    height: 170.0,
                     child: Text(
-                  widget.pop.description,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 18.0, color: Colors.black87),
-                )),
+                      widget.pop.description,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 18.0, color: Colors.black87),
+                    )),
                 _popCouponDetailsWidget(context),
                 Container(
                     margin: EdgeInsets.all(50.0),
