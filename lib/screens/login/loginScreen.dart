@@ -26,27 +26,35 @@ class _LoginScreenState extends State<LoginScreen> {
   void onGoogleSignInPressed(
       BuildContext context, FirebaseAuthService authService) async {
     toggleLoadingIndicator();
-    await authService.signInWithGoogle(false).catchError((onError) =>
-        print("login error occurred, user possibly canceled login"));
-    toggleLoadingIndicator();
+    await authService.signInWithGoogle(false).catchError((onError) {
+      toggleLoadingIndicator();
+      Scaffold.of(context).showSnackBar(
+          SnackBar(content: Text('Login failed, is your internet on?')));
+    });
   }
 
   void onFacebookSignInPressed(
       BuildContext context, FirebaseAuthService authService) async {
     toggleLoadingIndicator();
-    await authService.signInWithFacebook(false).catchError((onError) =>
-        print("login error occurred, user possibly canceled login"));
-    toggleLoadingIndicator();
+    await authService.signInWithFacebook(false).catchError((onError) {
+      toggleLoadingIndicator();
+      Scaffold.of(context).showSnackBar(
+          SnackBar(content: Text('Login failed, is your internet on?')));
+    });
   }
 
-    void onCredentialsSignInPressed(context) {
+  void onCredentialsSignInPressed(context) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => CredentialsLoginScreen(isBusinessUser: false,)));
+        context,
+        MaterialPageRoute(
+            builder: (context) => CredentialsLoginScreen(
+                  isBusinessUser: false,
+                )));
   }
 
   void onBusinessSignInPressed(context) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => BusinessLoginScreen()));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => BusinessLoginScreen()));
   }
 
   @override
@@ -91,9 +99,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   buttonText: 'Sign in with Email',
                   buttonColor: Colors.orange,
                   buttonIconPath: "assets/email_login.png",
-                  buttonOnPressedAction: () => onCredentialsSignInPressed(context),
+                  buttonOnPressedAction: () =>
+                      onCredentialsSignInPressed(context),
                 ),
-                                SizedBox(height: 20),
+                SizedBox(height: 20),
                 SignInButton(
                   buttonText: 'Business Login',
                   buttonColor: Colors.green,

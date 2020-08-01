@@ -24,22 +24,30 @@ class _BusinessLoginScreenState extends State<BusinessLoginScreen> {
   void onGoogleSignInPressed(
       BuildContext context, FirebaseAuthService authService) async {
     toggleLoadingIndicator();
-    await authService.signInWithGoogle(true).catchError((onError) =>
-        print("login error occurred, user possibly canceled login"));
-    toggleLoadingIndicator();
+    await authService.signInWithGoogle(true).catchError((onError) {
+      toggleLoadingIndicator();
+      Scaffold.of(context).showSnackBar(
+          SnackBar(content: Text('Login failed, is your internet on?')));
+    });
   }
 
   void onFacebookSignInPressed(
       BuildContext context, FirebaseAuthService authService) async {
     toggleLoadingIndicator();
-    await authService.signInWithFacebook(true).catchError((onError) =>
-        print("login error occurred, user possibly canceled login"));
-    toggleLoadingIndicator();
+    await authService.signInWithFacebook(true).catchError((onError) {
+      toggleLoadingIndicator();
+      Scaffold.of(context).showSnackBar(
+          SnackBar(content: Text('Login failed, is your internet on?')));
+    });
   }
 
   void onCredentialsSignInPressed(context) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => CredentialsLoginScreen(isBusinessUser: true,)));
+        context,
+        MaterialPageRoute(
+            builder: (context) => CredentialsLoginScreen(
+                  isBusinessUser: true,
+                )));
   }
 
   @override
@@ -47,51 +55,54 @@ class _BusinessLoginScreenState extends State<BusinessLoginScreen> {
     final authService =
         Provider.of<FirebaseAuthService>(context, listen: false);
     return Scaffold(
-      appBar: AppBar(
+        appBar: AppBar(
           title: const Text('Business Login'),
         ),
-        body: Container(
-      color: Colors.white,
-      child: Center(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(20.0),
-          child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Image(
-                    image: AssetImage("assets/foodiepopslogo_no_bg.png"),
-                    height: 250),
-                Stack(children: <Widget>[
-                  Visibility(
-                    visible: _isLoadingIndicatorShowing,
-                    child: CircularProgressIndicator(),
-                  ),
-                ]),
-                SizedBox(height: 50),
-                SignInButton(
-                    buttonText: 'Sign in with Google',
-                    buttonColor: Colors.red,
-                    buttonIconPath: "assets/google_logo.png",
-                    buttonOnPressedAction: () =>
-                        onGoogleSignInPressed(context, authService)),
-                SizedBox(height: 20),
-                SignInButton(
-                    buttonText: 'Sign in with Facebook',
-                    buttonColor: Colors.blue,
-                    buttonIconPath: "assets/facebook_logo.png",
-                    buttonOnPressedAction: () =>
-                        onFacebookSignInPressed(context, authService)),
-                SizedBox(height: 20),
-                SignInButton(
-                  buttonText: 'Sign in with Email',
-                  buttonColor: Colors.orange,
-                  buttonIconPath: "assets/email_login.png",
-                  buttonOnPressedAction: () => onCredentialsSignInPressed(context),
-                ),
-              ]),
-        ),
-      ),
-    ));
+        body: Builder(builder: (BuildContext context) {
+          return Container(
+            color: Colors.white,
+            child: Center(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.all(20.0),
+                child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Image(
+                          image: AssetImage("assets/foodiepopslogo_no_bg.png"),
+                          height: 250),
+                      Stack(children: <Widget>[
+                        Visibility(
+                          visible: _isLoadingIndicatorShowing,
+                          child: CircularProgressIndicator(),
+                        ),
+                      ]),
+                      SizedBox(height: 50),
+                      SignInButton(
+                          buttonText: 'Sign in with Google',
+                          buttonColor: Colors.red,
+                          buttonIconPath: "assets/google_logo.png",
+                          buttonOnPressedAction: () =>
+                              onGoogleSignInPressed(context, authService)),
+                      SizedBox(height: 20),
+                      SignInButton(
+                          buttonText: 'Sign in with Facebook',
+                          buttonColor: Colors.blue,
+                          buttonIconPath: "assets/facebook_logo.png",
+                          buttonOnPressedAction: () =>
+                              onFacebookSignInPressed(context, authService)),
+                      SizedBox(height: 20),
+                      SignInButton(
+                        buttonText: 'Sign in with Email',
+                        buttonColor: Colors.orange,
+                        buttonIconPath: "assets/email_login.png",
+                        buttonOnPressedAction: () =>
+                            onCredentialsSignInPressed(context),
+                      ),
+                    ]),
+              ),
+            ),
+          );
+        }));
   }
 }
