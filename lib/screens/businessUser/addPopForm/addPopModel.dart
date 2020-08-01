@@ -275,23 +275,37 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     return popExpirationTimeValidator.isValid(popExpirationTime);
   }
 
-    bool get canSubmitPopCoupon {
+  bool get canSubmitPopCoupon {
     return popCouponValidator.isValid(popCoupon);
   }
 
+  bool get canSubmitPopLocation {
+    return popLocation != null && popLocation.latitude != null && popLocation.longitude != null;
+  }
+
+  bool get canSubmitPopAddress {
+    return popAddressValidator.isValid(popCoupon);
+  }
+
+  bool get canSubmitPopKitchenTypes {
+    return selectedKitchenTypes.length > 0;
+  }
+
+  bool get canSubmitPopImage {
+    return popImageValidator.isValid(popPhotoPath);
+  }
+  
+  bool get canSubmitPopInnerImage {
+    return popInnerImageValidator.isValid(popInnerPhotoPath);
+  }
+
   bool get canSubmit {
-    print('checking if can submit');
-    print('checking if can submit canSubmitPopName $canSubmitPopName');
-    print('checking if can submit canSubmitPopDescription $canSubmitPopDescription');
-    print('checking if can submit canSubmitPopExpirationTime $canSubmitPopExpirationTime');
-    print('checking if can submit isLoading $isLoading');
-
-
-
-
   final bool canSubmitFields = canSubmitPopName &&
-        canSubmitPopDescription &&
-        canSubmitPopExpirationTime;
+        canSubmitPopDescription && canSubmitPopCoupon &&
+        canSubmitPopExpirationTime && canSubmitPopLocation &&
+        canSubmitPopAddress && canSubmitPopKitchenTypes &&
+        canSubmitPopImage && canSubmitPopInnerImage;
+
     return canSubmitFields && !isLoading;
   }
 
@@ -304,10 +318,29 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
       return "Submit failed - Description is empty";
     }
 
+    if (!canSubmitPopCoupon) {
+      return "Submit failed - Coupon is empty";
+    }
+
     if (!canSubmitPopExpirationTime) {
       return "Submit failed - Expiration time in the past";
     }
 
+    if (!canSubmitPopLocation || !canSubmitPopLocation) {
+      return "Submit failed - Address is empty";
+    }
+
+    if (!canSubmitPopKitchenTypes) {
+      return "Submit failed - Select Kitchen types";
+    }
+
+    if (!canSubmitPopImage) {
+      return "Submit failed - Choose pop photo";
+    }
+
+    if (!canSubmitPopInnerImage) {
+      return "Submit failed - Choose pop inner photo";
+    }
   }
 
   String get popNameErrorText {

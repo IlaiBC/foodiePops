@@ -771,7 +771,7 @@ class _DetailsPageState extends State<DetailsPage> {
                     label: Text(""),
                     onPressed: () => openMapsSheet(context, widget.pop),
                   ),
-                  FlatButton.icon(
+                  widget.pop.url.isNotEmpty ? FlatButton.icon(
                     textColor: Colors.blue,
                     icon: Icon(Icons.open_in_new, color: Colors.blue),
                     label: Text('Visit Pops website'),
@@ -779,7 +779,7 @@ class _DetailsPageState extends State<DetailsPage> {
                       FocusScope.of(context).requestFocus(FocusNode());
                       this._openInWebview(context, getPopUrl(widget.pop.url));
                     },
-                  )
+                  ) : SizedBox(width: 40,)
                 ])),
                 _popCouponDetailsWidget(context),
                 Container(
