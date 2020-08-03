@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:foodiepops/authentication/authWidget.dart';
-import 'package:foodiepops/screens/main/mainScreen.dart';
 import 'package:foodiepops/screens/onboarding/onboardingScreen.dart';
 import 'package:foodiepops/services/firebaseAuthService.dart';
 import 'package:foodiepops/services/fireStoreDatabase.dart';
@@ -59,7 +58,6 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             initialRoute: '/',
             routes: {
-              MainScreen.routeName: (context) => MainScreen(),
               '/auth': (context) => AuthWidget(userSnapshot: userSnapshot),
             },
             title: 'FoodiePops',

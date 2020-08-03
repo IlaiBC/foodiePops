@@ -38,8 +38,4 @@ class ImageUtil {
             height: height,
           );
   }
-
-  static Widget getNewsIcon() {
-    return ImageIcon(AssetImage(newsIcons[0]));
-  }
 }
