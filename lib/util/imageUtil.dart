@@ -28,7 +28,7 @@ class ImageUtil {
                 height: height,
                 fit: BoxFit.fitWidth)
             : FadeInImage(
-                image: NetworkImage(pop.innerPhoto), placeholder: AssetImage(ImageUtil.getAppLogo()),
+                image: NetworkImage(pop.photo), placeholder: AssetImage(ImageUtil.getAppLogo()),
                 width: width,
                 height: height,
                 fit: BoxFit.fitWidth))

@@ -176,8 +176,8 @@ class _PopListScreenState extends State<PopListScreen> {
             ),
             child: Slider(
               value: _filterDistance / 1000,
-              max: 40.0,
-              min: 2.0,
+              max: 100.0,
+              min: 5.0,
               divisions: 19,
               label: '${_filterDistance.round() / 1000}KM',
               onChanged: (double value) {
@@ -818,6 +818,9 @@ class _DetailsPageState extends State<DetailsPage> {
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 18.0, color: Colors.black87),
                     )),
+                SizedBox(
+                  height: 10.0,
+                ),
                 _popCouponDetailsWidget(context),
                 Container(
                     margin: EdgeInsets.all(50.0),
