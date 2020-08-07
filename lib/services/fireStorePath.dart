@@ -8,12 +8,14 @@ class FirestorePath {
   static String pops() => 'pops';
   static String addPopClick(String businessUserId, String popId) => 'businesses/$businessUserId/pops/$popId/clicks';
   static String addPopLike(String popId) => 'pops/$popId/likes';
+  static String removePopLike(String popId, String userId) => 'pops/$popId/likes/$userId';
   static String addPopLikeToBusinessAnalytics(String businessUserId, String popId) => 'businesses/$businessUserId/pops/$popId/likes';
+  static String removePopLikeFromBusinessAnalytics(String businessUserId, String popId, String userId) => 'businesses/$businessUserId/pops/$popId/likes/$userId';
   static String addCouponRedeemed(String popId) => 'pops/$popId/couponsRedeemed';
   static String addCouponRedeemedToBusinessAnalytics(String businessUserId, String popId) => 'businesses/$businessUserId/pops/$popId/couponsRedeemed';
   static String popLikeCount(String popId) => 'pops/$popId/likes/likeCount';
   static String popCouponsRedeemedCount(String popId) => 'pops/$popId/couponsRedeemed/couponsRedeemedCount';
-  static String businessPopCouponsRedeemedCount(String businessUserId, String popId) => 'businesses/$businessUserId/pops/$popId/couponsRedeemed/couponsRedeemedCount';
+  static String businessPopCouponsRedeemedCount(String businessUserId, String popId) => 'businesses/$businessUserId/pops/$popId/couponsRedeemedCount/count';
   static String businessPopLikeCount(String businessUserId, String popId) => 'businesses/$businessUserId/pops/$popId/likes/likeCount';
   static String businessPopImages(String businessUserId, String imageName) => 'businesses/$businessUserId/$imageName';
 }

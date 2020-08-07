@@ -89,9 +89,6 @@ class _PopListScreenState extends State<PopListScreen> {
       }
     }
 
-    print('current pop length ${pops.length}');
-
-    debugPrint("finished filter");
     return userLocation != null ? filteredPopsList : pops;
   }
 
@@ -292,12 +289,11 @@ class _PopListScreenState extends State<PopListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('*************** calling build *************');
     if (widget.userData != null) {
       likedPopsSet = widget.userData.likedPops;
       redeemedPopCouponsSet = widget.userData.redeemedPopCoupons;
-      debugPrint('redeemedPopCouponsSet is: $redeemedPopCouponsSet');
     }
+    
     final FirestoreDatabase database =
         Provider.of<FirestoreDatabase>(context, listen: false);
 
@@ -476,34 +472,8 @@ class _PopListScreenState extends State<PopListScreen> {
                                           color: likedPopsSet.contains(pop.id)
                                               ? Colors.red
                                               : Colors.grey),
-                                      onPressed: () {
-                                        if (widget.userData != null) {
-                                          database
-                                              .addLikeToPop(
-                                                  widget.userSnapshot.hasData
-                                                      ? widget
-                                                          .userSnapshot.data.uid
-                                                      : null,
-                                                  pop,
-                                                  userLocation,
-                                                  snapshot.data != null
-                                                      ? snapshot.data.counter
-                                                      : 0)
-                                              .catchError((e) =>
-                                                  Scaffold.of(context)
-                                                      .showSnackBar(SnackBar(
-                                                          content: Text(e))));
-
-                                          likedPopsSet.add(pop.id);
-                                          database.setLikedPops(
-                                              widget.userData, likedPopsSet);
-                                        } else {
-                                          Scaffold.of(context).showSnackBar(
-                                              SnackBar(
-                                                  content: Text(
-                                                      "Login to show your love")));
-                                        }
-                                      }),
+                                      onPressed: () => _handlePopLike(context, pop, database, snapshot),
+                                      ),
                                   new Text(
                                       snapshot.data != null
                                           ? snapshot.data.counter.toString()
@@ -587,6 +557,28 @@ class _PopListScreenState extends State<PopListScreen> {
                     openContainer();
                   }));
         });
+  }
+
+  _handlePopLike(BuildContext context, Pop pop, FirestoreDatabase database, AsyncSnapshot<PopClickCounter> snapshot) {
+     if (widget.userData != null) {
+        if (likedPopsSet.contains(pop.id)) {
+            database.removeLikeFromPop(widget.userSnapshot.hasData ? widget.userSnapshot.data.uid: null,
+            pop, userLocation, snapshot.data != null ? snapshot.data.counter: 1).catchError((e) =>
+            Scaffold.of(context).showSnackBar(SnackBar(content: Text(e))));
+
+            likedPopsSet.remove(pop.id);
+            database.setLikedPops(widget.userData, likedPopsSet);
+        } else {
+            database.addLikeToPop(widget.userSnapshot.hasData? widget.userSnapshot.data.uid: null,
+            pop, userLocation, snapshot.data != null ? snapshot.data.counter: 0).catchError((e) =>
+            Scaffold.of(context).showSnackBar(SnackBar(content: Text(e))));
+
+            likedPopsSet.add(pop.id);
+            database.setLikedPops(widget.userData, likedPopsSet);
+          }
+      } else {
+            Scaffold.of(context).showSnackBar(SnackBar(content: Text("Login to show your love")));
+        }
   }
 }
 
@@ -813,11 +805,11 @@ class _DetailsPageState extends State<DetailsPage> {
                 const SizedBox(height: 10),
                 SizedBox(
                     height: 170.0,
-                    child: Text(
+                    child: SingleChildScrollView(child: Text(
                       widget.pop.description,
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 18.0, color: Colors.black87),
-                    )),
+                    ))),
                 SizedBox(
                   height: 10.0,
                 ),

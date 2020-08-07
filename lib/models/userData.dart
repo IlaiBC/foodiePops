@@ -12,7 +12,6 @@ class UserData {
 
 
   factory UserData.fromMap(Map<String, dynamic> data, String documentId) {
-    try {
     if (data == null) {
       return null;
     }
@@ -25,10 +24,6 @@ class UserData {
     Set<String> redeemedPopCouponsSet = data['redeemedPopCoupons'] != null ? Set<String>.from(data['redeemedPopCoupons']) : {};
 
     return UserData(id: documentId, isBusinessUser: isBusinessUser, likedPops: likedPopsSet, redeemedPopCoupons: redeemedPopCouponsSet);
-
-    } catch (e) {
-      print("an error ocurred $e");
-    }
   }
 
   Map<String, dynamic> toMap() {

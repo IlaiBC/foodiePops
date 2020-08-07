@@ -38,7 +38,6 @@ class BusinessAnalyticsScreenState extends State<BusinessAnalyticsScreen> {
                     style: TextStyle(fontSize: 20),
                   ));
                 }
-                print('pops result $pops');
                 return Scaffold(
                   appBar: AppBar(
                     title: const Text(Texts.analyticsScreen),
@@ -84,6 +83,7 @@ class BusinessAnalyticsScreenState extends State<BusinessAnalyticsScreen> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Container(
+                                  padding: const EdgeInsets.all(20.0),
                                   height: 300,
                                   child: _showPopClickData(
                                       selectedPopId != null
@@ -91,13 +91,14 @@ class BusinessAnalyticsScreenState extends State<BusinessAnalyticsScreen> {
                                           : pops[0].id,
                                       database),
                                 ),
-                                SizedBox(height: 30),
+                                SizedBox(height: 20),
                                 Text(
                                   'Number of clicks by location',
                                   style: TextStyle(
                                       fontSize: 18.0,
                                       fontWeight: FontWeight.bold),
                                 ),
+                                SizedBox(height: 30),
                                 Container(
                                   height: 300,
                                   child: _showPopClickLocationChart(
@@ -106,6 +107,7 @@ class BusinessAnalyticsScreenState extends State<BusinessAnalyticsScreen> {
                                           : pops[0].id,
                                       database),
                                 ),
+                                SizedBox(height: 20),
                                 Text(
                                   'Coupons redeemed by date',
                                   style: TextStyle(
@@ -114,19 +116,21 @@ class BusinessAnalyticsScreenState extends State<BusinessAnalyticsScreen> {
                                 ),
                                 Container(
                                   height: 300,
+                                  padding: const EdgeInsets.all(20.0),
                                   child: _showPopCouponData(
                                       selectedPopId != null
                                           ? selectedPopId
                                           : pops[0].id,
                                       database),
                                 ),
-                                SizedBox(height: 30),
+                                SizedBox(height: 20),
                                 Text(
                                   'Coupons redeemed by location',
                                   style: TextStyle(
                                       fontSize: 18.0,
                                       fontWeight: FontWeight.bold),
                                 ),
+                                SizedBox(height: 30),
                                 Container(
                                   height: 300,
                                   child: _showPopCouponLocationChart(
@@ -159,19 +163,10 @@ class BusinessAnalyticsScreenState extends State<BusinessAnalyticsScreen> {
             return new charts.TimeSeriesChart(
                 _popClickAnalyticsToChart(popClickAnalytics),
                 animate: true,
-                // Custom renderer configuration for the point series.
-                // Optionally pass in a [DateTimeFactory] used by the chart. The factory
-                // should create the same type of [DateTime] as the data provided. If none
-                // specified, the default creates local date time.
                 domainAxis: new charts.DateTimeAxisSpec(
                     tickFormatterSpec: new charts.AutoDateTimeTickFormatterSpec(
                         day: new charts.TimeFormatterSpec(
                             format: 'dd/MM', transitionFormat: 'dd/MM/yy'))));
-            // return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-            //   Text('Pop name: ${pop.name}'),
-            //   const SizedBox(width: 20),
-            //   Text('Pop clicks: ${popClicks.length}'),
-            // ]);
           }
           return Scaffold(
             body: Center(
@@ -187,7 +182,6 @@ class BusinessAnalyticsScreenState extends State<BusinessAnalyticsScreen> {
         builder: (context, snapshot) {
           if (snapshot.data != null) {
             final List<PopClick> popClicks = snapshot.data;
-            debugPrint("got pop clicks ${popClicks.length}");
             return FutureBuilder<List<PopClickLocationAnalytics>>(
                 future: _parsePopClickLocationAnalytics(popClicks),
                 builder: (BuildContext context,
@@ -200,26 +194,11 @@ class BusinessAnalyticsScreenState extends State<BusinessAnalyticsScreen> {
                         _popClickLocationAnalyticsToChart(
                             popClickLocationAnalytics),
                         animate: true,
-                        // Configure the width of the pie slices to 60px. The remaining space in
-                        // the chart will be left as a hole in the center.
-                        //
-                        // [ArcLabelDecorator] will automatically position the label inside the
-                        // arc if the label will fit. If the label will not fit, it will draw
-                        // outside of the arc with a leader line. Labels can always display
-                        // inside or outside using [LabelPosition].
-                        //
-                        // Text style for inside / outside can be controlled independently by
-                        // setting [insideLabelStyleSpec] and [outsideLabelStyleSpec].
-                        //
-                        // Example configuring different styles for inside/outside:
-                        //       new charts.ArcLabelDecorator(
-                        //          insideLabelStyleSpec: new charts.TextStyleSpec(...),
-                        //          outsideLabelStyleSpec: new charts.TextStyleSpec(...)),
                         defaultRenderer: new charts.ArcRendererConfig(
                             arcWidth: 90,
                             arcRendererDecorators: [
                               new charts.ArcLabelDecorator(
-                                  labelPosition: charts.ArcLabelPosition.inside)
+                                  labelPosition: charts.ArcLabelPosition.auto)
                             ]));
                   }
                   return Center(child: CircularProgressIndicator());
@@ -233,39 +212,28 @@ class BusinessAnalyticsScreenState extends State<BusinessAnalyticsScreen> {
         });
   }
 
-    Widget _showPopCouponData(String popId, FirestoreDatabase database) {
+  Widget _showPopCouponData(String popId, FirestoreDatabase database) {
     return StreamBuilder<List<PopClick>>(
         stream: database.getPopCouponsRedeemedList(widget.businessId, popId),
         builder: (context, snapshot) {
           if (snapshot.data != null) {
             final List<PopClick> popCouponsData = snapshot.data;
             if (popCouponsData.length > 0) {
-
-            final List<PopClickAnalytics> popCouponAnalytics =
-                _parsePopCouponAnalytics(popCouponsData);
-            return new charts.TimeSeriesChart(
-                _popCouponAnalyticsToChart(popCouponAnalytics),
-                animate: true,
-                // Custom renderer configuration for the point series.
-                // Optionally pass in a [DateTimeFactory] used by the chart. The factory
-                // should create the same type of [DateTime] as the data provided. If none
-                // specified, the default creates local date time.
-                domainAxis: new charts.DateTimeAxisSpec(
-                    tickFormatterSpec: new charts.AutoDateTimeTickFormatterSpec(
-                        day: new charts.TimeFormatterSpec(
-                            format: 'dd/MM', transitionFormat: 'dd/MM/yy'))));
-            // return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-            //   Text('Pop name: ${pop.name}'),
-            //   const SizedBox(width: 20),
-            //   Text('Pop clicks: ${popClicks.length}'),
-            // ]);
+              final List<PopClickAnalytics> popCouponAnalytics =
+                  _parsePopCouponAnalytics(popCouponsData);
+              return new charts.TimeSeriesChart(
+                  _popCouponAnalyticsToChart(popCouponAnalytics),
+                  animate: true,
+                  domainAxis: new charts.DateTimeAxisSpec(
+                      tickFormatterSpec:
+                          new charts.AutoDateTimeTickFormatterSpec(
+                              day: new charts.TimeFormatterSpec(
+                                  format: 'dd/MM',
+                                  transitionFormat: 'dd/MM/yy'))));
             }
-              return Scaffold(
-            body: Center(
-              child: Text("No Coupons redeemed yet")
-            ),
-          ); 
-
+            return Scaffold(
+              body: Center(child: Text("No Coupons redeemed yet")),
+            );
           }
           return Scaffold(
             body: Center(
@@ -282,51 +250,34 @@ class BusinessAnalyticsScreenState extends State<BusinessAnalyticsScreen> {
           if (snapshot.data != null) {
             final List<PopClick> popCouponsData = snapshot.data;
             if (popCouponsData.length > 0) {
+              return FutureBuilder<List<PopClickLocationAnalytics>>(
+                  future: _parsePopCouponLocationAnalytics(popCouponsData),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<List<PopClickLocationAnalytics>> snapshot) {
+                    if (snapshot.hasData) {
+                      final List<PopClickLocationAnalytics>
+                          popCouponsLocationAnalytics = snapshot.data;
 
-            return FutureBuilder<List<PopClickLocationAnalytics>>(
-                future: _parsePopCouponLocationAnalytics(popCouponsData),
-                builder: (BuildContext context,
-                    AsyncSnapshot<List<PopClickLocationAnalytics>> snapshot) {
-                  if (snapshot.hasData) {
-                    final List<PopClickLocationAnalytics>
-                        popCouponsLocationAnalytics = snapshot.data;
-
-                    return new charts.PieChart(
-                        _popCouponLocationAnalyticsToChart(
-                            popCouponsLocationAnalytics),
-                        animate: true,
-                        // Configure the width of the pie slices to 60px. The remaining space in
-                        // the chart will be left as a hole in the center.
-                        //
-                        // [ArcLabelDecorator] will automatically position the label inside the
-                        // arc if the label will fit. If the label will not fit, it will draw
-                        // outside of the arc with a leader line. Labels can always display
-                        // inside or outside using [LabelPosition].
-                        //
-                        // Text style for inside / outside can be controlled independently by
-                        // setting [insideLabelStyleSpec] and [outsideLabelStyleSpec].
-                        //
-                        // Example configuring different styles for inside/outside:
-                        //       new charts.ArcLabelDecorator(
-                        //          insideLabelStyleSpec: new charts.TextStyleSpec(...),
-                        //          outsideLabelStyleSpec: new charts.TextStyleSpec(...)),
-                        defaultRenderer: new charts.ArcRendererConfig(
-                            arcWidth: 90,
-                            arcRendererDecorators: [
-                              new charts.ArcLabelDecorator(
-                                  labelPosition: charts.ArcLabelPosition.inside)
-                            ]));
-                  }
-                  return Center(child: CircularProgressIndicator());
-                });
+                      return new charts.PieChart(
+                          _popCouponLocationAnalyticsToChart(
+                              popCouponsLocationAnalytics),
+                          animate: true,
+                          defaultRenderer: new charts.ArcRendererConfig(
+                              arcWidth: 90,
+                              arcRendererDecorators: [
+                                new charts.ArcLabelDecorator(
+                                    labelPosition:
+                                        charts.ArcLabelPosition.inside)
+                              ]));
+                    }
+                    return Center(child: CircularProgressIndicator());
+                  });
             }
-          return Scaffold(
-            body: Center(
-              child: Text("No Coupons redeemed yet")
-            ),
-          );
+            return Scaffold(
+              body: Center(child: Text("No Coupons redeemed yet")),
+            );
           }
-          
+
           return Scaffold(
             body: Center(
               child: CircularProgressIndicator(),
@@ -344,14 +295,12 @@ class BusinessAnalyticsScreenState extends State<BusinessAnalyticsScreen> {
       PopClick currentPopClick = popClicksData[i];
       DateTime dateTimeDayResolution = new DateTime(currentPopClick.date.year,
           currentPopClick.date.month, currentPopClick.date.day);
-      print('dateTimeResolution: $dateTimeDayResolution');
 
       popClickDataMap.update(dateTimeDayResolution, (value) => value + 1,
           ifAbsent: () => 1);
     }
 
     popClickDataMap.keys.forEach((element) {
-      print('inserting to list $element');
       popClickAnalytics.add(PopClickAnalytics(
           popClickDate: element, popClickCount: popClickDataMap[element]));
     });
@@ -366,11 +315,6 @@ class BusinessAnalyticsScreenState extends State<BusinessAnalyticsScreen> {
 
     for (int i = 0; i < popClicksData.length; i++) {
       PopClick currentPopClick = popClicksData[i];
-      debugPrint('before to get placeMakr popclick is: $currentPopClick');
-
-      debugPrint('going to get placeMakr');
-      debugPrint('going to get placeMakr  ${currentPopClick.userLocation}');
-
       List<Placemark> placemark = currentPopClick.userLocation != null
           ? await Geolocator().placemarkFromCoordinates(
               currentPopClick.userLocation.latitude,
@@ -383,15 +327,10 @@ class BusinessAnalyticsScreenState extends State<BusinessAnalyticsScreen> {
           ifAbsent: () => 1);
     }
 
-    debugPrint('after popClickData update');
-
     popClickDataMap.keys.forEach((element) {
-      print('inserting to list $element');
       popClickLocationAnalytics.add(PopClickLocationAnalytics(
           clickLocation: element, popClickCount: popClickDataMap[element]));
     });
-
-    debugPrint('after popClickData update for each');
 
     return popClickLocationAnalytics;
   }
@@ -430,94 +369,86 @@ class BusinessAnalyticsScreenState extends State<BusinessAnalyticsScreen> {
   }
 }
 
-List<PopClickAnalytics> _parsePopCouponAnalytics(
-      List<PopClick> popCouponData) {
-    HashMap<DateTime, int> popCouponDataMap = new HashMap<DateTime, int>();
-    List<PopClickAnalytics> popCouponAnalytics = [];
+List<PopClickAnalytics> _parsePopCouponAnalytics(List<PopClick> popCouponData) {
+  HashMap<DateTime, int> popCouponDataMap = new HashMap<DateTime, int>();
+  List<PopClickAnalytics> popCouponAnalytics = [];
 
-    for (int i = 0; i < popCouponData.length; i++) {
-      PopClick currentPopCoupon = popCouponData[i];
-      DateTime dateTimeDayResolution = new DateTime(currentPopCoupon.date.year,
-          currentPopCoupon.date.month, currentPopCoupon.date.day);
+  for (int i = 0; i < popCouponData.length; i++) {
+    PopClick currentPopCoupon = popCouponData[i];
+    DateTime dateTimeDayResolution = new DateTime(currentPopCoupon.date.year,
+        currentPopCoupon.date.month, currentPopCoupon.date.day);
 
-      popCouponDataMap.update(dateTimeDayResolution, (value) => value + 1,
-          ifAbsent: () => 1);
-    }
-
-    popCouponDataMap.keys.forEach((element) {
-      print('inserting to list $element');
-      popCouponAnalytics.add(PopClickAnalytics(
-          popClickDate: element, popClickCount: popCouponDataMap[element]));
-    });
-
-    return popCouponAnalytics;
+    popCouponDataMap.update(dateTimeDayResolution, (value) => value + 1,
+        ifAbsent: () => 1);
   }
 
-  Future<List<PopClickLocationAnalytics>> _parsePopCouponLocationAnalytics(
-      List<PopClick> popCouponData) async {
-    HashMap<String, int> popCouponDataMap = new HashMap<String, int>();
-    List<PopClickLocationAnalytics> popCouponLocationAnalytics = [];
+  popCouponDataMap.keys.forEach((element) {
+    popCouponAnalytics.add(PopClickAnalytics(
+        popClickDate: element, popClickCount: popCouponDataMap[element]));
+  });
 
-    for (int i = 0; i < popCouponData.length; i++) {
-      PopClick currentPopCoupon = popCouponData[i];
-      List<Placemark> placemark = currentPopCoupon.userLocation != null
-          ? await Geolocator().placemarkFromCoordinates(
-              currentPopCoupon.userLocation.latitude,
-              currentPopCoupon.userLocation.longitude)
-          : [];
+  return popCouponAnalytics;
+}
 
-      popCouponDataMap.update(
-          placemark.length > 0 ? placemark[0].locality : "N/A",
-          (value) => value + 1,
-          ifAbsent: () => 1);
-    }
+Future<List<PopClickLocationAnalytics>> _parsePopCouponLocationAnalytics(
+    List<PopClick> popCouponData) async {
+  HashMap<String, int> popCouponDataMap = new HashMap<String, int>();
+  List<PopClickLocationAnalytics> popCouponLocationAnalytics = [];
 
-    debugPrint('after popClickData update');
+  for (int i = 0; i < popCouponData.length; i++) {
+    PopClick currentPopCoupon = popCouponData[i];
+    List<Placemark> placemark = currentPopCoupon.userLocation != null
+        ? await Geolocator().placemarkFromCoordinates(
+            currentPopCoupon.userLocation.latitude,
+            currentPopCoupon.userLocation.longitude)
+        : [];
 
-    popCouponDataMap.keys.forEach((element) {
-      print('inserting to list $element');
-      popCouponLocationAnalytics.add(PopClickLocationAnalytics(
-          clickLocation: element, popClickCount: popCouponDataMap[element]));
-    });
-
-    debugPrint('after popClickData update for each');
-
-    return popCouponLocationAnalytics;
+    popCouponDataMap.update(
+        placemark.length > 0 ? placemark[0].locality : "N/A",
+        (value) => value + 1,
+        ifAbsent: () => 1);
   }
 
+  popCouponDataMap.keys.forEach((element) {
+    popCouponLocationAnalytics.add(PopClickLocationAnalytics(
+        clickLocation: element, popClickCount: popCouponDataMap[element]));
+  });
 
-  List<charts.Series<PopClickAnalytics, DateTime>> _popCouponAnalyticsToChart(
-      List<PopClickAnalytics> popCouponAnalytics) {
-    popCouponAnalytics.sort((a, b) => a.popClickDate.compareTo(b.popClickDate));
-    return [
-      new charts.Series<PopClickAnalytics, DateTime>(
-        id: 'popCoupons',
-        colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
-        domainFn: (PopClickAnalytics popClick, _) => popClick.popClickDate,
-        measureFn: (PopClickAnalytics popClick, _) => popClick.popClickCount,
-        data: popCouponAnalytics,
-      ),
-    ];
-  }
+  return popCouponLocationAnalytics;
+}
 
-  List<charts.Series<PopClickLocationAnalytics, String>>
-      _popCouponLocationAnalyticsToChart(
-          List<PopClickLocationAnalytics> popCouponsLocationAnalytics) {
-    return [
-      new charts.Series<PopClickLocationAnalytics, String>(
-          id: 'popCouponsByLocation',
-          colorFn: (_, index) {
-            return charts.MaterialPalette.red.makeShades(5)[index];
-          },
-          domainFn: (PopClickLocationAnalytics popClick, _) =>
-              popClick.clickLocation,
-          measureFn: (PopClickLocationAnalytics popClick, _) =>
-              popClick.popClickCount,
-          data: popCouponsLocationAnalytics,
-          labelAccessorFn: (PopClickLocationAnalytics popClick, _) =>
-              '${popClick.clickLocation}:${popClick.popClickCount}'),
-    ];
-  }
+List<charts.Series<PopClickAnalytics, DateTime>> _popCouponAnalyticsToChart(
+    List<PopClickAnalytics> popCouponAnalytics) {
+  popCouponAnalytics.sort((a, b) => a.popClickDate.compareTo(b.popClickDate));
+  return [
+    new charts.Series<PopClickAnalytics, DateTime>(
+      id: 'popCoupons',
+      colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
+      domainFn: (PopClickAnalytics popClick, _) => popClick.popClickDate,
+      measureFn: (PopClickAnalytics popClick, _) => popClick.popClickCount,
+      data: popCouponAnalytics,
+    ),
+  ];
+}
+
+List<charts.Series<PopClickLocationAnalytics, String>>
+    _popCouponLocationAnalyticsToChart(
+        List<PopClickLocationAnalytics> popCouponsLocationAnalytics) {
+  return [
+    new charts.Series<PopClickLocationAnalytics, String>(
+        id: 'popCouponsByLocation',
+        colorFn: (_, index) {
+          return charts.MaterialPalette.red.makeShades(5)[index];
+        },
+        domainFn: (PopClickLocationAnalytics popClick, _) =>
+            popClick.clickLocation,
+        measureFn: (PopClickLocationAnalytics popClick, _) =>
+            popClick.popClickCount,
+        data: popCouponsLocationAnalytics,
+        labelAccessorFn: (PopClickLocationAnalytics popClick, _) =>
+            '${popClick.clickLocation}:${popClick.popClickCount}'),
+  ];
+}
 
 class PopClickAnalytics {
   final DateTime popClickDate;

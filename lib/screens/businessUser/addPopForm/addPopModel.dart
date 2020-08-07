@@ -116,7 +116,6 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
   }
 
   void setPopToEdit(Pop pop) {
-    print('pop name is ${pop.name}');
     this.popName = pop.name;
     this.popDescription = pop.description;
     this.popExpirationTime = pop.expirationTime;
@@ -167,7 +166,9 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     if (file != null) {
       final storage =
           Provider.of<FirebaseStorageService>(context, listen: false);
-      final String popPhotoPath = await storage.uploadPopImage(file: file);
+      final String popPhotoPath = await storage.uploadPopImage(file: file).timeout(Duration(seconds: 5), onTimeout: () {
+          throw Exception("Failed to upload photo, try again later");
+        });
 
       await file.delete();
 
@@ -181,7 +182,6 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     try {
       updateWith(submitted: true);
       if (!canSubmit) {
-        debugPrint('cant submit');
         return false;
       }
 

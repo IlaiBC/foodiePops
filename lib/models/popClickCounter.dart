@@ -18,13 +18,8 @@ class PopClickCounter {
   }
 
   static PopClickCounter fromMap(Map map) {
-    try {
-
     return new PopClickCounter(
         counter: (map[popClickCounter] as int),
     );
-    } catch (e) {
-      print('error is $e');
-    }
   }
 }

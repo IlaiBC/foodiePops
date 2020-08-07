@@ -64,8 +64,8 @@ class FirestoreDatabase {
 
 try {
 
-    await _service.addData(collectionPath: FirestorePath.addPopLike(pop.id), data: likeData, userId: userId);
-    await _service.addData(collectionPath: FirestorePath.addPopLikeToBusinessAnalytics(pop.businessId, pop.id), data: likeData, userId: userId);
+    await _service.addData(collectionPath: FirestorePath.addPopLike(pop.id), data: likeData, userId: userId, shouldCheckDocumentExists: true);
+    await _service.addData(collectionPath: FirestorePath.addPopLikeToBusinessAnalytics(pop.businessId, pop.id), data: likeData, userId: userId, shouldCheckDocumentExists: false);
 
     await _service.setData(path: FirestorePath.popLikeCount(pop.id), data: counterData, documentId: 'likeCount');
     await _service.setData(path: FirestorePath.businessPopLikeCount(pop.businessId, pop.id), data: counterData, documentId: 'likeCount');
@@ -89,8 +89,8 @@ try {
 
 try {
 
-    await _service.addData(collectionPath: FirestorePath.addCouponRedeemed(pop.id), data: couponRedeemData, userId: userId);
-    await _service.addData(collectionPath: FirestorePath.addCouponRedeemedToBusinessAnalytics(pop.businessId, pop.id), data: couponRedeemData, userId: userId);
+    await _service.addData(collectionPath: FirestorePath.addCouponRedeemed(pop.id), data: couponRedeemData, userId: userId, shouldCheckDocumentExists: true);
+    await _service.addData(collectionPath: FirestorePath.addCouponRedeemedToBusinessAnalytics(pop.businessId, pop.id), data: couponRedeemData, userId: userId, shouldCheckDocumentExists: false);
 
     await _service.setData(path: FirestorePath.popCouponsRedeemedCount(pop.id), data: counterData, documentId: 'couponsRedeemedCount');
     await _service.setData(path: FirestorePath.businessPopCouponsRedeemedCount(pop.businessId, pop.id), data: counterData, documentId: 'couponsRedeemedCount');
@@ -146,4 +146,16 @@ try {
     path: FirestorePath.popClicks(businessId, popId) ,
     builder: (data, documentId) => PopClick.fromMap(data),
   );
+
+   Future<void> removeLikeFromPop(String userId, Pop pop, Position userLocation, int previousLikeCount) async {
+        Map<String, dynamic> counterData = {
+        'counter': previousLikeCount - 1,
+      };
+
+    await _service.deleteData(path: FirestorePath.removePopLike(pop.id, userId));
+    await _service.deleteData(path: FirestorePath.removePopLikeFromBusinessAnalytics(pop.businessId, pop.id, userId));
+
+    await _service.setData(path: FirestorePath.popLikeCount(pop.id), data: counterData, documentId: 'likeCount');
+    await _service.setData(path: FirestorePath.businessPopLikeCount(pop.businessId, pop.id), data: counterData, documentId: 'likeCount');
+  }
 }

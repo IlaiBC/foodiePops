@@ -14,7 +14,10 @@
       "Hummus",
       "Seafood",
       "Bakery",
-      "Mexican"
+      "Mexican",
+      "Desserts",
+      "Street food",
+      "Ice cream",
     ];
   }
   

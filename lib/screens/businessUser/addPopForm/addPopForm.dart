@@ -194,6 +194,9 @@ class _AddPopFormState extends State<AddPopForm> {
     } on PlatformException catch (e) {
       _setUploadPopPhotoLoading(false);
       _showPopPhotoUploadError(model, e);
+    } on Exception catch(e) {
+      _setUploadPopPhotoLoading(false);
+      _showPopPhotoUploadException(e);
     }
   }
 
@@ -245,10 +248,7 @@ class _AddPopFormState extends State<AddPopForm> {
 
   void _isFieldEditingComplete(bool canSubmitField) {
     if (canSubmitField) {
-      print('could submit field');
       _node.nextFocus();
-    } else {
-      print('cannot submit field');
     }
   }
 
@@ -417,7 +417,7 @@ class _AddPopFormState extends State<AddPopForm> {
                 (int index) {
               final String currentKitchen = model.selectedKitchenTypes[index];
 
-              return Container(
+              return GestureDetector(onTap: _openKitchenTypesList, child: Container(
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
                     border: Border.all(
@@ -425,7 +425,7 @@ class _AddPopFormState extends State<AddPopForm> {
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(20))),
                 child: Text(currentKitchen),
-              );
+              ));
             })
           ])
         ],
@@ -477,12 +477,8 @@ class _AddPopFormState extends State<AddPopForm> {
                   ? widget.popToEdit.address
                   : Texts.addressSearchPlaceHolder,
               onSelected: (place) async {
-                print('place full json is: ${place.fullJSON}');
-                print('place description: ${place.description}');
+
                 final geolocation = await place.geolocation;
-                print('geolocation is: $geolocation');
-                print(
-                    'geolocation coordinates are: ${geolocation.coordinates}');
                 model.updatePopLocation(geolocation.coordinates);
                 model.updatePopAddress(place.description);
               }),
@@ -537,5 +533,13 @@ class _AddPopFormState extends State<AddPopForm> {
       title: Texts.popImageUploadError,
       exception: exception,
     ).show(context);
+  }
+
+  void _showPopPhotoUploadException(Exception exception) async {
+        await PlatformAlertDialog(
+          title: Texts.popImageUploadError,
+          content: exception.toString(),
+          defaultActionText: Texts.ok,
+        ).show(context);
   }
 }

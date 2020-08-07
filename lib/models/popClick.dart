@@ -28,15 +28,10 @@ class PopClick {
   }
 
   static PopClick fromMap(Map map) {
-    try {
-
     return new PopClick(
         id: map[popClickId],
         date: (map[popClickDate] as Timestamp).toDate(),
         userLocation: map[clickingUserLocation],
     );
-    } catch (e) {
-      print('error is $e');
-    }
   }
 }
