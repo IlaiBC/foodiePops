@@ -414,7 +414,7 @@ class _AddPopFormState extends State<AddPopForm> {
                 (int index) {
               final String currentKitchen = model.selectedKitchenTypes[index];
 
-              return Container(
+              return GestureDetector(onTap: _openKitchenTypesList, child: Container(
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
                     border: Border.all(
@@ -422,7 +422,7 @@ class _AddPopFormState extends State<AddPopForm> {
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(20))),
                 child: Text(currentKitchen),
-              );
+              ));
             })
           ])
         ],
