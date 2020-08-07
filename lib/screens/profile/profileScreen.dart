@@ -127,7 +127,7 @@ class ProfileScreen extends StatelessWidget {
                    Expanded(
                       child: ListView.builder(
                           itemCount: redeemedCouponPops
-                              .length, //need to get coupon number
+                              .length, 
                           itemBuilder: (BuildContext context, int index) {
                             return Card(
                                 child: ListTile(

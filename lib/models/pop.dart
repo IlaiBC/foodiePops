@@ -78,9 +78,6 @@ class Pop {
   }
 
   static Pop fromMap(Map map) {
-    try {
-
-      print('map min price 222: ${map[popMinPrice].runtimeType}');
     return new Pop(
         id: map[popId],
         name: map[popName],
@@ -99,11 +96,5 @@ class Pop {
         coupon: map[popCoupon],
 
     );
-    } catch (e) {
-      print('map values are: $map');
-      print('map values are2: ${map[popId]}');
-      print('map values are3: ${map[popName]}');
-      print('error is: $e');
-    }
   }
 }

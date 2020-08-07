@@ -74,7 +74,6 @@ class RSSNewsState extends State<RSSNews> {
       final response = await client.get(FEED_URL);
       return RssFeed.parse(response.body);
     } catch (e) {
-      //
     }
     return null;
   }
@@ -179,15 +178,6 @@ class RSSNewsState extends State<RSSNews> {
                 ],
               ),
             )));
-
-//            ListTile(
-//                  title: title(item.title),
-//                  subtitle: subtitle(item.pubDate),
-//                  leading: thumbnail(getImgUrlFromItem(item)),
-//                  trailing: rightIcon(),
-//                  contentPadding: EdgeInsets.all(5.0),
-//                  onTap: () => _openInWebview(context, item.link),
-//                ));
       },
     );
   }

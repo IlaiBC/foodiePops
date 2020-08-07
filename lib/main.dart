@@ -19,8 +19,6 @@ class MyApp extends StatelessWidget {
   const MyApp({Key key, this.authServiceBuilder, this.databaseBuilder})
       : super(key: key);
 
-  // Expose builders for 3rd party services at the root of the widget tree
-  // This is useful when mocking services while testing
   final FirebaseAuthService Function(BuildContext context) authServiceBuilder;
   final FirestoreDatabase Function(BuildContext context) databaseBuilder;
 
@@ -78,9 +76,6 @@ class Splash extends StatelessWidget {
   Future<bool> checkFirstSeen() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool _seen = (prefs.getBool('seen') ?? false);
-    debugPrint(_seen.toString());
-    debugPrint("here");
-
     return _seen;
   }
 

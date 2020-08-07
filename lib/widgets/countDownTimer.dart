@@ -88,26 +88,6 @@ class _CountDownTimerState extends State<CountDownTimer>
                           ),
                         ),
                       ),
-//                      AnimatedBuilder(
-//                          animation: controller,
-//                          builder: (context, child) {
-//                            return FloatingActionButton.extended(
-//                                onPressed: () {
-//                                  if (controller.isAnimating)
-//                                    controller.stop();
-//                                  else {
-//                                    controller.reverse(
-//                                        from: controller.value == 0.0
-//                                            ? 1.0
-//                                            : controller.value);
-//                                  }
-//                                },
-//                                icon: Icon(controller.isAnimating
-//                                    ? Icons.pause
-//                                    : Icons.play_arrow),
-//                                label: Text(
-//                                    controller.isAnimating ? "Pause" : "Play"));
-//                          }),
                     ],
                   ),
                 ),

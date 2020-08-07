@@ -116,7 +116,6 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
   }
 
   void setPopToEdit(Pop pop) {
-    print('pop name is ${pop.name}');
     this.popName = pop.name;
     this.popDescription = pop.description;
     this.popExpirationTime = pop.expirationTime;
@@ -181,7 +180,6 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     try {
       updateWith(submitted: true);
       if (!canSubmit) {
-        debugPrint('cant submit');
         return false;
       }
 

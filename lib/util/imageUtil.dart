@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:foodiepops/models/pop.dart';
-import 'package:foodiepops/data/mockData.dart';
 import 'dart:math';
 
 Random random = Random();

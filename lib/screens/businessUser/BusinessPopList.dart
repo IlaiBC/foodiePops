@@ -54,7 +54,6 @@ class _BusinessPopListState extends State<BusinessPopList> {
                       transitionType: _transitionType,
                       openBuilder:
                           (BuildContext _, VoidCallback openContainer) {
-                        print('clicked on open');
                         return DetailsPage(pop: pops[index]);
                       },
                       tappable: true,

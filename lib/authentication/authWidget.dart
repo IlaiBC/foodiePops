@@ -12,14 +12,9 @@ class AuthWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("in auth widget1");
-    debugPrint("in auth widget1 user snapshot $userSnapshot");
-
     if (userSnapshot.connectionState == ConnectionState.active) {
-    debugPrint("in auth widget2");
 
       if (userSnapshot.hasData) {
-    debugPrint("in auth widget3");
 
         final database = Provider.of<FirestoreDatabase>(context, listen: false); 
 
@@ -27,14 +22,6 @@ class AuthWidget extends StatelessWidget {
             stream: database.userInfoStream(userSnapshot.data.uid),
             builder: (context, snapshot) {
               final UserData userData = snapshot.data;
-    debugPrint("in auth widget4");
-    debugPrint("in auth widget4 userData : $userData");
-
-    debugPrint("in auth widget4 userData?.isBusinessUser ${userData?.isBusinessUser}");
-    debugPrint("in auth widget4 userSnapshot.data.uid ${userSnapshot.data.uid}");
-
-
-
 
               return userData?.isBusinessUser == true
                   ? BusinessNavBar(
@@ -42,7 +29,6 @@ class AuthWidget extends StatelessWidget {
                   : UserNavBar(userSnapshot: userSnapshot, userData: userData);
             });
       }
-    debugPrint("in auth widget5");
 
       return UserNavBar(userSnapshot: userSnapshot);
     }

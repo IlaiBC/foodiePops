@@ -38,7 +38,6 @@ class BusinessAnalyticsScreenState extends State<BusinessAnalyticsScreen> {
                     style: TextStyle(fontSize: 20),
                   ));
                 }
-                print('pops result $pops');
                 return Scaffold(
                   appBar: AppBar(
                     title: const Text(Texts.analyticsScreen),
@@ -187,7 +186,6 @@ class BusinessAnalyticsScreenState extends State<BusinessAnalyticsScreen> {
         builder: (context, snapshot) {
           if (snapshot.data != null) {
             final List<PopClick> popClicks = snapshot.data;
-            debugPrint("got pop clicks ${popClicks.length}");
             return FutureBuilder<List<PopClickLocationAnalytics>>(
                 future: _parsePopClickLocationAnalytics(popClicks),
                 builder: (BuildContext context,
@@ -344,14 +342,12 @@ class BusinessAnalyticsScreenState extends State<BusinessAnalyticsScreen> {
       PopClick currentPopClick = popClicksData[i];
       DateTime dateTimeDayResolution = new DateTime(currentPopClick.date.year,
           currentPopClick.date.month, currentPopClick.date.day);
-      print('dateTimeResolution: $dateTimeDayResolution');
 
       popClickDataMap.update(dateTimeDayResolution, (value) => value + 1,
           ifAbsent: () => 1);
     }
 
     popClickDataMap.keys.forEach((element) {
-      print('inserting to list $element');
       popClickAnalytics.add(PopClickAnalytics(
           popClickDate: element, popClickCount: popClickDataMap[element]));
     });
@@ -366,11 +362,6 @@ class BusinessAnalyticsScreenState extends State<BusinessAnalyticsScreen> {
 
     for (int i = 0; i < popClicksData.length; i++) {
       PopClick currentPopClick = popClicksData[i];
-      debugPrint('before to get placeMakr popclick is: $currentPopClick');
-
-      debugPrint('going to get placeMakr');
-      debugPrint('going to get placeMakr  ${currentPopClick.userLocation}');
-
       List<Placemark> placemark = currentPopClick.userLocation != null
           ? await Geolocator().placemarkFromCoordinates(
               currentPopClick.userLocation.latitude,
@@ -383,15 +374,11 @@ class BusinessAnalyticsScreenState extends State<BusinessAnalyticsScreen> {
           ifAbsent: () => 1);
     }
 
-    debugPrint('after popClickData update');
 
     popClickDataMap.keys.forEach((element) {
-      print('inserting to list $element');
       popClickLocationAnalytics.add(PopClickLocationAnalytics(
           clickLocation: element, popClickCount: popClickDataMap[element]));
     });
-
-    debugPrint('after popClickData update for each');
 
     return popClickLocationAnalytics;
   }
@@ -445,7 +432,6 @@ List<PopClickAnalytics> _parsePopCouponAnalytics(
     }
 
     popCouponDataMap.keys.forEach((element) {
-      print('inserting to list $element');
       popCouponAnalytics.add(PopClickAnalytics(
           popClickDate: element, popClickCount: popCouponDataMap[element]));
     });
@@ -472,15 +458,11 @@ List<PopClickAnalytics> _parsePopCouponAnalytics(
           ifAbsent: () => 1);
     }
 
-    debugPrint('after popClickData update');
 
     popCouponDataMap.keys.forEach((element) {
-      print('inserting to list $element');
       popCouponLocationAnalytics.add(PopClickLocationAnalytics(
           clickLocation: element, popClickCount: popCouponDataMap[element]));
     });
-
-    debugPrint('after popClickData update for each');
 
     return popCouponLocationAnalytics;
   }

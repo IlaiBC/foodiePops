@@ -14,7 +14,6 @@ class FirestoreService {
   }) async {
     final reference = Firestore.instance.document(path);
     data['id'] = documentId;
-    print('$path: $data');
     await reference.setData(data, merge: merge);
   }
 
@@ -49,7 +48,6 @@ class FirestoreService {
     DocumentReference reference = Firestore.instance.collection(collectionPath).document();
     String documentId = reference.documentID;
     data['id'] = documentId;
-    print('$collectionPath: $data');
 
     await reference.setData(data, merge: merge);
 
@@ -59,7 +57,6 @@ class FirestoreService {
 
   Future<void> deleteData({@required String path}) async {
     final reference = Firestore.instance.document(path);
-    print('delete: $path');
     await reference.delete();
   }
 

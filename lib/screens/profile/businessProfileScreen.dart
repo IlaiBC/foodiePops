@@ -59,7 +59,6 @@ class BusinessProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = userSnapshot.data;
-    debugPrint('user details: displayName: ${user.displayName}, email: ${user.email}');
     var rng = new Random();
     final authService =
         Provider.of<FirebaseAuthService>(context, listen: false);

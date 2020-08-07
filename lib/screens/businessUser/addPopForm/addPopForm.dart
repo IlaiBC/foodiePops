@@ -245,10 +245,7 @@ class _AddPopFormState extends State<AddPopForm> {
 
   void _isFieldEditingComplete(bool canSubmitField) {
     if (canSubmitField) {
-      print('could submit field');
       _node.nextFocus();
-    } else {
-      print('cannot submit field');
     }
   }
 
@@ -477,12 +474,8 @@ class _AddPopFormState extends State<AddPopForm> {
                   ? widget.popToEdit.address
                   : Texts.addressSearchPlaceHolder,
               onSelected: (place) async {
-                print('place full json is: ${place.fullJSON}');
-                print('place description: ${place.description}');
+
                 final geolocation = await place.geolocation;
-                print('geolocation is: $geolocation');
-                print(
-                    'geolocation coordinates are: ${geolocation.coordinates}');
                 model.updatePopLocation(geolocation.coordinates);
                 model.updatePopAddress(place.description);
               }),

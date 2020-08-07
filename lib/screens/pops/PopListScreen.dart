@@ -89,9 +89,6 @@ class _PopListScreenState extends State<PopListScreen> {
       }
     }
 
-    print('current pop length ${pops.length}');
-
-    debugPrint("finished filter");
     return userLocation != null ? filteredPopsList : pops;
   }
 
@@ -292,12 +289,11 @@ class _PopListScreenState extends State<PopListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('*************** calling build *************');
     if (widget.userData != null) {
       likedPopsSet = widget.userData.likedPops;
       redeemedPopCouponsSet = widget.userData.redeemedPopCoupons;
-      debugPrint('redeemedPopCouponsSet is: $redeemedPopCouponsSet');
     }
+    
     final FirestoreDatabase database =
         Provider.of<FirestoreDatabase>(context, listen: false);
 
