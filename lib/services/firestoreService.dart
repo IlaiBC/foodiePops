@@ -22,22 +22,26 @@ class FirestoreService {
     @required Map<String, dynamic> data,
     bool merge = false,
     String userId,
+    bool shouldCheckDocumentExists,
   }) async {
 
     // Check special case where userId is provided and document already exists - if so - print error
     if (userId != null) {
       DocumentSnapshot documentSnapshot;
       CollectionReference collectionReference = Firestore.instance.collection(collectionPath);
-      try {
+      
+      if (shouldCheckDocumentExists) {
+        try {
 
-      documentSnapshot = await collectionReference.document(userId).get();
-      } 
-      catch (e) {
-      // Ignore this, probably a permission issue.
-    }
-      if (documentSnapshot != null && documentSnapshot.exists) {
-        throw("Document already exists!");
-    } 
+        documentSnapshot = await collectionReference.document(userId).get();
+        } 
+        catch (e) {
+        // Ignore this, probably a permission issue.
+      }
+        if (documentSnapshot != null && documentSnapshot.exists) {
+          throw("Document already exists!");
+        } 
+      }
       
       DocumentReference reference = Firestore.instance.collection(collectionPath).document(userId);
       await reference.setData(data, merge: merge);
