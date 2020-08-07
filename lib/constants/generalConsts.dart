@@ -15,7 +15,7 @@
       "Seafood",
       "Bakery",
       "Mexican",
-      "Dessrts",
+      "Desserts",
       "Street food",
       "Ice cream",
     ];
