@@ -1,111 +1,105 @@
 import 'package:flutter/material.dart';
+import 'package:foodiepops/authentication/authWidget.dart';
+import 'package:foodiepops/screens/onboarding/onboardingScreen.dart';
+import 'package:foodiepops/services/firebaseAuthService.dart';
+import 'package:foodiepops/services/fireStoreDatabase.dart';
+import 'package:foodiepops/services/imagePickerService.dart';
+import 'package:provider/provider.dart';
+import 'authentication/authWidgetBuilder.dart';
+import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(MyApp(
+      authServiceBuilder: (_) => FirebaseAuthService(),
+      databaseBuilder: (_) => FirestoreDatabase(),
+    ));
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+  const MyApp({Key key, this.authServiceBuilder, this.databaseBuilder})
+      : super(key: key);
+
+  // Expose builders for 3rd party services at the root of the widget tree
+  // This is useful when mocking services while testing
+  final FirebaseAuthService Function(BuildContext context) authServiceBuilder;
+  final FirestoreDatabase Function(BuildContext context) databaseBuilder;
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+          SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
+    return MultiProvider(
+      providers: [
+        Provider<FirebaseAuthService>(
+          create: authServiceBuilder,
+        ),
+        Provider<FirestoreDatabase>(
+          create: databaseBuilder,
+        ),
+        Provider<ImagePickerService>(
+          create: (_) => ImagePickerService(),
+        )
+      ],
+      child: AuthWidgetBuilder(
+        builder: (BuildContext context, AsyncSnapshot<User> userSnapshot) {
+          FlutterStatusbarcolor.setStatusBarColor(Color(0xffe51923));
+
+          return GestureDetector(
+              onTap: () {
+            FocusScopeNode currentFocus = FocusScope.of(context);
+
+            if (!currentFocus.hasPrimaryFocus) {
+              currentFocus.unfocus();
+            }
+          },
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            initialRoute: '/',
+            routes: {
+              '/auth': (context) => AuthWidget(userSnapshot: userSnapshot),
+            },
+            title: 'FoodiePops',
+            theme: ThemeData(
+                primarySwatch: Colors.red, primaryColor: Color(0xffe51923)),
+            home: Splash(userSnapshot: userSnapshot,),
+          ));
+        },
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+class Splash extends StatelessWidget {
+  const Splash({Key key, @required this.userSnapshot}) : super(key: key);
+  final AsyncSnapshot<User> userSnapshot;
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
+  Future<bool> checkFirstSeen() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool _seen = (prefs.getBool('seen') ?? false);
+    debugPrint(_seen.toString());
+    debugPrint("here");
 
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+    return _seen;
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    return new Scaffold(
+      body: new Center(
+          child: FutureBuilder(
+              future: checkFirstSeen(),
+              builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                if (snapshot.hasData) {
+                  bool hasSeenSplash = snapshot.data;
+
+                  return hasSeenSplash ?  AuthWidget(userSnapshot: userSnapshot,) : OnboardingScreen(
+                            title: 'Fancy OnBoarding HomePage');
+                }
+
+                return CircularProgressIndicator();
+              })),
     );
   }
 }
