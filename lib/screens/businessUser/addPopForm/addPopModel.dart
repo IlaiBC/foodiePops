@@ -166,7 +166,9 @@ class AddPopModel with AddPopValidator, ChangeNotifier {
     if (file != null) {
       final storage =
           Provider.of<FirebaseStorageService>(context, listen: false);
-      final String popPhotoPath = await storage.uploadPopImage(file: file);
+      final String popPhotoPath = await storage.uploadPopImage(file: file).timeout(Duration(seconds: 5), onTimeout: () {
+          throw Exception("Failed to upload photo, try again later");
+        });
 
       await file.delete();
 

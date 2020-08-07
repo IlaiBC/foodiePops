@@ -194,6 +194,9 @@ class _AddPopFormState extends State<AddPopForm> {
     } on PlatformException catch (e) {
       _setUploadPopPhotoLoading(false);
       _showPopPhotoUploadError(model, e);
+    } on Exception catch(e) {
+      _setUploadPopPhotoLoading(false);
+      _showPopPhotoUploadException(e);
     }
   }
 
@@ -530,5 +533,13 @@ class _AddPopFormState extends State<AddPopForm> {
       title: Texts.popImageUploadError,
       exception: exception,
     ).show(context);
+  }
+
+  void _showPopPhotoUploadException(Exception exception) async {
+        await PlatformAlertDialog(
+          title: Texts.popImageUploadError,
+          content: exception.toString(),
+          defaultActionText: Texts.ok,
+        ).show(context);
   }
 }
