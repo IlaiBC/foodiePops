@@ -13,7 +13,7 @@ class FirestorePath {
   static String addCouponRedeemedToBusinessAnalytics(String businessUserId, String popId) => 'businesses/$businessUserId/pops/$popId/couponsRedeemed';
   static String popLikeCount(String popId) => 'pops/$popId/likes/likeCount';
   static String popCouponsRedeemedCount(String popId) => 'pops/$popId/couponsRedeemed/couponsRedeemedCount';
-  static String businessPopCouponsRedeemedCount(String businessUserId, String popId) => 'businesses/$businessUserId/pops/$popId/couponsRedeemed/couponsRedeemedCount';
+  static String businessPopCouponsRedeemedCount(String businessUserId, String popId) => 'businesses/$businessUserId/pops/$popId/couponsRedeemedCount/count';
   static String businessPopLikeCount(String businessUserId, String popId) => 'businesses/$businessUserId/pops/$popId/likes/likeCount';
   static String businessPopImages(String businessUserId, String imageName) => 'businesses/$businessUserId/$imageName';
 }
