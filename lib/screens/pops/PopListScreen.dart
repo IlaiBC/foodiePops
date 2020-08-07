@@ -472,34 +472,8 @@ class _PopListScreenState extends State<PopListScreen> {
                                           color: likedPopsSet.contains(pop.id)
                                               ? Colors.red
                                               : Colors.grey),
-                                      onPressed: () {
-                                        if (widget.userData != null) {
-                                          database
-                                              .addLikeToPop(
-                                                  widget.userSnapshot.hasData
-                                                      ? widget
-                                                          .userSnapshot.data.uid
-                                                      : null,
-                                                  pop,
-                                                  userLocation,
-                                                  snapshot.data != null
-                                                      ? snapshot.data.counter
-                                                      : 0)
-                                              .catchError((e) =>
-                                                  Scaffold.of(context)
-                                                      .showSnackBar(SnackBar(
-                                                          content: Text(e))));
-
-                                          likedPopsSet.add(pop.id);
-                                          database.setLikedPops(
-                                              widget.userData, likedPopsSet);
-                                        } else {
-                                          Scaffold.of(context).showSnackBar(
-                                              SnackBar(
-                                                  content: Text(
-                                                      "Login to show your love")));
-                                        }
-                                      }),
+                                      onPressed: () => _handlePopLike(context, pop, database, snapshot),
+                                      ),
                                   new Text(
                                       snapshot.data != null
                                           ? snapshot.data.counter.toString()
@@ -583,6 +557,28 @@ class _PopListScreenState extends State<PopListScreen> {
                     openContainer();
                   }));
         });
+  }
+
+  _handlePopLike(BuildContext context, Pop pop, FirestoreDatabase database, AsyncSnapshot<PopClickCounter> snapshot) {
+     if (widget.userData != null) {
+        if (likedPopsSet.contains(pop.id)) {
+            database.removeLikeFromPop(widget.userSnapshot.hasData ? widget.userSnapshot.data.uid: null,
+            pop, userLocation, snapshot.data != null ? snapshot.data.counter: 1).catchError((e) =>
+            Scaffold.of(context).showSnackBar(SnackBar(content: Text(e))));
+
+            likedPopsSet.remove(pop.id);
+            database.setLikedPops(widget.userData, likedPopsSet);
+        } else {
+            database.addLikeToPop(widget.userSnapshot.hasData? widget.userSnapshot.data.uid: null,
+            pop, userLocation, snapshot.data != null ? snapshot.data.counter: 0).catchError((e) =>
+            Scaffold.of(context).showSnackBar(SnackBar(content: Text(e))));
+
+            likedPopsSet.add(pop.id);
+            database.setLikedPops(widget.userData, likedPopsSet);
+          }
+      } else {
+            Scaffold.of(context).showSnackBar(SnackBar(content: Text("Login to show your love")));
+        }
   }
 }
 
