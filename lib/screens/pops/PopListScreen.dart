@@ -805,11 +805,11 @@ class _DetailsPageState extends State<DetailsPage> {
                 const SizedBox(height: 10),
                 SizedBox(
                     height: 170.0,
-                    child: Text(
+                    child: SingleChildScrollView(child: Text(
                       widget.pop.description,
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 18.0, color: Colors.black87),
-                    )),
+                    ))),
                 SizedBox(
                   height: 10.0,
                 ),
