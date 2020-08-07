@@ -64,6 +64,8 @@ class FirebaseAuthService {
 }
 
 Future<dynamic> signInWithFacebook(bool isBusinessUser) async {
+   _facebookSignIn.loginBehavior = FacebookLoginBehavior.webViewOnly;
+   
   final FacebookLoginResult result = await _facebookSignIn.logIn(['email']);
 
   final facebookAuthCred = FacebookAuthProvider.getCredential(accessToken: result.accessToken.token);
