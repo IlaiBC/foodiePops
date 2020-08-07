@@ -29,6 +29,14 @@ class ProfileScreen extends StatelessWidget {
     return redeemedCouponPops;
   }
 
+    ImageProvider _getUserImage() {
+    if (userSnapshot.hasData && userSnapshot.data.photoUrl != null) {
+      return NetworkImage(userSnapshot.data.photoUrl);
+    }
+
+    return AssetImage('assets/profile.png');
+  }
+
   Widget rowCell(int count, String type) => new Expanded(
           child: new Column(
         children: <Widget>[
@@ -81,7 +89,7 @@ class ProfileScreen extends StatelessWidget {
               decoration: BoxDecoration(
                   color: Colors.red,
                   image: DecorationImage(
-                      image: NetworkImage(user.photoUrl), fit: BoxFit.cover),
+                      image: _getUserImage(), fit: BoxFit.cover),
                   borderRadius: BorderRadius.all(Radius.circular(75.0)),
                   boxShadow: [
                     BoxShadow(blurRadius: 7.0, color: Colors.black)
