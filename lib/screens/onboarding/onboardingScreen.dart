@@ -24,7 +24,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             )),
         body: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.0),
-            child: Text('Find special foodie expiriences near you',
+            child: Text('Find special foodie experiences near you',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white,
