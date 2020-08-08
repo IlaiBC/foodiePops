@@ -354,7 +354,7 @@ class _PopListScreenState extends State<PopListScreen> {
                                               userData: widget.userData,
                                               pop: currentPop,
                                               redeemedCouponSet:
-                                                  redeemedPopCouponsSet);
+                                                  redeemedPopCouponsSet, userLocation: userLocation,);
                                         },
                                         tappable: false,
                                         closedShape:
