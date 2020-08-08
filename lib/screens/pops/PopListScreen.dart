@@ -45,23 +45,6 @@ class _PopListScreenState extends State<PopListScreen> {
   int _priceRank = 0;
   double _filterDistance = 10000;
   List<String> selectedKitchenTypes = [];
-  List<String> kitchenTypes = [
-    "Asian",
-    "Sushi",
-    "Pizza",
-    "Hamburger",
-    "Italian",
-    "American",
-    "Cafe",
-    "Bar",
-    "Meat",
-    "Fish",
-    "Indian",
-    "Hummus",
-    "Seafood",
-    "Bakery",
-    "Mexican"
-  ];
 
   @override
   void initState() {
@@ -279,12 +262,12 @@ class _PopListScreenState extends State<PopListScreen> {
   bool _popKitchenTypesContainedInSelectedKitchenTypes(
       List<String> popKitchenTypes) {
     for (int i = 0; i < popKitchenTypes.length; i++) {
-      if (selectedKitchenTypes.contains(popKitchenTypes[i]) == false) {
-        return false;
+      if (selectedKitchenTypes.contains(popKitchenTypes[i]) == true) {
+        return true;
       }
     }
 
-    return true;
+    return false;
   }
 
   @override
